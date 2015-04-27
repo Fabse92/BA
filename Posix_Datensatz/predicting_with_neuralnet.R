@@ -36,7 +36,7 @@ d.results$percent_error = (d.results$error / d.results$Duration)*100
 plot(d.results$percent_error, ylim=c(-200, 1000))
 
 # Plot der echten Duration gegenüber der vorhergesagten
-plot(d.results$Duration, col="blue", ylim=c(-0.001, 0.002))
+plot(d.results$Duration, col="blue", ylim=c(-0.0001, 0.0008))
 points(d.results$prediction, col="red")
 
 d.results$abserror = abs(d.results$error)
