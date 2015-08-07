@@ -6,7 +6,7 @@ registerDoParallel(cores=4)
 d = read.table("data.csv", header = T, sep=",")
 d$OpTyp = as.numeric(d$OpTyp)
 
-train_net = function(nof_layers, nof_neurons, test_threshold, nof_reps, algo,error_fct,act_fct) {
+train_net = function(layers, test_threshold, nof_reps, algo,error_fct,act_fct) {
   # Einsatz des Neuronalen Netzes
   net = NULL
   net = neuralnet(Quantile_0.1+Quantile_0.5+Quantile_0.9~OpTyp+DeltaOffset+Size, data = d.norm, hidden = layers, threshold = test_threshold, algorithm = algo, rep = nof_reps, err.fct = error_fct, act.fct = act_fct)
@@ -84,19 +84,19 @@ test_data <- data.frame(apply(d[c("OpTyp","DeltaOffset", "Size")],2,normalize))
 test_count = 100000
 temp_test = head(test_data, test_count)
 
-parameter_test = data.frame(1,2,3,4,5,6,7,8,9,10,11)
-names(parameter_test) = c("layers","neurons","reps","threshold","algo","error function","activation function","mean_error","best_error","avg. training duration / sec","nof errors occured")
+# parameter_test = data.frame(1,2,3,4,5,6,7,8,9,10,11)
+# names(parameter_test) = c("layers","neurons","reps","threshold","algo","error function","activation function","mean_error","best_error","avg. training duration / sec","nof errors occured")
 idx = 1
 nof_iterations = 50
 for (nof_layers in 1:3) { # Anzahl hidden-layers
-  for (nof_neurons in 12:14) { # Anzahl Neuronen pro hidden-layer
+  for (nof_neurons in 8:11) { # Anzahl Neuronen pro hidden-layer
     layers = c(nof_neurons)
     for (idx_layer in 2:nof_layers) {
       layers = c(layers, nof_neurons)
     }
     for (nof_reps in 1:1) { # Anzahl Wiederholungen des Trainingsprozesses
       for (threshold_exponent in 5:5) { #  über 5 selten konvergent; über 4 Error
-        for (threshold_summand in 9:9) { # threshold des Algorithmus ist 10^(-threshold_exponent) + threshold_summand * 10^(-threshold_exponent);
+        for (threshold_summand in 3:3) { # threshold des Algorithmus ist 10^(-threshold_exponent) + threshold_summand * 10^(-threshold_exponent);
           test_threshold = 10^(-threshold_exponent) + threshold_summand * 10^(-threshold_exponent)
           for (learning_algo in 2:3) { # 1 - backprop, 2 - rprop+, 3- rprop-, 4 - sag, 5 - slr
             if (learning_algo == 1) {
@@ -126,7 +126,7 @@ for (nof_layers in 1:3) { # Anzahl hidden-layers
                 best_error = 10000
                 stime <- system.time({
                   return_values <- foreach(icount(nof_iterations), .combine='c', .inorder=FALSE) %dopar% {
-                    train_net(nof_layers,nof_neurons,test_threshold,nof_reps,algo,error_fct,act_fct)
+                    train_net(layers,test_threshold,nof_reps,algo,error_fct,act_fct)
                   }
                 })
                 error_count = sum(return_values == "error")
@@ -140,7 +140,7 @@ for (nof_layers in 1:3) { # Anzahl hidden-layers
                 }
                 avg_duration = stime[3] / nof_iterations
                 #test_type = c(nof_layers,nof_neurons,nof_reps,test_threshold,algo)
-                parameter_test[idx,] = c(nof_layers,nof_neurons,nof_reps,test_threshold,algo,error_fct,act_fct,mean_error, best_error, avg_duration,error_count)
+                parameter_test[idx,] = c(as.numeric(nof_layers),as.numeric(nof_neurons),as.numeric(nof_reps),as.numeric(test_threshold),algo,error_fct,act_fct,as.numeric(mean_error), as.numeric(best_error), as.numeric(avg_duration),as.numeric(error_count))
                 idx = idx + 1
               }
             }
@@ -150,14 +150,14 @@ for (nof_layers in 1:3) { # Anzahl hidden-layers
     }
   }
 }
-
-# Plot der echten Duration gegenüber der vorhergesagten
-plot(d.results$Duration, col="blue", ylim=c(-0.0001, 0.0004))
-points(d.results$pred_Quantile_0.5, col="red")
-
-d.results$in_range = 0
-d.results$in_range[(d.results$Duration > d.results$pred_Quantile_0.1) & (d.results$Duration < d.results$pred_Quantile_0.9)] = 1
-summary(d.results$in_range)
-plot(d.results$in_range)
+# 
+# # Plot der echten Duration gegenüber der vorhergesagten
+# plot(d.results$Duration, col="blue", ylim=c(-0.0001, 0.0004))
+# points(d.results$pred_Quantile_0.5, col="red")
+# 
+# d.results$in_range = 0
+# d.results$in_range[(d.results$Duration > d.results$pred_Quantile_0.1) & (d.results$Duration < d.results$pred_Quantile_0.9)] = 1
+# summary(d.results$in_range)
+# plot(d.results$in_range)
 
 
