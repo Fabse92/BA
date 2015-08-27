@@ -4,17 +4,6 @@ library("RSNNS")
 registerDoParallel(cores=4)
 
 
-# Funktion zum normalisieren von Werten
-normalize <- function(x,min = NULL,max = NULL){
-  if(missing(min)) {
-    min = min(x)
-  }
-  if(missing(max)) {
-    max = max(x)
-  }
-  (x - min) / (max - min)
-}
-
 train_rnn_net = function(layers,rnn_type) {
   # Einsatz des Neuronalen Netzes
   rnn_net = NULL
@@ -99,14 +88,14 @@ d.rnn_target_test <- tail(data.frame(apply(d.first_prediction["Duration"],2,norm
 rnn_parameter_test = data.frame(1,2,3,4,5,6,7)
 names(rnn_parameter_test) = c("layers","neurons","rnn_type","mean_error","best_error","avg. training duration / sec","nof errors occured")
 idx = 1
-nof_iterations = 20
-for (nof_layers in 1:1) { # Anzahl hidden-layers
-  for (nof_neurons in 10:10) { # Anzahl Neuronen pro hidden-layer
+nof_iterations = 30
+for (nof_layers in 1:3) { # Anzahl hidden-layers
+  for (nof_neurons in 10:15) { # Anzahl Neuronen pro hidden-layer
     layers = c(nof_neurons)
     for (idx_layer in 2:nof_layers) {
       layers = c(layers, nof_neurons)
     }
-    for (rnn_type in 1:2) {
+    for (rnn_type in 1:1) {
       if (rnn_type == 1) {
         algo = "elman"
       } else if (rnn_type == 2) {
