@@ -3,13 +3,13 @@ library("neuralnet")
 source("preparation_of_data.R")
 
 idx = 1
-nof_iterations = 30
+nof_iterations = 10
 best_error = 10000
 best_net = neuralnet(Quantile_0.1+Quantile_0.5+Quantile_0.9~OpTyp+DeltaOffset+Size, d.norm, hidden = c(1), threshold = 0.0001, algorithm = "rprop-", rep = 1)
 for (nof_neurons in 13:13) {
   for (count in 1:nof_iterations) {
     # Einsatz des Neuronalen Netzes
-    net = neuralnet(Quantile_0.1+Quantile_0.5+Quantile_0.9~OpTyp+DeltaOffset+Size, d.norm, hidden = c(nof_neurons), threshold = 0.0001, algorithm = "rprop-", rep = 1)
+    net = neuralnet(Quantile_0.1+Quantile_0.5+Quantile_0.9~OpTyp+DeltaOffset+Size, d.norm, hidden = rep(nof_neurons,4), threshold = 0.0001, algorithm = "rprop-", rep = 1)
     
     results = data.frame(compute(net, temp_test)$net.result)
     d.results = data.frame(Duration = head(d$Duration, test_count), pred_Quantile_0.1 = results$X1, pred_Quantile_0.5 = results$X2, pred_Quantile_0.9 = results$X3)
