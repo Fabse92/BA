@@ -1,0 +1,250 @@
+\documentclass[
+	12pt,
+	a4paper,
+	BCOR10mm,
+	%chapterprefix,
+	DIV14,
+	listof=totoc,
+	bibliography=totoc,
+	headsepline
+]{scrreprt}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{ngerman}
+
+\usepackage{lmodern}
+
+\usepackage[footnote]{acronym}
+\usepackage[page,toc]{appendix}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage[htt]{hyphenat}
+\usepackage{listings}
+\usepackage{lscape}
+\usepackage{microtype}
+\usepackage{nicefrac}
+\usepackage{subfig}
+\usepackage{textcomp}
+\usepackage[subfigure,titles]{tocloft}
+\usepackage{units}
+
+\lstset{
+	basicstyle=\ttfamily,
+	frame=single,
+	numbers=left,
+	language=C,
+	breaklines=true,
+	breakatwhitespace=true,
+	postbreak=\hbox{$\hookrightarrow$ },
+	showstringspaces=false,
+	tabsize=4
+}
+
+\renewcommand*{\lstlistlistingname}{Listingverzeichnis}
+
+\renewcommand*{\appendixname}{Anhang}
+\renewcommand*{\appendixtocname}{Anhänge}
+\renewcommand*{\appendixpagename}{Anhänge}
+
+\begin{document}
+
+\begin{titlepage}
+	\begin{center}
+		{\titlefont\huge Vorhersage von E/A-Leistung im Hochleistungsrechnen unter der Verwendung von neuronalen Netzen\par}
+
+		\bigskip
+		\bigskip
+
+		{\titlefont\Large --- Bachelorarbeit ---\par}
+
+		\bigskip
+		\bigskip
+
+		{\large Arbeitsbereich Wissenschaftliches Rechnen\\
+		Fachbereich Informatik\\
+		Fakultät für Mathematik, Informatik und Naturwissenschaften\\
+		Universität Hamburg\par}
+	\end{center}
+
+	\vfill
+
+	{\large \begin{tabular}{ll}
+		Vorgelegt von: & Jan Fabian Schmid \\
+		E-Mail-Adresse: & \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de} \\
+		Matrikelnummer: & 6440383 \\
+		Studiengang: & Computing in Science - SP. Physik \\
+		\\
+		Erstgutachter: & Dr. Julian Kunkel \\
+		Zweitgutachter: & Prof. Dr. Thomas Ludwig\\ \\
+		Betreuer: & Dr. Julian Kunkel \\
+		\\
+		Hamburg, den 17.12.2015
+	\end{tabular}\par}
+\end{titlepage}
+
+\chapter*{Abstract}
+
+\thispagestyle{empty}
+
+
+
+\tableofcontents
+
+\chapter{Einleitung}
+\label{Einleitung}
+
+\textit{%
+Im folgenden wird zunächst kurz dargelegt mit welcher Problemstellung sich diese Thesis befasst, welches Ziel verfolgt wird, und wie dieser Text im Weiteren aufgebaut sein wird.
+}
+\bigskip
+
+\section{Motivation}
+
+Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Signifikanz, viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können z.B. nur in einer effizienten Weise durch Analyse einer Simulation eines Modells gelöst werden. Der extensive Rechenaufwand solcher Simulationen erfordert, dass Wissenschaftler nicht am eigenen Computer rechnen, sondern hierfür die Dienste eines Hochleistungszentrum in Anspruch nehmen. Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungszentren dazu für den gewünschten Leistungsgewinn in stark parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränkt, die zur Verfügung stehende Leistung wird dadurch allerdings schwieriger nutzbar. Einerseits liegt dies am großen  technische Aufwand, der zur Vernetzung der Recheneinheiten notwendig ist, andererseits liegt es an der komplexen Programmierung der Software, welche die Parallelität des Rechners berücksichtigt. Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche Tools zur Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren von Programmcode.
+
+\section{Problemstellung}
+
+ Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor liegenden Caches. Dabei stellt sich die Problematik des Vorhersagen der Dauer von Dateizugriffen (warum?). Diese Arbeit versucht diese Problematik mit dem Hilfsmittel neuronaler Netze zu lösen. 
+
+\section{Ziele der Thesis}
+Main goal:\\
+A neural network that is reliable in predicting performance of HPC-IO with sufficient quality\\
+
+Subgoals:\\
+Knowing which data can be provided by SIOX\\
+Identify interesting (data mining) features, that can be derived from the available data\\
+Having an understanding of what kind of neural network is suitable for the task\\
+A measure for adequate quality of an IO-performance predictor \\
+Benchmark of different predictors using different approaches\\
+Implementation of a predictor module for SIOX for online evaluation of application performances\\
+
+
+\section{Strukturierung}
+Nachdem in diesem Kapitel die Metaebene der Thesis behandelt wird, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Das dritte Kapitel beschäftigt sich mit bereits vorhandenen Ansätzen und Arbeiten zur Problemstellung. Im vierten Kapitel werden die Konzepte, sowie die Implementierung, der verschiedenen Modelle beschrieben, die als potenzielle Lösungen des Problems entwickelt und getestet wurden. Die Evaluierung der verschiedenen Lösungsansätze wird daraufhin im fünften Kapitel vorgenommen. Im sechsten Kapitel wird untersucht, welche Lösungsansätze für welche Anwendungsfälle am besten geeignet sind, um dann mit diesen Erkenntnissen im siebten Kapitel ein Fazit der Arbeit zu ziehen.
+
+\chapter{Hintergrund}
+\textit{%
+	test
+}
+\bigskip
+
+\section{Dateisystem}
+Wie werden Dateien abgelegt, wie greift man darauf zu.
+Wie funktioniert Caching?
+
+\section{HPC}
+Wofür HPC?
+Was zeichnet HPC aus?
+Dateisystem im HPC 
+Besondere herausforderungen
+
+\section{Mistral}
+Speziell die Hardware von Mistral, von hier kommen die Benchmarks
+
+\section{SIOX}
+Ziele
+Vorgehen
+Wofür diese Arbeit?
+\cite{UMLTPTPONI15} The SIOX framework [13,14] aims to become a holistic approach covering the
+full cycle of monitoring, analysis, machine learning of the adequate settings and
+their automatic enactment.
+
+\section{Neuronale Netze}
+Data Mining kurz allg.
+zu lösende Problemklasse
+Vor- und Nachteile
+
+
+\chapter{Verwandte Arbeiten}
+\textit{%
+	Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.  
+}
+\bigskip
+
+\section{Kategorisierung (woanders hin?)}
+	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen ein Modell des Festplattensystems zu erstellen, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten, bekannt sind oder entsprechende Parameter werden durch gezielte Untersuchung approximiert. (\textbf{stimmt das? Referenz?}) Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und so deren Aufwand vorhergesagt werden. \\ Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das aus gemessenen Leistungswerten von Festplattenzugriffen die Werte von neuen Zugriffen ableitet. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz (in der Fachliteratur etwa als analytic device modeling und simulation modeling bezeichnet), bei dem versucht wird das Festplattensystem nachzubilden und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (Quelle? Fourier assisted ml)
+	
+\section{Modellierungssansatz gegenüber Interpolationsansatz}
+	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
+	Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System eine etwas schlechtere Präzision. \\ Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. "Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads" \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).
+
+\section{Themenverwandtes}
+	Im HPC Bereich ist die Leistungsanalyse generell ein wichtiger Punkt, so wird beispielsweise das Scheduling-Algorithmen vom Dateisystem simuliert \cite{Liu_towardssimulation}, hier wird DiskSim \cite{Bucy08thedisksim} zur Vorhersage der Festplattenzugriffszeiten genutzt, dabei nutzt DiskSim einen Modellierungssansatz (analytical simulation). Eine weitere Arbeit, in der ein Modellierungsansatz genutzt wird stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}.\\ 
+	Bei Arbeiten, in denen ein Interpolationsansatz genutzt wird, werden verschiedene Data-Mining bzw. stochastischen Methoden angewandt, beispielsweise eine Kombination aus regression trees und support vector mashines  \cite{Dai:2012:SDP:2477169.2477214}, bagging classification und regression trees \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.
+
+\section{Fourier-Assisted Machine Learning}
+Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten in der Erkennung von periodischen Mustern liegt. Diese Annahme ist für eine einzelne Festplatte gerechtfertigt, da man die Zugriffstzeit grob in zwei Teile aufteilen kann, zum einen die Bewegung des Lesekopfs auf die richtige Spur und die Bewegung des Kopfes entlang der Spur zum richtigen Punkt, auch wenn diese beiden Bewegungen in der Realität überlappen. Jede Festplattenspur hat entsprechend des Radius eine andere Periodendauer.\\
+Durch eine Fourier Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
+Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anzahl Perioden nur ein kleiner Ausschnitt der Festplatte in seiner Gesamtheit, also alle möglichen Paare von Ausgangs- und Endspuren, untersucht werden kann. Die Priorität solcher Frequenzen für die exakte Leistungsvorhersage, ist im komplexen HPC-E/A-System zunächst einmal nicht zu erwarten, müsste allerdings untersucht werden.
+
+\section{Predicting Performance of Non-Contiguos I/O with Machine Learning}
+Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Zimmer und Betke \cite{UMLTPTPONI15}. Hier wird versucht mit Hilfe von decision trees die performantesten Parameter für nicht zusammenhängende Zugriffe auf Dateien durch ROMIO, einer Implementierung von MPI-2 I/O, zu finden. Dabei sagen sie mit den decision trees die Performance für die verschiedenen Parameter auf den Daten voraus, sodass sie anhand dieser Vorhersagen die besten Parameter finden. (\textbf{habe ich das richtig verstanden}?) Mit dieser Methode haben sie es geschafft zufriedenstellende Ergebnisse zu erzielen. Die Simplizität von decision trees, beispielsweise können diese nur Entscheidungen als eine Aneinanderreihung von linearen Separationen des Werteraums treffen, lässt vermuten, dass mit Hilfe von komplexeren Data Mining - Methoden, wie neuronalen Netzen noch bessere Ergebnisse erzielt werden könnten. Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelorarbeit.
+
+\chapter{Design \& Implementierung}
+\textit{%
+	test
+}
+\bigskip
+
+\chapter{Evaluierung}
+\textit{%
+	test
+}
+\bigskip
+
+\chapter{Anwendungsfälle}
+\textit{%
+	test
+}
+\bigskip
+
+\chapter{Fazit}
+\label{Fazit}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+At vero eos et accusam et justo duo dolores et ea rebum.
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\bibliographystyle{alpha}
+\bibliography{literatur}
+
+\listoffigures
+
+\listoftables
+
+\lstlistoflistings
+
+\begin{appendices}
+
+\chapter{Anhangskapitel}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+At vero eos et accusam et justo duo dolores et ea rebum.
+Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\end{appendices}
+
+\newpage
+
+\thispagestyle{empty}
+
+\chapter*{}
+
+\section*{Erklärung}
+
+Ich versichere, dass ich die Arbeit selbstständig verfasst und keine anderen, als die angegebenen Hilfsmittel -- insbesondere keine im Quellenverzeichnis nicht benannten Internetquellen -- benutzt habe, die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht habe und die eingereichte schriftliche Fassung der auf dem elektronischen Speichermedium entspricht.
+
+\smallskip
+
+\textbf{Optional:} Ich bin mit der Einstellung der Bachelor-Arbeit in den Bestand der Bibliothek des Fachbereichs Informatik einverstanden.
+
+\bigskip
+\bigskip
+\bigskip
+
+Hamburg, den 01.01.2012  \quad \dotfill
+
+\end{document}
