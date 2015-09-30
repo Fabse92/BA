@@ -9,7 +9,7 @@ normalize = function(x){
   (x - min(x))/(max(x) - min(x))
 }
 
-d.norm <- data.frame(apply(d[c("DeltaTime","Duration")],2,normalize))
+d.norm <- data.frame(apply(d[c("DeltaTime","Duration","Size","DeltaOffset")],2,normalize))
 
 d.norm$OpTyp = as.numeric(d$OpTyp)
 
@@ -18,6 +18,8 @@ d.learn <- d.norm[1:(4000-testsize),]
 d.test <- d.norm[(4000-testsize+1):4000,]
 
 # Einsatz des Neuronalen Netzes
+net = neuralnet(Duration~DeltaTime+OpTyp+Size+DeltaOffset, d.norm, hidden = 8, threshold = min(d$Duration) / 20 )
+
 net = neuralnet(Duration~DeltaTime+OpTyp, d.learn, hidden = 8, threshold = min(d$Duration) / 20 ) # 5% Fehler
 plot(net, rep = "best")
 
