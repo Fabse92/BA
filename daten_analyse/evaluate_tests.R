@@ -1,13 +1,14 @@
 
-layers_from = 1
-layers_to = 13
-layers_by = 2
-neurons_from = 1
-neurons_to = 30
-neurons_by = 2
+layers_from = 5# 1
+layers_to = 7#9# 13
+layers_by = 2# 2
+neurons_from = 7# 1
+neurons_to = 11# 30
+neurons_by = 2# 2
 
 series = ""
 para_pfad = "../parameter_tests/"
+pfad = "../best_parameters/"
 
 parameter_test = NULL
 parameter_test = read.table(paste(para_pfad,"parameter_test-baselines",sep=""), header = T, sep=",", stringsAsFactors = FALSE)
@@ -16,6 +17,7 @@ for(layer in seq(layers_from,layers_to,by = layers_by)) {
   for(neuron in seq(neurons_from,neurons_to,by = neurons_by)) {
     if(is.null(parameter_test)) {
       parameter_test = read.table(paste(para_pfad,"parameter_test_",layer,"_",neuron,"_",series,sep=""), header = T, sep=",",stringsAsFactors = FALSE)
+      
     } else {
       parameter_test = rbind(parameter_test,read.table(paste(para_pfad,"parameter_test_",layer,"_",neuron,"_",series,sep=""), header = T, sep=",",stringsAsFactors = FALSE))
     }
@@ -23,8 +25,41 @@ for(layer in seq(layers_from,layers_to,by = layers_by)) {
 }
 
 parameter_test = data.frame(parameter_test, stringsAsFactors = FALSE)
-
 write.table(parameter_test, paste(para_pfad,"parameter_test","_",series,sep = ""), sep=",", row.names = FALSE)
+
+
+best_data = read.table(paste(pfad,"models_data_",layers_from,"_",neurons_from,"_",series,sep=""), header = T, sep=",", stringsAsFactors = FALSE)
+best_results = read.table(paste(pfad,"models_results_",layers_from,"_",neurons_from,"_",series,sep=""), header = T, sep=",", stringsAsFactors = FALSE)
+
+for(layer in seq(layers_from,layers_to,by = layers_by)) {
+  for(neuron in seq(neurons_from,neurons_to,by = neurons_by)) {
+    this_data = read.table(paste(pfad,"models_data_",layer,"_",neuron,"_",series,sep=""), header = T, sep=",", stringsAsFactors = FALSE)
+    this_results = read.table(paste(pfad,"models_results_",layer,"_",neuron,"_",series,sep=""), header = T, sep=",", stringsAsFactors = FALSE)
+    for(row_idx in 1:nrow(this_results)){
+      if(this_results[row_idx,"model"] %in% best_results$model){
+        if(this_results[row_idx,"rel_rms"] < best_results[best_results$model == this_results[row_idx,"model"],"rel_rms"]) {
+          best_results[best_results$model == this_results[row_idx,"model"],] = this_results[row_idx,]
+          best_data[,names(best_data) == paste(this_results[row_idx,"model"],"_Duration",sep = "")] = this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_Duration",sep = "")]
+          best_data[,names(best_data) == paste(this_results[row_idx,"model"],"_q0.1",sep = "")] = this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_q0.1",sep = "")]
+          best_data[,names(best_data) == paste(this_results[row_idx,"model"],"_q0.9",sep = "")] = this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_q0.9",sep = "")]
+        }
+      } else {
+        best_results[nrow(best_results)+1,] = this_results[row_idx,]
+        best_data = cbind(best_data,this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_Duration",sep = "")])
+        names(best_data)[ncol(best_data)] = paste(this_results[row_idx,"model"],"_Duration",sep = "")
+        best_data = cbind(best_data,this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_q0.1",sep = "")])
+        names(best_data)[ncol(best_data)] = paste(this_results[row_idx,"model"],"_q0.1",sep = "")
+        best_data = cbind(best_data,this_data[,names(this_data) == paste(this_results[row_idx,"model"],"_q0.9",sep = "")])
+        names(best_data)[ncol(best_data)] = paste(this_results[row_idx,"model"],"_q0.9",sep = "")
+      }
+    }
+  }
+}
+
+write.table(best_data, paste("../best_parameters/models_data_",series, sep = ""), sep=",", row.names = FALSE)
+write.table(best_results, paste("../best_parameters/models_results_",series, sep = ""), sep=",", row.names = FALSE)
+
+
 
 for (idx in 2:5) {
   parameter_test[,idx] = as.numeric(parameter_test[,idx])
@@ -84,7 +119,7 @@ correlation_throughput_ema2 = parameter_test[parameter_test$model == 6,c("mean_r
 
 param_wo =parameter_test[parameter_test$mean_rel_rms != -1,]
 ordered_param = param_wo[order(param_wo$mean_rel_rms),]
-write.table(head(ordered_param,nrow(ordered_param)), paste("../results/best_of_parameter_test","_",series), sep=",", row.names = FALSE)
+write.table(head(ordered_param,nrow(ordered_param)), paste(para_pfad,"/best_of_parameter_test","_",series,sep = ""), sep=",", row.names = FALSE)
 
 
 parameter_test = parameter_test[parameter_test$layers %in% 0:6,]

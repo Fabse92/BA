@@ -104,12 +104,14 @@ Im folgenden wird zunächst kurz dargelegt mit welcher Problemstellung sich dies
 
 \section{Motivation}
 
-Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Signifikanz, viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können z.B. nur in einer effizienten Weise durch Analyse einer Simulation eines Modells gelöst werden. Der extensive Rechenaufwand solcher Simulationen erfordert, dass Wissenschaftler nicht am eigenen Computer rechnen, sondern hierfür die Dienste eines Hochleistungszentrum in Anspruch nehmen. Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungszentren dazu für den gewünschten Leistungsgewinn in stark parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränkt, die zur Verfügung stehende Leistung wird dadurch allerdings schwieriger nutzbar. Einerseits 
-liegt dies am großen  technische Aufwand, der zur Vernetzung der Recheneinheiten notwendig ist, andererseits liegt es an der komplexen Programmierung der Software, welche die Parallelität des Rechners berücksichtigt. Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche Tools zur Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren von Programmcode.
+Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Signifikanz, viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können z.B. nur in einer effizienten Weise durch Analyse einer Simulation eines Modells gelöst werden. Der extensive Rechenaufwand solcher Simulationen erfordert, dass Wissenschaftler nicht am eigenen Computer rechnen, sondern hierfür die Dienste eines Hochleistungszentrum in Anspruch nehmen. 
+Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungszentren dazu für den gewünschten Leistungsgewinn in stark parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränkt, die zur Verfügung stehende Leistung wird dadurch allerdings schwieriger nutzbar. 
+Einerseits liegt dies am großen  technische Aufwand, der zur Vernetzung der Recheneinheiten notwendig ist, andererseits liegt es an der komplexen Programmierung der Software, welche die Parallelität des Rechners berücksichtigt. Insbesondere ist es auch bei der Ein-/Ausgabe (E/A) von erforderlichen Dateien und Ergebnissen des Programms wichtig, dass sie parallel durchgeführt wird.
+Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche Tools zur Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren von Programmcode. Wünschenswert ist es dabei, wenn diese Tools die Optimierungen möglichst selbstständig durchführen können, sodass der Wissenschaftler sich auf die Funktionalität seines Programms konzentrieren kann, statt sich mit Leistungsoptimierung abzulenken.
 
 \section{Problemstellung}
 
- Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor liegenden Caches. Dabei stellt sich die Problematik des Vorhersagen der Dauer von Dateizugriffen (warum?). Diese Arbeit versucht diese Problematik mit dem Hilfsmittel neuronaler Netze zu lösen. 
+Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor liegenden Caches. Autonome Tools zur Optimierung der E/A können versuchen die Dauer von Dateizugriffen vorherzusagen \textbf{(warum?)}. Diese Arbeit versucht dies mit dem Hilfsmittel neuronaler Netze zu erreichen. 
 
 \section{Ziele der Thesis}
 Main goal:\\
@@ -123,30 +125,41 @@ A measure for adequate quality of an IO-performance predictor \\
 Benchmark of different predictors using different approaches\\
 Implementation of a predictor module for SIOX for online evaluation of application performances\\
 
-
 \section{Strukturierung}
 Nachdem in diesem Kapitel die Metaebene der Thesis behandelt wird, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Das dritte Kapitel beschäftigt sich mit bereits vorhandenen Ansätzen und Arbeiten zur Problemstellung. Im vierten Kapitel werden die Konzepte, sowie die Implementierung, der verschiedenen Modelle beschrieben, die als potenzielle Lösungen des Problems entwickelt und getestet wurden. Die Evaluierung der verschiedenen Lösungsansätze wird daraufhin im fünften Kapitel vorgenommen. Im sechsten Kapitel wird untersucht, welche Lösungsansätze für welche Anwendungsfälle am besten geeignet sind, um dann mit diesen Erkenntnissen im siebten Kapitel ein Fazit der Arbeit zu ziehen.
 
 \chapter{Hintergrund}
-\textit{%
-	test
-}
-\bigskip
 
 \section{Ein-/Ausgabe}
+\label{E/A}
 Wie werden Dateien abgelegt, wie greift man darauf zu.
-Wie funktioniert Caching?
+Wie funktioniert Caching? Read ahead, Write ahead? \textbf{Was soll hier so hin?}
+\medskip
+
+Als Ein-/Ausgabe (E/A) bezeichnet man jedweden Austausch von Informationen eines Informationssystems mit der Außenwelt (Wiki). Durch Eingaben erhält der Rechner auszuführende Befehle, die Programme und Funktionen mit denen er etwas ausführen soll, sowie die Daten, die verarbeitet werden sollen. Eine Ausgabe des Rechners gibt dem Nutzer Informationen zum inneren Zustand des Systems und er erhält die Ergebnisse seiner Eingaben.
+Im Kontext dieser Arbeit handelt es sich bei Ein-/Ausgaben um Dateien, die vom Computersystem von einem Datenträger eingelesen und wieder darauf geschrieben werden.
+Die in den Testsystemen verwendeten Datenträger sind Festplattenlaufwerke, bei diesen werden Informationen durch magnetische Polarisierung von Speicherzellen auf Magnetscheiben gespeichert und durch Abtastung dieser Magnetisierung mit einem Lesekopf ausgelesen. (\textbf{Bild einer Festplatte})
+Festplatten sind in Datenblöcke (auch Sektoren) unterteilt, diese bilden die kleinste Einheit, die von dem Medium gelesen bzw. darauf geschrieben werden kann. Durch eine eindeutige Adressierung dieser Sektoren kann der Schreib-/Lesekopf durch Aus- und Einfahren, sowie einer Drehung der Magnetscheibe, direkt auf den gewünschten Datenblock zugreifen.
+Aufgrund des vergleichsweise geringen Durchsatzes, und insbesondere wegen der großen Latenz bei der Durchführung von Festplattenaufrufen, sind zwischen Festplatte und den tatsächlichen Recheneinheiten im Prozessor mehrere Schichten von Speichern zwischengeschaltet. Von der Festplatte gelesene Daten befinden sich zunächst auf dem Arbeitsspeicher und werden dann in die auf dem Prozessor liegenden Pufferspeicher (Caches) geladen. In den verschiedenen Cache-Ebenen geschieht vergleichbares, die Ebenen gehen von kleinen, sehr schnellen zu größeren, langsameren Speichern über, üblich sind hier zwei oder drei Level. 
+Die Zugriffszeit auf eine Datei ist durch diese Struktur stark davon abhängig in welcher Speicherebene es einen Treffer zu den gesuchten Speicheradressen gibt. Wenn die Datei bereits vollständig im Level 1 Cache liegt, ist sie schon nach wenigen Prozessorzyklen geladen, wenn sie aus dem Arbeitsspeicher geholt werden muss, braucht es mehrere hundert Prozessorzyklen. Das lesen von der Festplatte dauert hingegen einige Millionen Zyklen (\textbf{Link? duartes.org}). Im wesentlichen kann also unterschieden werden, ob eine Datei "gecached", sich also im Arbeitsspeicher oder Prozessor-Cache befindet, oder noch von der Fesplatte geladen werden muss.
+Verschiedene Cache-Strategien erlauben eine noch effizientere Nutzung der Zwischenspeicher
 
 \section{Hochleistungsrechnen}
-Wofür HPC?
-Was zeichnet HPC aus?
-Dateisystem im HPC 
+Wofür HPC? c
+Was zeichnet HPC aus? c
+Ein-/Ausgabe im HPC  c
 Besondere herausforderungen
+\medskip
 
+Man spricht von Hochleistungsrechnen, wenn der Rechenaufwand eines Programms außerhalb dessen liegt, was ein einzelner Desktop-Computer in vertretbarer Zeit bearbeiten kann.
+Die im Hochleistungsrechnen verwendeten Computer werden als Superrechner bezeichnet (wiki Superrechner), hierbei handelt es sich heutzutage üblicherweise um Rechnerverbünde (englisch: Cluster) in denen große Anzahlen Prozessoren und Speichermedien zusammengeschaltet werden.
+Notwendig wird Hochleistungsrechnen in der Forschung für die Simulation von numerischen Modellen aus verschiedensten Bereichen, beispielsweise zur Mehrkörpersimulation in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen.
+Wichtige Themen im Hochleistungsrechnen sind die Ausnutzung der zur Verfügung stehenden Leistung, das Erkennen und Beheben von Fehlern des genutzten Programmcodes, die Bereitstellung der Rechen- und Speicherkapazitäten, sowie die Energieeffizienz von Hard- und Software.
+Um den Superrechner gut ausnutzen zu können ist eine effiziente Ein-/Ausgabe bei vielen Anwendungen von großer Wichtigkeit, da die Menge der anfallenden Datenmengen wesentlich stärker ansteigt, als die Geschwindigkeit der Verbindungen zwischen den verschiedenen Speichermedien und -orten. So steigt beispielsweise die Rechenleistung und die Speicherkapazität beim dem Superrechner des Deutschen Klimarechenzentrum (DKRZ) gegenüber dem Vorgänger wesentlich stärker an, als der mögliche Datendurchsatz (\textbf{Verweis}).
+Die in \ref{E/A} beschriebene Ein-/Ausgabe erweitert sich im Rechnerverbund zur parallelen E/A, dies bedeutet einerseits, dass eine Datei von mehreren Prozessen zeitgleich gelesen und bearbeitet werden kann, und andererseits, dass eine Datei über mehrere Festplatten verteilt sein kann. Diese Parallelität hat einen wesentlichen Einfluss auf die Aufgabe der E/A-Leistungsvorhersage, denn statt nur den Aufwand der Arbeitsschritte auf einer einzelnen Festplatte abzuschätzen, müssen hier die verstrickten Zusammenhänge zwischen Netzwerken von Festplatten und Rechnern, den jeweiligen Auslastungen der Komponenten, sowie Priorisierungen bestimmter Aufgaben und Instanzen.\\
+\textbf{Dies woanders hin?}
+Die Erfassung dieser Informationen wäre sehr aufwendig, sodass dies zur Zeit nicht möglich ist. Die Genauigkeit einer Vorhersage von E/A-Leistung eines parallelen Systems sollte daher systematisch ungenauer sein, als die zu einem seriellen System.
 
-\section{Mistral}
-Speziell die Hardware von Mistral, von hier kommen die Benchmarks
-Zur Evaluation verschieben: Testsystem
 
 \section{Ein-Ausgabe Optimierung mit SIOX}
 Ziele
@@ -157,6 +170,9 @@ Wofür diese Arbeit?
 full cycle of monitoring, analysis, machine learning of the adequate settings and
 their automatic enactment.
 
+\section{Maschinelles Lernen}
+Wozu, Vor-Nachteile
+
 \section{Neuronale Netze}
 Data Mining kurz allg.
 zu lösende Problemklasse
@@ -165,7 +181,6 @@ Vor- und Nachteile
 \bigskip
 
 \paragraph{Zusammenfassung:}
-
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
 
 
@@ -207,7 +222,7 @@ ABER sie werden nur unzureichend eingesetzt für I/O und deswegen braucht es die
 	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen ein Modell des Festplattensystems zu erstellen, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten, bekannt sind oder entsprechende Parameter werden durch gezielte Untersuchung approximiert. (\textbf{stimmt das? Referenz?}) Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und so deren Aufwand vorhergesagt werden. \\ Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das aus gemessenen Leistungswerten von Festplattenzugriffen die Werte von neuen Zugriffen ableitet. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz (in der Fachliteratur etwa als analytic device modeling und simulation modeling bezeichnet)
 , bei dem versucht wird das Festplattensystem nachzubilden und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (Quelle? Fourier assisted ml)
 	
-\section{Modellierungssansatz gegenüber Interpolationsansatz}
+\section{Modellierungssansatz gegenüber Regressionsansatz}
 	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
 	Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System eine etwas schlechtere Präzision. \\ Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. "Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads" \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).
 
@@ -223,30 +238,91 @@ Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anz
 \section{Predicting Performance of Non-Contiguos I/O with Machine Learning}
 Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et. al \cite{UMLTPTPONI15}. Hier wird versucht mit Hilfe von decision trees die performantesten Parameter für nicht zusammenhängende Zugriffe auf Dateien durch ROMIO, einer Implementierung von MPI-2 I/O, zu finden. Dabei sagen sie mit den decision trees die Performance für die verschiedenen Parameter auf den Daten voraus, sodass sie anhand dieser Vorhersagen die besten Parameter finden. (\textbf{habe ich das richtig verstanden}?) Mit dieser Methode haben sie es geschafft zufriedenstellende Ergebnisse zu erzielen. Die Simplizität von decision trees, beispielsweise können diese nur Entscheidungen als eine Aneinanderreihung von linearen Separationen des Werteraums treffen, lässt vermuten, dass mit Hilfe von komplexeren Data Mining - Methoden, wie neuronalen Netzen noch bessere Ergebnisse erzielt werden könnten. Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelorarbeit.
 
-\chapter{Design \& Implementierung}
+\paragraph{Zusammenfassung:}
+\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+
+
+\chapter{Gestaltung der Analyse}
 \textit{%
 	test
 }
 \bigskip
+
+\section{Modell der Ein-/Ausgabe}
+Zeit zum Bewegen des Lesekopfes + Zeit zum rotieren + lese-/schreibzeit + Aufrufprozedur mit festem Beitrag; t = tNetwork + tHDD +tMem \\
+mit tHDD(deltaOffset, sizeInBlocks) = tBus(size) + f(deltaOffset)\\
+track-to-track-seek-time, rotational time
+Welche Abhängigkeiten gibt es, oder könnte es geben? Z.B. Umso größer die Size, desto länger die Lese-/Schreibzeit, umso größer Offset, desto größer die Seekzeit
+
+\section{Leistungs- und Ausreißervorhersage}
+Die Beiden Dinge, die ich versuche vorherzusagen. Warum? Unterschiede. 
+\textbf{Macht es Sinn zu versuchen Ausreißer vorherzusagen?}
+
+\section{Attribut Selektion und Generierung}
+Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)
+
+\section{Modellklassen}
+Zeitreihenanalyse, Aggregierung, Hybride
+
+\section{Leistungsmetriken}
+Welche Leistungsmerkmale werden warum untersucht?
+
+\paragraph{Zusammenfassung:}
+\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+
+
+\chapter{Implementierung}
+\textit{%
+	test
+}
+\bigskip
+
+\section{Untersuchte Modelle}
+jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten, was die Idee davon ist ( warum macht es Sinn, dies zu testen), (wie soll die Performance hier untersucht werden?, Design?)
+
+\section{Bagging zur Leistungssteigerung}
+Konzept und Anwendung
+
+\section{Anwendung? und Parameter}
+Wie wird mit Ausreißern umgegangen, wie werden sie definiert, Cross-Validation, Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen,
+
+\section{Verwendete Programmiersprache und Bibliotheken}
+
+\section{Testsystem, Mistral}
+Speziell die Hardware von Mistral, von hier kommen die Benchmarks
+Zur Evaluation verschieben: Testsystem
+
+\paragraph{Zusammenfassung:}
+\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+
 
 \chapter{Evaluierung}
 \textit{%
 	test
 }
 \bigskip
+\section{Leistungsvorhersage}
+Zu jedem Modell schreiben, welche Attribute und Parameter sich als geeignet herausgestellt haben. Ergebnisse anhand von Graphen veranschaulichen.\\
+Ergebnisse für verschiedene Fälle vergleichen, seq,rnd,mistral vs pc?\\
+Jeweils schreiben, ob bagging etwas bringt.
+\subsection{Aggregationsmodelle}
+\subsection{Zeitreihenmodelle}
+\subsection{Hybridemodelle}
 
-\chapter{Anwendungsfälle}
-\textit{%
-	test
-}
-\bigskip
+\section{Ausreißervorhersage}
+\subsection{Aggregationsmodelle}
+\subsection{Zeitreihenmodelle}
+\subsection{Hybridemodelle}
+
+\paragraph{Zusammenfassung:}
+\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
 
 \chapter{Fazit}
 \label{Fazit}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-At vero eos et accusam et justo duo dolores et ea rebum.
-Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Welche Modelle sind für welchen Fall erfolgsversprechend?
+Eignen sich Neuronale Netze zum Vorhersagen von E/A-Leistung im HPC?\\
+Wo könnten die Ergebnisse eingesetzt werden?\\
+Was müsste als nächstes getan werden?\\
 
 \bibliographystyle{alpha}
 \bibliography{literatur}

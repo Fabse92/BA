@@ -1,20 +1,20 @@
 library("TTR")
 
-# d.read = read.table("../data-cached-off0-seq-R.csv", header = T, sep=",")#, nrows = 1000000)
-# names(d.read)[2] = "Size"
-# d.read$OpTyp = 1
-#  
-# d.write = read.table("../data-cached-off0-seq-W.csv", header = T, sep=",")#, nrows = 1000000)
-# names(d.write)[2] = "Size"
-# d.write$OpTyp = 2
-#  
-# d = rbind(d.read,d.write)
-# 
-# last_Offset = head(d$Offset,nrow(d)-1)
-# last_Offset = c(0,last_Offset)
-# d$DeltaOffset = d$Offset - last_Offset   ##### !!! ACHTUNG !!! #####
+d.read = read.table("../data-cached-off0-seq-R.csv", header = T, sep=",", nrows = 200000)
+names(d.read)[2] = "Size"
+d.read$OpTyp = 1
+ 
+d.write = read.table("../data-cached-off0-seq-W.csv", header = T, sep=",", nrows = 200000)
+names(d.write)[2] = "Size"
+d.write$OpTyp = 2
+ 
+d = rbind(d.read,d.write)
 
-d = read.table("../data.csv", header = T, sep=",")
+last_Offset = head(d$Offset,nrow(d)-1)
+last_Offset = c(0,last_Offset)
+d$DeltaOffset = d$Offset - last_Offset   ##### !!! ACHTUNG !!! #####
+
+# d = read.table("../data.csv", header = T, sep=",")
 
 if(typeof(d$OpTyp) == "integer") {
   d$OpTyp = as.numeric(d$OpTyp)
@@ -36,24 +36,33 @@ detect_outlier = function(relevant_cols){
 }
 
 relevant_cols = list("Size","DeltaOffset")
-d = detect_outlier(relevant_cols)
-d$known_outlier = d$outlier
+d$known_outlier = detect_outlier(relevant_cols)$outlier
 
 ##############################################################################################################################################################################
 
-d.agg_throughput_sigma = aggregate(d$throughput, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = sd,na.rm =FALSE)
-d.agg_throughput_sigma$x[is.na(d.agg_throughput_sigma$x)] = 0
-d.agg_mean = aggregate(d$throughput, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = mean)
+### die langsamsten und schnellsten 10% der Quantile werden als outlier markiert
 
+
+# d.agg_duration_sigma = aggregate(d$Duration, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = sd,na.rm =FALSE)
+# d.agg_duration_sigma$x[is.na(d.agg_duration_sigma$x)] = 0
+# d.agg_mean = aggregate(d$Duration, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = mean)
+
+d.agg_q0.1 = aggregate(d$Duration, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = quantile, x = d$Duration, probs = 0.1, names = FALSE)
+d.agg_q0.9 = aggregate(d$Duration, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = quantile, x = d$Duration, probs = 0.9, names = FALSE)
 d.agg_Count = aggregate(cbind(Count = 1,d)$Count, by = list(d$OpTyp,d$DeltaOffset,d$Size), FUN = length)
 
-d.aggregated = data.frame(OpTyp = d.agg_mean$Group.1,DeltaOffset = d.agg_mean$Group.2,Size = d.agg_mean$Group.3, sigma =d.agg_throughput_sigma$x, mean =d.agg_mean$x, Count = d.agg_Count$x)
+d.aggregated = data.frame(OpTyp = d.agg_q0.1$Group.1,DeltaOffset = d.agg_q0.1$Group.2,Size = d.agg_q0.1$Group.3, q0.1 =d.agg_q0.1$x, q0.9 =d.agg_q0.9$x, Count = d.agg_Count$x)
 
 d.merged = merge(d,d.aggregated,by=c("OpTyp","DeltaOffset","Size"),all = TRUE,sort = FALSE)
 
-d$outlier[d.merged$throughput < d.merged$mean - 2 * d.merged$sigma & d.merged$Count > 1] = 1
-d$outlier[d.merged$throughput > d.merged$mean + 2 * d.merged$sigma & d.merged$Count > 1] = 1
+# d$outlier[d.merged$Duration < d.merged$mean - 2 * d.merged$sigma & d.merged$Count > 1] = 1
+# d$outlier[d.merged$Duration > d.merged$mean + 2 * d.merged$sigma & d.merged$Count > 1] = 1
 
+d$outlier[d.merged$Duration < d.merged$q0.1 & d.merged$Count > 1] = 1
+d$outlier[d.merged$Duration > d.merged$q0.9 & d.merged$Count > 1] = 1
+
+d$q0.1 = d.merged$q0.1
+d$q0.9 = d.merged$q0.9
 
 d.without_outlier = d[d$outlier == 0,]
 
@@ -88,10 +97,10 @@ d.aggregated = data.frame(OpTyp = d.agg_dur_mean$Group.1,DeltaOffset = d.agg_dur
 
 ##############################################################################################################################################################################
 
-# plot(d$index[d$outlier == 0 & d$OpTyp == 1], d$throughput[d$outlier == 0 & d$OpTyp == 1], col="blue", ylim = c(min(d$throughput),max(d$throughput)), xlim = c(0,nrow(d)), xlab = "index", ylab = "throughput")
-# points(d$index[d$outlier == 1 & d$OpTyp == 1], d$throughput[d$outlier == 1 & d$OpTyp == 1], col="red")
-# points(d$index[d$outlier == 0 & d$OpTyp == 2], d$throughput[d$outlier == 0 & d$OpTyp == 2], col="green")
-# points(d$index[d$outlier == 1 & d$OpTyp == 2], d$throughput[d$outlier == 1 & d$OpTyp == 2], col="yellow")
+# plot(d$index[d$outlier == 0 & d$OpTyp == 1], d$throughput[d$outlier == 0 & d$OpTyp == 1], col="blue", ylim = c(min(d$throughput),max(d$throughput)), xlim = c(0,nrow(d)), xlab = "index", ylab = "throughput",pch = c(1,rep(NA,20)))
+# points(d$index[d$outlier == 1 & d$OpTyp == 1], d$throughput[d$outlier == 1 & d$OpTyp == 1], col="red",pch = c(1,rep(NA,20)))
+# points(d$index[d$outlier == 0 & d$OpTyp == 2], d$throughput[d$outlier == 0 & d$OpTyp == 2], col="green",pch = c(1,rep(NA,20)))
+# points(d$index[d$outlier == 1 & d$OpTyp == 2], d$throughput[d$outlier == 1 & d$OpTyp == 2], col="yellow",pch = c(1,rep(NA,20)))
 
 # Funktion zum normalisieren von Werten
 normalize <- function(x,min = NULL,max = NULL){
@@ -135,20 +144,34 @@ d.tuple = data.frame(tail(d,nrow(d) - 1), head(d,nrow(d) - 1))
 d.triple = data.frame(tail(d.tuple,nrow(d) - 2), head(d,nrow(d) - 2))
 
 for(col_idx in 1:ncol(d)) {
+  if (names(d.tuple)[col_idx] %in% c("q0.1","q0.9","q0.1.1","q0.9.1")) {
+    for (idx in 1:ncol(d)) {
+      if (names(d)[idx] == "Duration") {
+        min_idx = idx
+      }
+    }
+  } else min_idx = col_idx
   if(col_idx == 1) {
-    d.tuple_norm = data.frame(apply(d.tuple[c(col_idx,col_idx+ncol(d))],2,normalize,min(d[col_idx]),max(d[col_idx])))
+    d.tuple_norm = data.frame(apply(d.tuple[c(col_idx,col_idx+ncol(d))],2,normalize,min(d[min_idx]),max(d[min_idx])))
   }
   else {
-    d.tuple_norm = cbind(d.tuple_norm, apply(d.tuple[c(col_idx,col_idx+ncol(d))],2,normalize,min(d[col_idx]),max(d[col_idx])))
+    d.tuple_norm = cbind(d.tuple_norm, apply(d.tuple[c(col_idx,col_idx+ncol(d))],2,normalize,min(d[min_idx]),max(d[min_idx])))
   }
 }
 
 for(col_idx in 1:ncol(d)) {
+  if (names(d.triple)[col_idx] %in% c("q0.1","q0.9","q0.1.1","q0.9.1","q0.1.2","q0.9.2")) {
+    for (idx in 1:ncol(d)) {
+      if (names(d)[idx] == "Duration") {
+        min_idx = idx
+      }
+    }
+  } else min_idx = col_idx
   if(col_idx == 1) {
-    d.triple_norm = data.frame(apply(d.triple[c(col_idx,col_idx+ncol(d),col_idx+2*ncol(d))],2,normalize,min(d[col_idx]),max(d[col_idx])))
+    d.triple_norm = data.frame(apply(d.triple[c(col_idx,col_idx+ncol(d),col_idx+2*ncol(d))],2,normalize,min(d[min_idx]),max(d[min_idx])))
   }
   else {
-    d.triple_norm = cbind(d.triple_norm, apply(d.triple[c(col_idx,col_idx+ncol(d),col_idx+2*ncol(d))],2,normalize,min(d[col_idx]),max(d[col_idx])))
+    d.triple_norm = cbind(d.triple_norm, apply(d.triple[c(col_idx,col_idx+ncol(d),col_idx+2*ncol(d))],2,normalize,min(d[min_idx]),max(d[min_idx])))
   }
 }
 
@@ -162,7 +185,7 @@ d.general_pred$last_error = d.errors[,"last_error"]
 d.general_pred$rel_correction = d.errors[,"rel_correction"]
 
 d.tuple1_with_general_pred = d.general_pred
-d.general_pred = d.general_pred[c("Duration","mean_Duration","last_error","rel_correction")]
+d.general_pred = d.general_pred[c("Duration","mean_Duration","last_error","rel_correction","q0.1","q0.9","outlier")]
 
 
 d.general_pred_norm <- data.frame(apply(d.general_pred[c("Duration")],2,normalize))
@@ -170,8 +193,11 @@ d.general_pred_norm$Duration = normalize(d.general_pred$Duration, shortest_durat
 d.general_pred_norm$last_error = normalize(d.general_pred$last_error, shortest_duration, longest_duration) 
 d.general_pred_norm$rel_correction = normalize(d.general_pred$rel_correction, shortest_duration, longest_duration) 
 d.general_pred_norm$mean_Duration = normalize(d.general_pred$mean_Duration, shortest_duration, longest_duration) 
+d.general_pred_norm$q0.1 = normalize(d.general_pred$q0.1, shortest_duration, longest_duration) 
+d.general_pred_norm$q0.9 = normalize(d.general_pred$q0.9, shortest_duration, longest_duration) 
+d.general_pred_norm$outlier =  d.general_pred$outlier
 ##############################################################################################################################################################################
-d.tuple1_with_general_pred = d.tuple1_with_general_pred[c("OpTyp","DeltaOffset","Size","Duration","mean_Duration","rel_correction","last_error")]
+d.tuple1_with_general_pred = d.tuple1_with_general_pred[c("OpTyp","DeltaOffset","Size","Duration","mean_Duration","rel_correction","last_error","outlier","q0.1","q0.9")]
 
 
 d.tuple1_with_general_pred_norm <- data.frame(apply(d.tuple1_with_general_pred[c("OpTyp","DeltaOffset", "Size")],2,normalize))
@@ -179,6 +205,9 @@ d.tuple1_with_general_pred_norm$Duration = normalize(d.tuple1_with_general_pred$
 d.tuple1_with_general_pred_norm$last_error = normalize(d.tuple1_with_general_pred$last_error, shortest_duration, longest_duration)
 d.tuple1_with_general_pred_norm$rel_correction = normalize(d.tuple1_with_general_pred$rel_correction, shortest_duration, longest_duration) 
 d.tuple1_with_general_pred_norm$mean_Duration = normalize(d.tuple1_with_general_pred$mean_Duration, shortest_duration, longest_duration) 
+d.tuple1_with_general_pred_norm$q0.1 = normalize(d.tuple1_with_general_pred$q0.1, shortest_duration, longest_duration) 
+d.tuple1_with_general_pred_norm$q0.9 = normalize(d.tuple1_with_general_pred$q0.9, shortest_duration, longest_duration) 
+d.tuple1_with_general_pred_norm$outlier = d.tuple1_with_general_pred$outlier
 
 row.names(d.tuple1_with_general_pred_norm) = row.names(d.tuple1_with_general_pred)
 ##############################################################################################################################################################################
@@ -190,6 +219,9 @@ d.ema = tail(d.ema,-10)
 
 d.ema_norm <- data.frame(apply(d.ema[,c("Duration","OpTyp","DeltaOffset","Size", "throughput_ema")],2,normalize))
 d.ema_norm$Duration = normalize(d.ema$Duration, shortest_duration, longest_duration) 
+d.ema_norm$q0.1 = normalize(d.ema$q0.1, shortest_duration, longest_duration) 
+d.ema_norm$q0.9 = normalize(d.ema$q0.9, shortest_duration, longest_duration)
+d.ema_norm$outlier = d.ema$outlier
 row.names(d.ema_norm) = row.names(d.ema)
 
 # d.ema = d
@@ -213,6 +245,21 @@ row.names(d.ema_norm) = row.names(d.ema)
 # for (col in 1:ncol(d.without_outlier)) {
 #   message(cor(d.without_outlier$Duration,d.without_outlier[col]))
 # }
+
+rm(d.agg_max)
+rm(d.agg_Count)
+rm(d.agg_dur_mean)
+rm(d.agg_min)
+rm(d.agg_q0.1)
+rm(d.agg_q0.9)
+rm(d.agg_quantile_0.1)
+rm(d.agg_quantile_0.5)
+rm(d.agg_quantile_0.9)
+rm(d.errors)
+rm(d.merged)
+rm(d.read)
+rm(d.write)
+
 
 save.image("../images/prepared_data")
 

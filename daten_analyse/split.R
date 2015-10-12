@@ -1,5 +1,5 @@
 # 
-test = read.table("results/best5", header = T, sep=",")
+# test = read.table("results/best5", header = T, sep=",")
 
 # parameter_test1 = read.table("parameter_test", header = T, sep=",")
 # parameter_test2 = read.table("parameter_test_all_new", header = T, sep=",")
@@ -7,7 +7,7 @@ test = read.table("results/best5", header = T, sep=",")
 # 
 # parameter_test = rbind(parameter_test1,parameter_test2,parameter_test3)
 
-parameter_test = read.table("results/parameter_test_all", header = T, sep=",")
+parameter_test = read.table("../results/parameter_test_all", header = T, sep=",")
 parameter_test_wo_errors = parameter_test[parameter_test$nof.errors == 0,]
 baselines = parameter_test[parameter_test$nof.nets == -1,]
 
@@ -44,7 +44,7 @@ for (idx in 9:27) {
   best5[,idx] = as.numeric(best5[,idx])
 }
 
-write.table(best5, paste("results/best5", sep = ""), sep=",", row.names = FALSE)
+write.table(best5, paste("../results/best5", sep = ""), sep=",", row.names = FALSE)
 
 ######################################################################################################################################################
 
@@ -101,3 +101,4 @@ for(model in unique(parameter_test_wo_errors$model)){
 # aggregated_agg_layers$min_mean_rel_rms = mins$min_mean_rel_rms
 # aggregated_agg_layers$min_best_rel_rms = mins$min_best_rel_rms
 # aggregated_agg_neurons = aggregate(cbind(mean_rel_rms,best_rel_rms)~neurons+model, data = aggregated[aggregated$layers == 7 & aggregated$model == "aggregated",], FUN = min, na.rm =FALSE)
+
