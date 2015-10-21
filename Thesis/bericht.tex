@@ -31,6 +31,8 @@
 \usepackage{textcomp}
 \usepackage[subfigure,titles]{tocloft}
 \usepackage{units}
+\usepackage{amssymb}
+\usepackage{pgfplots}
 
 \lstset{
 	basicstyle=\ttfamily,
@@ -173,13 +175,55 @@ their automatic enactment.
 \section{Maschinelles Lernen}
 Wozu, Vor-Nachteile
 
-\section{Neuronale Netze}
+\section{Künstliche Neuronale Netze}
 Data Mining kurz allg.
-zu lösende Problemklasse
+zu lösende Problemklasse 
+lineare serperabilität, -> mächtigkeit von NN
+RNN
 Vor- und Nachteile
 
-\bigskip
+Bei künstlichen neuronalen Netzen, im Folgenden oft nur neuronale Netze genannt, handelt es sich um eine Methode aus dem Bereich des maschinellen Lernens zum Approximieren einer unbekannten Funktion, die der Relation zwischen zwei Datenmengen zugrunde liegt. Die Methode ist inspiriert von biologischen neuronalen Netzen, wie sie im Gehirn vorkommen. 
+Dafür verwenden sie einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.
+Rojas \cite{Rojas:1996:NNS:235222} vergleicht neuronale Netze mit einer Black Box, also einem System mit beobachtbarer Ein- und Ausgabe, aber unbekannter innerer Verarbeitung der Informationen. 
+Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabevektoren $E \in \mathbb{R}^n$ mit jeweils zugehörigem Ausgabevektor $A \in \mathbb{R}^m$ vor und dieses versucht eine passende Funktion $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$ zu finden. Dementsprechend handelt es sich hierbei um überwachtes Lernen, da eine gewünschte ideale Ausgabe vorgegeben wird.\\
+Ein neuronales Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe \ref{fig:Schichten}).
+Die Eingabeschicht besteht meiner vorherigen Definition entsprechend aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet. Die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter, bis die Ergebnisse der Ausgabeschicht als Ausgabevektor interpretiert werden.
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
+	\end{center}
+	\caption{Zweischichtiges Netz (wiki)}
+	\label{fig:Schichten}
+\end{figure}\\
 
+Ein jedes Neuron rechnet die hineinkommenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("ulimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
+\\
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[totalheight=0.2\textheight]{Bilder/ArtificialNeuronModel_deutsch.png}
+	\end{center}
+	\caption{Schema eines künstlichen Neurons (wiki)}
+	\label{fig:Neuron}
+\end{figure} \\
+
+adsd \\
+
+\pgfplotsset{compat=1.6}
+
+\pgfplotsset{soldot/.style={color=blue,only marks,mark=*}} \pgfplotsset{holdot/.style={color=blue,fill=white,only marks,mark=*}}
+
+\begin{tikzpicture}
+\begin{axis}
+\addplot[domain=0:5,blue] {x*x};
+\addplot[domain=5:19,blue] {x};
+\draw[dotted] (axis cs:4,16) -- (axis cs:4,4);
+\draw[dotted] (axis cs:6,6) -- (axis cs:6,-5);
+\addplot[holdot] coordinates{(0,0)(4,4)(6,-5)};
+\addplot[soldot] coordinates{(4,16)(6,6)(10,-5)};
+\end{axis}
+\end{tikzpicture}	
+
+\bigskip
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
 
