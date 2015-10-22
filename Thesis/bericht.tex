@@ -173,7 +173,23 @@ full cycle of monitoring, analysis, machine learning of the adequate settings an
 their automatic enactment.
 
 \section{Maschinelles Lernen}
-Wozu, Vor-Nachteile
+Wozu c
+Verschiedene Klassen, un -/ supervised c
+kmeans
+regresson trees
+neuronale netze -> verweis
+Bagging
+
+
+Maschinelles Lernen überträgt Aufgaben aus einem Gebiet auf den Computer in dem Menschen sehr fortgeschritten sind, daher gehört es auch zum Feld der künstlichen Intelligenz. Verfahren dieser Disziplin versuchen durch intelligentes lernen von Mustern Vorhersagen und Entscheidungen, wie die Zuordnung zu einer bestimmten Klasse, zu treffen. Intelligent bedeutet hierbei (beispielweise), dass vorgegebene Informationen nicht schlicht auswendig gelernt und wiedergegeben werden, sondern von diesen Informationen abstrahiert wird, um Gesetzmäßigkeiten innerhalb der Trainingsdaten zu erkennen.
+Die Trainingsdaten sind die Informationen, die dem Algorithmus bekannt sind, von diesen versucht er zu lernen. Mit einem Testdatensatz kann anschließend die Ausgabe zu bisher unbekannten Daten bewertet werden.
+Zur Anwendung eines Verfahrens des maschinellen Lernens müssen Kriterien zunächst Kriterien bzw. Leistungsmetriken eingeführt werden, anhand derer die Qualität der Vorhersagen und Entscheidungen gemessen werden kann. Einerseits zum Vergleich verschiedener Ansätze, aber insbesondere für den Lernprozess des Algorithmus, damit dieser sozusagen aus seinen Fehlern und Erfolgen lernen kann. Einfache Metriken wären beispielsweise für einen Klassifizierungsalgorithmus der Anteil falsch klassifizierter Datenpunkte.
+Zu unterscheiden sind Verfahren des überwachten und des unüberwachten Lernens. Während beim überwachten Lernen die idealen Ausgaben zu den Eingabedaten vorgegeben werden, wird beim unüberwachten Lernen kein bestimmtes Ergebnis erwartet, stattdessen muss der Algorithmus versuchen den Informationen inhärente Abhängigkeiten und Zusammenhänge zu erkennen. 
+
+
+\cite{Alpaydin:2010:IML:1734076}. 
+
+
 
 \section{Künstliche Neuronale Netze}
 Data Mining kurz allg.
@@ -183,20 +199,20 @@ RNN
 Vor- und Nachteile
 
 Bei künstlichen neuronalen Netzen, im Folgenden oft nur neuronale Netze genannt, handelt es sich um eine Methode aus dem Bereich des maschinellen Lernens zum Approximieren einer unbekannten Funktion, die der Relation zwischen zwei Datenmengen zugrunde liegt. Die Methode ist inspiriert von biologischen neuronalen Netzen, wie sie im Gehirn vorkommen. 
-Dafür verwenden sie einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.
+Dafür verwenden sie einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.\\
 Rojas \cite{Rojas:1996:NNS:235222} vergleicht neuronale Netze mit einer Black Box, also einem System mit beobachtbarer Ein- und Ausgabe, aber unbekannter innerer Verarbeitung der Informationen. 
 Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabevektoren $E \in \mathbb{R}^n$ mit jeweils zugehörigem Ausgabevektor $A \in \mathbb{R}^m$ vor und dieses versucht eine passende Funktion $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$ zu finden. Dementsprechend handelt es sich hierbei um überwachtes Lernen, da eine gewünschte ideale Ausgabe vorgegeben wird.\\
-Ein neuronales Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe \ref{fig:Schichten}).
-Die Eingabeschicht besteht meiner vorherigen Definition entsprechend aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet. Die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter, bis die Ergebnisse der Ausgabeschicht als Ausgabevektor interpretiert werden.
+Ein feedforward-Netz neuronales Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe \ref{fig:Schichten}), wobei die Verbindungen aus jeder Schicht jeweils nur in die nächsthöhere Schicht gehen. 
+Die Eingabeschicht besteht meiner vorherigen Definition entsprechend aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet. Die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter, bis die Ergebnisse der Ausgabeschicht als Ausgabevektor interpretiert werden.\\
+Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen zu zurückliegenden Schichten vorkommen, dadurch ist die Berechnung mehr deterministisch bestimmt. Es müssen Berechnungs- und Determinierungsregeln festgelegt werden. 
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
 	\end{center}
 	\caption{Zweischichtiges Netz (wiki)}
 	\label{fig:Schichten}
-\end{figure}\\
-
-Ein jedes Neuron rechnet die hineinkommenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("ulimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
+\end{figure}
+Ein jedes Neuron rechnet die hineinkommenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("unlimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
 \\
 \begin{figure}[h]
 	\begin{center}
@@ -206,22 +222,24 @@ Ein jedes Neuron rechnet die hineinkommenden Eingabewerte mit einer zur Übertra
 	\label{fig:Neuron}
 \end{figure} \\
 
-adsd \\
+Die Aktivierungsfunktion berechnet eventuell mit einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht gegeben wird. Die Aktivierungsfunktion kann beispielsweise eine simple Stufenfunktion sein, die allen Netzeingbaben kleiner des Schwellwertes eine Null und allen Eingaben größer gleich des Schwellwertes eine Eins zuweist.\\
+Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion und einer Stufenfunktion mit Schwellwert als Aktivierungsfunktion wird von Rojas Perzeptron bezeichnet \cite{Rojas:1996:NNS:235222} (Seite 60).
+Ein feedforward-Netzwerk aus Perzeptrons, in dem jedes Neuron mit allen Neuronen der folgenden Schicht verbunden ist, wird als multilayer perceptron (kurz MLP) bezeichnet.
+Ein neuronales Netz lernt die Abbildung zwischen den vorgegebenen Paaren von Eingabe- und Ausgabedaten durch Anpassung der Gewichte an den Kanten, nachdem es mit zufällig initialisierten Kantengewichten gestartet ist. Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagation). Dabei wird der mittlere quadratische Fehler der berechneten Ausgabe gegenüber der vorgegebenen Ausgabe ermittelt und daraufhin unter Rücksichtnahme auf eine Lernrate mit Hilfe des Gradientenverfahren minimiert.
+Vor der Anwendung eines künstlichen neuronalen Netzes für ein Problem stellt sich die Frage, ob dieses für das Problem geeignet ist. Dazu gibt es einige interessante mathematische Beweise.
+Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren \cite{Rojas:1996:NNS:235222} (Seite 62-63). 
+Wobei lineare Separierbarkeit definiert ist als: Zwei Mengen von Pukten A und B .. (auf deutsch? ) \\
 
-\pgfplotsset{compat=1.6}
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[totalheight=0.2\textheight]{Bilder/Lineare_Separierbarkeit.png}
+	\end{center}
+	\caption{Lineare Separierbarkeit von Funktionen (wiki)}
+	\label{fig:Neuron}
+\end{figure} 
 
-\pgfplotsset{soldot/.style={color=blue,only marks,mark=*}} \pgfplotsset{holdot/.style={color=blue,fill=white,only marks,mark=*}}
-
-\begin{tikzpicture}
-\begin{axis}
-\addplot[domain=0:5,blue] {x*x};
-\addplot[domain=5:19,blue] {x};
-\draw[dotted] (axis cs:4,16) -- (axis cs:4,4);
-\draw[dotted] (axis cs:6,6) -- (axis cs:6,-5);
-\addplot[holdot] coordinates{(0,0)(4,4)(6,-5)};
-\addplot[soldot] coordinates{(4,16)(6,6)(10,-5)};
-\end{axis}
-\end{tikzpicture}	
+Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen \cite{Rojas:1996:NNS:235222} (Seite 37).
+Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie belieblige kontinuierliche Funktionen auf einer kompakten Teilmenge des euklidischen Raums $\mathbb{R}^n$ approximieren kann. Dies wird auch als "universal approximation theorem" bezeichnet.
 
 \bigskip
 \paragraph{Zusammenfassung:}
