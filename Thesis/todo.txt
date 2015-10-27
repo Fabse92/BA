@@ -1,0 +1,79 @@
+* Literaturreferenzen
+* [X] (pp. 17)
+
+* Gestaltung
+* 4.1 Vorgehensweise ??
+** Daten exploriert
+** Baselines
+** Validierung
+*** Sampling der Datenmenge
+** Fehlermetriken verwenden wir?
+*** Relativen Fehler, |Abs Fehler|, Summary von residuals summary(mess - pred), Summary (relative)
+** Erste Modelle gebastelt
+** Entscheidungen zu treffen:
+*** Lernen von Read & Write zusammen oder getrennt
+
+* Auswertung
+** Daten:
+1) Sequential Read
+2) Sequential Write
+3) Random Write
+4) Random Read
+
+=> 4 Bilder
+
+** Bilder produzieren 
+*** Exploration:
+Für jede Daten ein paar Statistiken raus geben, sortieren nach Size...
+Sortiert nach Duratin.
+Bild: Vergleich Read vs. Write und Vergleich Random vs. Sequentiell
+
+plot(d$Duration[1:1000], type="l")
+plot(d$Duration[30100:31000], type="l")
+
+Ausschnitte aus der Timeline raus greifen, bspw. die Zugriffe mit 256 KB (und hieraus evtl. die ersten 2000 Datenpunkte)
+
+** Ergebnisse sichern und dokumentieren
+** Tabellen mit Übersichten (Fehlermetriken der verschiedenen Modelle)
+*** Triviale Modelle
+*** Datentransformation für bessere korrelation & Linearisierung
+*** Fehlerklassen eingeführt
+
+Beste Modelle (Linear + NN(Tuple1) + Linear/NNErrorClass + NN(Tuple1)/NNErrorClass)
+- Übersichten
+- Outlier betrachten & PLOTTEN
+=> Berechne Fehler, schaue dichte plot an, lege Fehlerschwellwert fest (relativ oder absolut geschehen), 
+plot(density(abs(error)))
+bspw. bei 8e-7
+d[abs(e) > 8e-7,]
+Diese plotten  UND mit Summary bearbeiten
+Die Frage ist, ist an den Outliern etwas besonders?
+
+Achte auf die Beschreibungen: Achsenbeschriftungen
+Logaritmisch vs. normal
+
+Modelparameter  => Plot des NN
+Lineares Modell dessen Eigenschaften (print(m))
+Klassenzugehörigkeiten farbig in Timeline plotten und Fehler ausgeben
+
+
+
+
+Anschauen:
+- Lernen seperat von Read | Write | Random Read | Random Write
+- Lernen zusammen von Read + Write 
+- Lernen zusammen von allem Random + Seq.
+
+Angenommen das ErrorClass-Modell Read+Write (Sequentiell) wird gelernt (via samples).
+=> Klasse1, Klasse N => diese Sortieren wir noch nach deren Mittelwerten => Klasse 1 ist langsam, Klasse N ist schnell
+=> Hierzu noch Performance Berechnen (Klasse1 ist 50 MB/s)
+=> Zugehörigkeit der Messung zu Klassen ausgeben:
+=> 3000 Punkte in Klasse1, .... , 2000 Punkte in Klasse N
+
+Plotte die Verteilung der Datenpunkte über Klassen.
+Jetzt wenden wir dieses Model auf Read+Write (Random) an, schauen welche Klassen kommen raus.
+=> Erwartung ist, es kommen die langsamen Klassen heraus.
+d.h. für Write:
+=> 500 Punkte in Klasse1, .... , 4000 Punkte in Klasse N
+
+
