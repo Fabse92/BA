@@ -77,3 +77,10 @@ d.h. für Write:
 => 500 Punkte in Klasse1, .... , 4000 Punkte in Klasse N
 
 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Untersuchung der Unabhängigkeit zweier Netze, die unter den selben Bedingungen entstanden sind (selbe Parameter, selbe Trainingsdaten) -> wie groß ist die Zufallskomponente, reicht es aus ein Netz zu berechnen? -> Verweis auf Emsemble Learning
+
+
+
