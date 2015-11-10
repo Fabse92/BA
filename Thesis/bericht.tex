@@ -385,8 +385,9 @@ Zur Evaluation verschieben: Testsystem
 Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln. In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Größe und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer. Alle Datensätze bestehen aus 200.000 Messungen.\\
 
 \begin{table}
+	\scriptsize
 	\subfloat[cached-off0-seq-R]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
@@ -394,7 +395,7 @@ Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich
 		\end{tabular}
 	}\\
 	\subfloat[cached-off0-seq-W]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
@@ -402,7 +403,7 @@ Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich
 		\end{tabular}
 	}\\
 	\subfloat[cached-off0-rnd-R]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
@@ -410,7 +411,7 @@ Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich
 		\end{tabular}
 	}\\
 	\subfloat[cached-off0-rnd-W]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
@@ -424,8 +425,9 @@ Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich
 Das Attribut OpTyp kann nur sinnvoll über der Vereinigung von cached-off0-seq-R und cached-off0-seq-W bzw. cached-off0-rnd-R und cached-off0-rnd-W betrachtet werden. \ref{tab:metaoptyp}
 
 \begin{table}
+	\scriptsize
 	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_seq_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
@@ -433,19 +435,19 @@ Das Attribut OpTyp kann nur sinnvoll über der Vereinigung von cached-off0-seq-R
 		\end{tabular}
 	} \\
 	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
 			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_rnd_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
 			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
 		\end{tabular}
 	}
-	\caption{Metainformationen über OpTyp}
+	\caption{Metainformationen über OpTyp, 1 entspricht einerm Leseaufruf und 2 einem Schreibaufruf}
 	\label{tab:metaoptyp}
 \end{table}
 
 
-Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden ist, folgt eine Betrachtung der tatsächlichen Messungen in Zeitreihe. Um den wesentlichen Teil der Punkte besser erkennen zu können, wurden in den Graphen die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten.
+Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden ist, folgt eine Betrachtung der tatsächlichen Messungen in Zeitreihe (\ref{Laufzeiten_Zeitreihe}). Um den wesentlichen Teil der Punkte besser erkennen zu können, wurden in den Graphen die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten.
 
 \begin{figure}
 	\subfloat{
@@ -462,11 +464,11 @@ Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden i
 	\subfloat{
 		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Duration_write_rnd.png}
 	}		
-	\caption{Messungen der Laufzeiten als Zeitreihe dargestellt}
+	\caption{Messungen der Laufzeiten als Zeitreihe dargestellt, Index ist die Nummer der Messung}
 	\label{Laufzeiten_Zeitreihe}
 \end{figure} 
 
-Wenn die Messpunkte nach der Laufzeit sortiert sind, kann die Verteilung Daten besser betrachtet werden. Die logarithmische Skalierung der Y-Achse entzerrt die Punkte.
+Wenn die Messpunkte nach der Laufzeit sortiert sind, kann die Verteilung Daten besser betrachtet werden. Die logarithmische Skalierung der Y-Achse entzerrt die Punkte (\ref{Laufzeiten_Sortiert}).
 
 \begin{figure}
 	\subfloat{
@@ -487,8 +489,22 @@ Wenn die Messpunkte nach der Laufzeit sortiert sind, kann die Verteilung Daten b
 	\label{Laufzeiten_Sortiert}
 \end{figure} 
 
+Zum Vergleich werden die Laufzeiten in \ref{Laufzeiten_Sortiert_nolog} ohne logarithmische Y-Achse dargestellt. Aufgrund der Häufung von Messungen mit sehr kurzer Laufzeit sind etwa die ersten 100.000 Werte in dieser Darstellung nicht zu unterscheiden. Aus diesem Grund werden die Laufzeiten (und Zugriffsgrößen zur Erhaltung der Korrelation) für die höheren Modelle zum Lernen logarithmiert. Da die neuronalen Netze versuchen den Modellfehler zu minimieren würde es ansonsten eine Tendenz dazu geben, die Messungen mit längerer Laufzeit korrekt zu lernen. Während für die kürzeren Laufzeiten für den internen Modellfehler unwichtiger wären. Ein ungenaues Lernen der Messungen mit kürzeren Laufzeiten würde sich  nicht in einer absoluten Metrik, sondern nur in einer Relativen niederschlagen.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_seq_nolog.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_rnd_nolog.png}
+	}			
+	\caption{Messungen der Laufzeiten sortiert dargestellt ohne Logarithmus}
+	\label{Laufzeiten_Sortiert_nolog}
+\end{figure} 
+
 Als Ausreißer werden für alle \textbf{Attribut-Sets} die Messungen mit den $10\%$ kürzesten und längsten Laufzeiten behandelt. Die Verteilung der Ausreißer ist in \ref{fig:ausreisser} erkennen.\\
-Am Verhalten der Ausreißer lässt sich gut unterscheiden, ob es sich um den sequentiellen oder den randomisierten Datensatz handelt. Bei cached-off0-seq befinden sich die Ausreißer gerade an den oberen und unteren Enden einer Ansammlung von Punkten, da alle Punkte innerhalb der Ansammlung zu einem Attribut-Set gehören muss sich gerade dieses Bild ergeben. Dagegen sind die roten Punkte bei cached-off0-rnd unregelmäßiger verteilt. Da die Ausreißer als zweites in den Graphen gezeichnet wurden, überdecken sie die grauen und erscheinen daher präsenter. (\textbf{Sind die Ausreißer hier eher ein Zeichen dafür, dass das System in den Häufungspunkten von Ausreißern besonders schnell oder langsam  agiert hat, oder ist dies durch die Art des Benchmarks bedingt}?)
+Am Verhalten der Ausreißer lässt sich gut unterscheiden, ob es sich um den sequentiellen oder den randomisierten Datensatz handelt. Bei cached-off0-seq befinden sich die Ausreißer gerade an den oberen und unteren Enden einer Ansammlung von Punkten. Da alle Punkte innerhalb der Ansammlung zu einem Attribut-Set gehören muss sich gerade dieses Bild ergeben. Dagegen sind die roten Punkte bei cached-off0-rnd unregelmäßiger verteilt. Da die Ausreißer als zweites in den Graphen gezeichnet wurden, überdecken sie die grauen und erscheinen daher präsenter. (\textbf{Sind die Ausreißer hier eher ein Zeichen dafür, dass das System in den Häufungspunkten von Ausreißern besonders schnell oder langsam  agiert hat, oder ist dies durch die Art des Benchmarks bedingt}?)
 
 \begin{figure}
 	\subfloat{
@@ -668,10 +684,7 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 	} 	
 	\subfloat[Farblich markierte Fehlerklassen]{
 		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_seq.png}
-	}\\
-	\subfloat[Vorhersagen des Modells, farblich gekennzeichnete Fehlerklassen]{
-		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/plot_durationToPredErrorclasses_seq.png}
-	} 	
+	}\\	
 	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
 	\label{fig:error_class_clustering_seq}
 \end{figure} 
@@ -690,9 +703,6 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 	\subfloat[Farblich markierte Fehlerklassen]{
 		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_rnd.png}
 	}\\
-	\subfloat[Vorhersagen des Modells, farblich gekennzeichnete Fehlerklassen]{
-		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/plot_durationToPredErrorclasses_rnd.png}
-	} 	
 	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
 	\label{fig:error_class_clustering_rnd}
 \end{figure} 
@@ -713,20 +723,21 @@ Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testf
 Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.\\
 
 \begin{table}
+	\scriptsize
 	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|l|l|l|l|l|l|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
-			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Typ}%
 		\end{tabular}
 	} \\
 	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|l|l|l|l|l|l|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
-			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Typ}%
 		\end{tabular}
 	}
 	\caption{Ergebnisse der trivialen Modelle}
@@ -868,20 +879,21 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 \subsection{Analyse der höheren Modelle}
 
 \begin{table}
+	\scriptsize
 	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|l|l|l|l|l|l|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
-			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+			{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Bereich = \Bereich}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
 		\end{tabular}
 	} \\
 	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|l|l|l|l|l|l|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
-			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+			{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Bereich = \Bereich}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
 		\end{tabular}
 	}
 	\caption{Ergebnisse der Modelle}
@@ -908,6 +920,18 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 
 \begin{figure}
 	\centering
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_biggest1_errors_tuple1_Duration_seq.png}
+	}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_smallest1_errors_tuple1_Duration_seq.png}
+	}
+	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-seq. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
+	\label{fig:tupel1_biggest_smallest_seq}
+\end{figure} 
+
+\begin{figure}
+	\centering
 	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
 		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
 	}
@@ -922,6 +946,18 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	} 		
 	\caption{Betrachtung der Vorhersagen von \glqq Tupel1 LinReg-Fehlerklassen\grqq{} auf cached-off0-seq. In blau Vorhersage des Modells, rot bzw. grün Vorhersage des Quantil 0.9 bzw. 0.1}
 	\label{fig:tupel1_fk_on_seq}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-seq. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
+	\label{fig:tupel1_fk_biggest_smallest_seq}
 \end{figure}
 
 \begin{figure}
@@ -944,6 +980,18 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 
 \begin{figure}
 	\centering
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_biggest1_errors_tuple1_Duration_rnd.png}
+	}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_smallest1_errors_tuple1_Duration_rnd.png}
+	}
+	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-seq. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
+	\label{fig:tupel1_biggest_smallest_rnd}
+\end{figure} 
+
+\begin{figure}
+	\centering
 	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
 		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
 	}
@@ -960,19 +1008,32 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{fig:tupel1_fk_on_rnd}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}
+	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-seq. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
+	\label{fig:tupel1_fk_biggest_smallest_rnd}
+\end{figure}
+
 \subsection{Betrachtung der neuronalen Netze}
 \begin{table}
+	\scriptsize
 	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|l|l|l|l|l|}\hline%
-			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
 			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
 		\end{tabular}
 	} \\
 	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|l|l|l|l|l|}\hline%
-			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
 			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
@@ -982,6 +1043,30 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{tab:model-stats}
 \end{table}
 
+\section{Ausreisser Vorhersage}
+Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
+
+\begin{table}
+	\scriptsize
+	\subfloat[cached-off0-seq]{
+	\begin{tabular}{|r|r|r|r|r|r|}\hline%
+		Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
+		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+	\end{tabular}
+	}\\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|r|r|r|r|r|r|}\hline%
+			Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%)\\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_rnd_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
+			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+		\end{tabular}
+	}
+	\caption{Informationen über die Ausreißervorhersage der höheren Modelle}
+	\label{tab:outlier}
+\end{table}
 
 \section{Ensemble Lernen}
 Qualität einzelner Netze\\

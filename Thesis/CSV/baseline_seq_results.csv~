@@ -1,0 +1,8 @@
+Modell,Mittlerer\\ Arithmetischer Fehler,Relativer Mittlerer Arithmetischer Fehler,Relative Mittlere quadratische Abweichung,Q3 des Fehlers,Maximaler Fehler
+Durchschnittsdauer,0.0005559,2745,3534,4647,6115
+LinReg Größe,7.285e-05,35.19,43.04,42.16,309.5
+LinReg Größe und Abstand,7.285e-05,35.07,47.58,41.79,5908
+LinReg Größe, Abstand und OpTyp,8.498e-05,189.8,243.4,277.2,6021
+Median aggregiert,6.267e-05,12.25,27.85,9.734,224.2
+Median aggregiert mit Fehlerklasse aus LinReg,1.535e-05,5.196,9.996,5.779,96.08
+Median aggregiert mit Fehlerklasse aus ??,1.684e-05,5.507,10.41,6.085,112.8
