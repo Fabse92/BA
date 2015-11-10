@@ -24,19 +24,21 @@
 
 ** Bilder produzieren 
 *** Exploration:
-Für jede Daten ein paar Statistiken raus geben, sortieren nach Size...
+Für jede Daten ein paar Statistiken (Summary, Correlationen) raus geben, sortieren nach Size...
 Sortiert nach Duratin.
-Bild: Vergleich Read vs. Write und Vergleich Random vs. Sequentiell
+Bild: Vergleich Read vs. Write und Vergleich Random vs. Sequentiell      				????
 
 plot(d$Duration[1:1000], type="l")
 plot(d$Duration[30100:31000], type="l")
 
 Ausschnitte aus der Timeline raus greifen, bspw. die Zugriffe mit 256 KB (und hieraus evtl. die ersten 2000 Datenpunkte)
 
+---------------------------------------------------------------------------------------------------------------
+
 ** Ergebnisse sichern und dokumentieren
 ** Tabellen mit Übersichten (Fehlermetriken der verschiedenen Modelle)
 *** Triviale Modelle
-*** Datentransformation für bessere korrelation & Linearisierung
+*** Datentransformation für bessere korrelation & Linearisierung (logarithmus von duration, size)
 *** Fehlerklassen eingeführt
 
 Beste Modelle (Linear + NN(Tuple1) + Linear/NNErrorClass + NN(Tuple1)/NNErrorClass)
@@ -78,9 +80,29 @@ d.h. für Write:
 
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ Punkte in einzelnen Klassen auch noch analysieren mit deskriptiver Statistik.
+Was ist da drinne, Punkte Plotten....
+Evtl. Timeline für bspw. 256 KB und dort Farbig die Fehlerklasse
+auch noch für kleine und große Sizes...
+
+Dann kann ich ohne Log plotten
+
+Bitte die Fehlerklassen und Ergebnisse der besten Modelle in CSV
+richtig raus schreiben.
+
+Input + Prediction raus schreiben.
+
+=> wir können noch nachträglich Analysen fahren.
+
+Zuerst raus schreiben, dann analysieren.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Untersuchung der Unabhängigkeit zweier Netze, die unter den selben Bedingungen entstanden sind (selbe Parameter, selbe Trainingsdaten) -> wie groß ist die Zufallskomponente, reicht es aus ein Netz zu berechnen? -> Verweis auf Emsemble Learning
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 

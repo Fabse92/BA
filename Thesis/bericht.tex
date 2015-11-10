@@ -33,6 +33,14 @@
 \usepackage{units}
 \usepackage{amssymb}
 \usepackage{pgfplots}
+\usepackage{amsmath}
+\usepackage{csvsimple}
+\usepackage[export]{adjustbox}
+\usepackage[T1]{fontenc}
+\usepackage{mwe}    % loads »blindtext« and »graphicx«
+\usepackage{subfig}
+
+\restylefloat{table}
 
 \lstset{
 	basicstyle=\ttfamily,
@@ -145,7 +153,8 @@ Festplatten sind in Datenblöcke (auch Sektoren) unterteilt, diese bilden die kl
 Aufgrund des vergleichsweise geringen Durchsatzes, und insbesondere wegen der großen Latenz bei der Durchführung von Festplattenaufrufen, sind zwischen Festplatte und den tatsächlichen Recheneinheiten im Prozessor mehrere Schichten von Speichern zwischengeschaltet. Von der Festplatte gelesene Daten befinden sich zunächst auf dem Arbeitsspeicher und werden dann in die auf dem Prozessor liegenden Pufferspeicher (Caches) geladen. In den verschiedenen Cache-Ebenen geschieht vergleichbares, die Ebenen gehen von kleinen, sehr schnellen zu größeren, langsameren Speichern über, üblich sind hier zwei oder drei Level. 
 Die Zugriffszeit auf eine Datei ist durch diese Struktur stark davon abhängig in welcher Speicherebene es einen Treffer zu den gesuchten Speicheradressen gibt. Wenn die Datei bereits vollständig im Level 1 Cache liegt, ist sie schon nach wenigen Prozessorzyklen geladen, wenn sie aus dem Arbeitsspeicher geholt werden muss, braucht es mehrere hundert Prozessorzyklen. Das lesen von der Festplatte dauert hingegen einige Millionen Zyklen (\textbf{Link? duartes.org}). Im wesentlichen kann also unterschieden werden, ob eine Datei "gecached", sich also im Arbeitsspeicher oder Prozessor-Cache befindet, oder noch von der Fesplatte geladen werden muss.
 Verschiedene Caching-Strategien erlauben eine noch effizientere Nutzung der Zwischenspeicher. Ein Beispiel ist das Einschalten der Read-Ahead-Einstellung, dadurch werden weitere Sektoren im Cache zwischengespeichert, die sich in der unmittelbaren physischen Umgebung auf dem  Speichermedium befinden. Falls ein Programm fortlaufend über einen großen Datenbereich arbeitet, weil dort beispielsweise direkt hintereinander Bilddateien eines Fotoalbums befinden, das gerade im Präsentationsmodus gezeigt wird, so ist der Zugriff auf ein weiteres Bild für das E/A-System nicht mehr 'überraschend'. Statt erst in dem Moment des E/A-Aufrufs des nächsten Bildes die erforderlichen Datenblöcke von der Festplatte zu lesen, befinden sich diese nun bereits in einem der vorgeschalteten Zwischenspeicher. Diese Caching-Strategie macht offensichtlich nur Sinn, wenn ein solches sequentielles Zugriffsverhalten eines Programms stattfindet. Wenn aufeinanderfolgende Zugriffe in unterschiedlichen Bereichen der Festplatte Datenblöcke anfordern, würde bei dieser Strategie immerzu zusätzlicher Aufwand für das lesen der umgebenden Daten betrieben, ohne davon einen Nutzen zu haben. 
-Eine weitere Caching-Strategie ist das Write-Back. Beim Write-Through werden Schreibbefehle, die zunächst nur direkt im Cache umgesetzt werden, direkt in den Arbeitsspeicher übernommen. Cache und Arbeitsspeciher sind so immer in einem gültigen Zustand --- 
+Eine weitere Caching-Strategie ist das Wechseln von Write-Through zu Write-Back. Beim Write-Through werden Schreibbefehle, die zunächst nur direkt im Cache umgesetzt werden, direkt in den Arbeitsspeicher übernommen. Cache und Arbeitsspeicher sind so immer in einem widerspruchsfreien Zustand, sie enthalten den gleichen Zustand der Daten, sodass auch nach plötzlicher Löschung des Caches keine Informationen verloren wurden. Diese Sicherheit ist beim Write-Back nicht gegeben, da der geänderte Zustand von Daten zunächst nur im Cache bekannt bleibt. Das Ausschreiben der Änderungen im Arbeitsspeicher geschieht erst in einem günstigen Moment, wenn beispielsweise ansonsten gerade wenige E/A-Zugriffe geschehen, oder wenn ein Zugriff einer anderen Instanz auf die noch nicht geänderten Daten im Arbeitsspeicher stattfindet.\\
+Entscheidend für die beste Auswahl der Cache-Strategien sind jeweils die vorherrschenden Bedingungen im System, sowie dessen Benutzungsweise und die gestellten Anforderungen.
 
 \section{Hochleistungsrechnen}
 Wofür HPC? c
@@ -164,14 +173,14 @@ Die in \ref{E/A} beschriebene Ein-/Ausgabe erweitert sich im Rechnerverbund zur 
 Die Erfassung dieser Informationen wäre sehr aufwendig, sodass dies zur Zeit nicht möglich ist. Die Genauigkeit einer Vorhersage von E/A-Leistung eines parallelen Systems sollte daher systematisch ungenauer sein, als die zu einem seriellen System.
 
 
-\section{Ein-Ausgabe Optimierung mit SIOX}
-Ziele
-Vorgehen
-Wofür diese Arbeit?
+%\section{Ein-Ausgabe Optimierung mit SIOX}
+%Ziele
+%Vorgehen
+%Wofür diese Arbeit?
 
-\cite{UMLTPTPONI15} The SIOX framework [13,14] aims to become a holistic approach covering the
-full cycle of monitoring, analysis, machine learning of the adequate settings and
-their automatic enactment.
+%\cite{UMLTPTPONI15} The SIOX framework [13,14] aims to become a holistic approach covering the
+%full cycle of monitoring, analysis, machine learning of the adequate settings and
+%their automatic enactment.
 
 \section{Maschinelles Lernen}
 Wozu c
@@ -190,14 +199,13 @@ Oft is es notwendig die zur Verfügung stehenden Daten aufzubereiten, bevor ein 
 Unüberwachtes Lernen findet bei der Clusteranalyse statt, Kantardzic beschreibt Clusteranalyse folgendermaßen: "Cluster analysis is the formal study of methods and algorithms for natural grouping, or clustering, of objects according to measured or perceived intrinsic characteristics or similarities." \cite{kantardzic2011data} (Seite 250). Ein einfaches und anschauliches Beispiel sind Punkte im zweidimesionnalen Raum, die hinsichtlich ihrer Position gruppiert werden. ( \textbf{BILDER SELBER MACHEN HIERZU} )
 Ein einfacher Clustering-Algorithmus ist der k-Means-Algorithmus. Bei diesem muss zunächst die Anzahl Cluster $k$ festgelegt werden. Die $k$ Mittelwerte der Cluster mit zufälligen Werten initialisiert. Dann wird jeder Datenpunkt dem Cluster zugeordnet, dessen Mittelwert seinem am dichtesten ist. Danach werden die Mittelwerte der Cluster anhand der Ihnen zugeordneten Punkte mit einer beliebigen Metrik berechnet und gesetzt. Das Neuzuordnen der Punkte und Berechnen der Mittelwerte wird nun solange wiederholt, bis sich keine Änderung der Zuordnung mehr ergibt. Als Endergebnis eines Cluster-Algorithmus erhält man eine Gruppierung der Datenpunkte in Mengen mit möglichst niedriger Varianz innerhalb der Menge und möglichst großer Varianz zwischen den Mengen. \\
 Die Aggregierung der Vorhersagen gesuchter Ausgabewerte von überwachten Lernalgorithmen ist eine recht simple Möglichkeit ein zuverlässigeres und exakteres Endergebnis zu erhalten. Verschiedene Modelle im Bereich des Ensemble Lernens verfolgen diesen Ansatz. Ein Ensemble ist dabei eine Menge von Vorhersage-Modellen. Nach Kantardzic \cite{kantardzic2011data} (Seite 236) kann ein solches Ensemble eine bessere Vorhersage treffen, als eines der in ihm enthaltenen einzelnen Modelle, wenn das Ensemble aus voneinander unabhängigen Modellen besteht, die mit einer Wahrscheinlichkeit größer als $0,5$ das richtige Ergebnis vorhersagen. Wobei er sich hier auf Klassifizierende Modelle bezieht, bei einem Regressionsmodell kann eine solche Wahrscheinlichkeit für die exakt richtige Ausgabe nicht erreicht werden, hier würde man eventuell von der Wahrscheinlichkeit sprechen, dass die Vorhersage in einem bestimmten Fehlerrahmen liegt. 
-An einem einfachen Beispiel verdeutlicht Kantardzic \cite{kantardzic2011data} (Seite 237) weshalb seine Behauptung gilt. Angenommen man hat $15$ voneinander unabhängige Modelle, jeweils mit einer Fehlerrate $\epsilon = 0,3$, das Ensemble bestehend aus diesen $15%$ Modellen sagt die Klasse für einen Datenpunkt voraus, für die die Mehrheit der Modelle stimmt. Entsprechend liegt die Vorhersage des Ensembles falsch, wenn mehr als die Hälfte der Modelle eine falsche Vorhersage gemacht haben. Somit ergibt sich als Fehlerrate des Ensembles: 
-\begin{align}
-  \epsilon_{ensemble}=\sum{15,i=8}{n\choose k}\epsilon^i(1-\epsilon)^(15-i) = 0,05
-\end{align}
+An einem einfachen Beispiel verdeutlicht Kantardzic \cite{kantardzic2011data} (Seite 237) weshalb seine Behauptung gilt. Angenommen man hat $15$ voneinander unabhängige Modelle, jeweils mit einer Fehlerrate $\epsilon = 0,3$, das Ensemble bestehend aus diesen $15$ Modellen sagt die Klasse für einen Datenpunkt voraus, für die die Mehrheit der Modelle stimmt. Entsprechend liegt die Vorhersage des Ensembles falsch, wenn mehr als die Hälfte der Modelle eine falsche Vorhersage gemacht haben. Somit ergibt sich als Fehlerrate des Ensembles: 
 Der Fehler der einzelnen Modelle von $0,3$ konnte also um ein wesentliches Stück verkleinert werden.
+\begin{align*}
+	\epsilon _{ensemble}=\sum{15,i=8}{n\choose k}\epsilon^i(1-\epsilon)^(15-i) = 0,05
+\end{align*}
 \\
-
-(generell , statt . bei Zahlen)
+\textbf{(generell , statt . bei Zahlen)}
 
 \section{Künstliche Neuronale Netze}
 Data Mining kurz allg.
@@ -358,6 +366,8 @@ Wie wird mit Ausreißern umgegangen, wie werden sie definiert, Cross-Validation,
 
 \section{Verwendete Programmiersprache und Bibliotheken}
 
+\section{Aufbau der Benchmark-Tests}
+
 \section{Testsystem, Mistral}
 Speziell die Hardware von Mistral, von hier kommen die Benchmarks
 Zur Evaluation verschieben: Testsystem
@@ -365,24 +375,617 @@ Zur Evaluation verschieben: Testsystem
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
 
-
 \chapter{Evaluierung}
 \textit{%
 	test
 }
 \bigskip
+
+\section{Exploration der Daten}
+Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln. In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Größe und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer. Alle Datensätze bestehen aus 200.000 Messungen.\\
+
+\begin{table}
+	\subfloat[cached-off0-seq-R]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_read_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	}\\
+	\subfloat[cached-off0-seq-W]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_write_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	}\\
+	\subfloat[cached-off0-rnd-R]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_read_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	}\\
+	\subfloat[cached-off0-rnd-W]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_write_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	}
+	\caption{Metainformationen über die Datensätze}
+	\label{tab:meta}
+\end{table}
+
+Das Attribut OpTyp kann nur sinnvoll über der Vereinigung von cached-off0-seq-R und cached-off0-seq-W bzw. cached-off0-rnd-R und cached-off0-rnd-W betrachtet werden. \ref{tab:metaoptyp}
+
+\begin{table}
+	\subfloat[cached-off0-seq]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_seq_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	} \\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/exploration/data_summary_rnd_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+		\end{tabular}
+	}
+	\caption{Metainformationen über OpTyp}
+	\label{tab:metaoptyp}
+\end{table}
+
+
+Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden ist, folgt eine Betrachtung der tatsächlichen Messungen in Zeitreihe. Um den wesentlichen Teil der Punkte besser erkennen zu können, wurden in den Graphen die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Duration_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Duration_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Duration_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Duration_write_rnd.png}
+	}		
+	\caption{Messungen der Laufzeiten als Zeitreihe dargestellt}
+	\label{Laufzeiten_Zeitreihe}
+\end{figure} 
+
+Wenn die Messpunkte nach der Laufzeit sortiert sind, kann die Verteilung Daten besser betrachtet werden. Die logarithmische Skalierung der Y-Achse entzerrt die Punkte.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_write_rnd.png}
+	}		
+	\caption{Messungen der Laufzeiten sortiert dargestellt (logarithmische Y-Achse)}
+	\label{Laufzeiten_Sortiert}
+\end{figure} 
+
+Als Ausreißer werden für alle \textbf{Attribut-Sets} die Messungen mit den $10\%$ kürzesten und längsten Laufzeiten behandelt. Die Verteilung der Ausreißer ist in \ref{fig:ausreisser} erkennen.\\
+Am Verhalten der Ausreißer lässt sich gut unterscheiden, ob es sich um den sequentiellen oder den randomisierten Datensatz handelt. Bei cached-off0-seq befinden sich die Ausreißer gerade an den oberen und unteren Enden einer Ansammlung von Punkten, da alle Punkte innerhalb der Ansammlung zu einem Attribut-Set gehören muss sich gerade dieses Bild ergeben. Dagegen sind die roten Punkte bei cached-off0-rnd unregelmäßiger verteilt. Da die Ausreißer als zweites in den Graphen gezeichnet wurden, überdecken sie die grauen und erscheinen daher präsenter. (\textbf{Sind die Ausreißer hier eher ein Zeichen dafür, dass das System in den Häufungspunkten von Ausreißern besonders schnell oder langsam  agiert hat, oder ist dies durch die Art des Benchmarks bedingt}?)
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_outlier_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_outlier_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_outlier_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_outlier_write_rnd.png}
+	}		
+	\caption{Ausreißer sind in rot dargstellt, sie überdecken die grauen Punkte}
+	\label{fig:ausreisser}
+\end{figure} 
+
+Bei der Betrachtung der Metainformationen wurde festgestellt, dass die Zugriffsgröße sehr stark mit der Laufzeit eines Messpunktes korreliert. Um eine Vorstellung davon zu entwickeln, wie diese beiden Größen miteinander zusammenhängen, habe ich die Messdaten nach der Zugriffsgröße sortiert und ihre Laufzeit aufgetragen. \ref{fig:Zugriffsgroesse_Sortiert} \\
+Die Korrelation der beiden Größen ist deutlich erkennbar, die Laufzeiten nehmen im Mittel zu. Doch es ist auch zu erkennen, insbesondere bei cached-off0-rnd-R, dass die Laufzeiten aufgrund der Streuung von weiteren Faktoren abhängen müssen. Die Verteilung der Messpunkte einer Zugriffsgröße in zwei bis drei deutlich zu unterscheidende Gruppen deutete darauf hin, dass Messungen innerhalb einer vom E/A-System Gruppe ähnlich behandelt wurden.
+
+\begin{figure}
+	\subfloat[Von links nach rechts in KB: 1, 4, 16, 256, 1024, 16384, 65536, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_read_seq.png}
+	}
+	\hfill
+	\subfloat[Von links nach rechts in KB: 1, 4, 16, 64, 256, 1024, 4096, 8192, 16384, 65536, 262144, 524288, 2097152, 4194304, 16777216]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_write_seq.png}
+	}\\
+	\subfloat[Von links nach rechts in KB: 1, 4, 16, 64, 256, 4096, 8192, 16384, 65536, 262144, 524288, 1048576, 2097152, 8388608]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_read_rnd.png}
+	}
+	\hfill
+	\subfloat[Von links nach rechts in KB: 1, 4, 1024, 4096, 8192, 16384, 65536, 262144, 524288, 1048576, 2097152, 8388608]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_write_rnd.png}
+	}		
+	\caption{Messungen der Laufzeiten nach Zugriffsgröße sortiert dargestellt (logarithmische Y-Achse)}
+	\label{fig:Zugriffsgroesse_Sortiert}
+\end{figure} 
+
+Um die unterschiedlichen Laufzeiten innerhalb einer Zugriffsgröße zu untersuchen, habe ich für die Größen 1KB, 16384KB und 2097152KB (diese Zugriffsgrößen kommen in allen vier Datensätzen vor) alle Messungen betrachtet.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size1_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size1_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size1_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size1_write_rnd.png}
+	}		
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 1KB}
+	\label{fig:groesse1}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size16384_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size16384_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size16384_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size16384_write_rnd.png}
+	}		
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 16384KB}
+	\label{fig:groesse16384}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size2097152_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size2097152_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size2097152_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_Size2097152_write_rnd.png}
+	}		
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 2097152KB}
+	\label{fig:groesse2097152}
+\end{figure} 
+
+
+Um die Messdaten noch detaillierter darzustellen, müssen kleine Ausschnitte herausgegriffen werden. Zunächst betrachte ich die ersten $250$ Messungen. \ref{fig:first250}
+Auf den ersten Blick scheint bei cached-off0-seq-W eine gewisse Periodizität ersichtlich (etwa alle 45 Messungen gibt es einen größeren Sprung, alternierend sind die Laufzeiten jeweils etwas langsamer und schneller). Nach genau $123$ Punkten scheint sich das Muster zu wiederholen, dort befindet sich der zweitgrößte Messwert. Wenn man nun als erstes simples Modell eine Fortführung der augenscheinlichen Periodizität der ersten $123$ Messpunkten betrachtet, so erkannt man doch, dass der Verlauf recht unregelmäßig ist. \ref{fig:periodicity} \\
+Bei den anderen Graphen kann keine so simple Periodizität vermutet werden.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_First250_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_First250_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_First250_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_First250_write_rnd.png}
+	}		
+	\caption{Detailbetrachtung der ersten 250 Messungen}
+	\label{fig:first250}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.8\textwidth]{Bilder/Plots/exploration/plot_periodicitywrite_seq.png}
+	}	
+	\caption{Wiederholung der ersten Werte, als erstes einfaches Modell}
+	\label{fig:periodicity}
+\end{figure} 
+
+Eine weitere Detailbetrachtung mache ich bei den Messungen 30.001 bis 30.250. \ref{fig:from100001}\\
+Hier scheint eine Periodizität bei cached-off0-seq-R vorhanden zu sein. Und wenn eine Überlappung wie zuvor durchgeführt wird (diesmal nach den ersten 129 Messungen), so erkennt man, dass dieses simple Modell die Ausreißer für diesen kleinen Ausschnitt exakt vorhersagen kann. \ref{fig:periodicity100001}\\
+Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere Annahme \textbf{ABSCHNITT} einer gewissen Periodizität in der Leistung des E/A-Systems ist scheinbar gerechtfertigt. Ein Modell das versucht diese auszunutzen muss eine komplexere Methode als schlichtes Übertragen vorheriger Leistungswerte haben, ansonsten kann es wohl nur in äußerst eingeschränktem Maße korrekte Leistung vorhersagen.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_read_seq.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_write_seq.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_read_rnd.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_write_rnd.png}
+	}		
+	\caption{Detailbetrachtung der Messungen 100001 bis 100250}
+	\label{fig:from100001}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.8\textwidth]{Bilder/Plots/exploration/plot_periodicity100001read_seq.png}
+	}	
+	\caption{Wiederholung der ersten Werte, als erstes einfaches Modell}
+	\label{fig:periodicity100001}
+\end{figure} 
+
+\section{Analyse der Fehlerklassen}
+
+\begin{figure}
+	\centering
+	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_seq.png}
+	}
+	\subfloat[Farblich markierte Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_seq.png}
+	}\\
+	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_seq.png}
+	} 	
+	\subfloat[Farblich markierte Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_seq.png}
+	}\\
+	\subfloat[Vorhersagen des Modells, farblich gekennzeichnete Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/plot_durationToPredErrorclasses_seq.png}
+	} 	
+	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
+	\label{fig:error_class_clustering_seq}
+\end{figure} 
+
+\begin{figure}
+	\centering
+	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-rnd, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_rnd.png}
+	}
+	\subfloat[Farblich markierte Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_rnd.png}
+	}\\
+	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-rnd, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_rnd.png}
+	} 	
+	\subfloat[Farblich markierte Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_rnd.png}
+	}\\
+	\subfloat[Vorhersagen des Modells, farblich gekennzeichnete Fehlerklassen]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/error_class/exploration/plot_durationToPredErrorclasses_rnd.png}
+	} 	
+	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
+	\label{fig:error_class_clustering_rnd}
+\end{figure} 
+
 \section{Leistungsvorhersage}
 Zu jedem Modell schreiben, welche Attribute und Parameter sich als geeignet herausgestellt haben. Ergebnisse anhand von Graphen veranschaulichen.\\
 Ergebnisse für verschiedene Fälle vergleichen, seq,rnd,mistral vs pc?\\
 Jeweils schreiben, ob bagging etwas bringt.
-\subsection{Aggregationsmodelle}
-\subsection{Zeitreihenmodelle}
-\subsection{Hybridemodelle}
 
-\section{Ausreißervorhersage}
-\subsection{Aggregationsmodelle}
-\subsection{Zeitreihenmodelle}
-\subsection{Hybridemodelle}
+\subsection{Analyse der trivialen Modelle}
+
+Die Ergebnisse der in \textbf{ABSCHNITT} beschriebenen trivialen Modelle sind in \ref{tab:triv} zu sehen. Eine positive Beobachtung in den Ergebnissen auf cached-off0-seq ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen. Das gilt im Wesentlichen auch für cached-off0-rnd, jedoch hat das Modell "Median agg" einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen RMQA-Wert, obwohl der relative arithmetische Fehler noch recht gering ist. \\
+Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Fehlerwerte höher sind. Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren, hier sind die Werte $30-140$ mal höher. Eine Ausnahme ist "Median agg LinReg-Fehlerklasse", das Modell kann eine weiterhin sehr gute mittlere Vorhersage treffen, nur die Ausreißer nach oben scheinen zugenommen zu haben, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.\\
+Allgemein sind die Ergebnisse bereits überraschend gut. Ein durchschnittlicher Fehler von $5\%$ auf cached-off0-seq bzw. $7-12\%$ auf cached-off0-rnd durch die Modelle, die Fehlerklassen ausnutzen, deutet daraufhin, dass die Vorgänge im E/A-System im Wesentlichen korrekt repräsentiert werden. Ob über eine größere Messreihe ein geringerer durchschnittlicher Fehler als $5\%$ überhaupt erreicht werden kann, ist fraglich, da das Messrauschen durch unvorhersehbare Ereignisse sowohl auf System-, als auch Bauteilebene, in diesen Bereichen eine zu große Bedeutung zukommt.\\
+Die Modelle mit linearer Regression führen auf cached-off0-seq auch bereits zu zufriedenstellenden Ergebnissen, während sie auf cached-off0-rnd kaum sinnvolle Vorhersagen machen zu scheinen. Die Modelle lassen sich für die Datensätze jeweils in drei Gruppen (gut, mittel, schlecht) unterteilen. Auf beiden Datensätzen führen die beiden Modelle mit Fehlerklasse zu einer guten Vorhersage. "Median agg" hat jeweils eine mittel gute Leistung, während "Durchschnitt" jeweils schlecht ist. Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende mittlel gute Vorhersage macht, während die Vorhersage auf dem randomisierten Messungen kaum besser als des Durschnitts-Modell ist. \\ 
+Das Modell, das immer die Durchschnittsdauer vorhersagt ist als absolute untere Grenze für angewendete Modelle zu verstehen, da hier praktisch keine Expertise über die Daten eingeht. Einem Modell mit schlechterer Leistung, als das Durchschnitts-Modell müsste unterstellt werden zufällige Vorhersagen zu machen.
+Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind somit gerechtfertigt. \\
+Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.\\
+
+\begin{table}
+	\subfloat[cached-off0-seq]{
+		\begin{tabular}{|l|l|l|l|l|l|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	} \\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|l|l|l|l|l|l|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	}
+	\caption{Ergebnisse der trivialen Modelle}
+	\label{tab:triv}
+\end{table}
+MAF $\rightarrow$ Mittlerer arithmetischer absoluter Fehler \\
+RMAF $\rightarrow$ Relativer mittlerer arithmetischer absoluter Fehler\\
+RMQA $\rightarrow$ Relative mittlere quadratische absolute Abweichung\\
+Q3 $\rightarrow$ oberes Quartil des absoluten relativen Fehlers\\
+Max $\rightarrow$ Maximaler relativer absoluter Fehler\\
+\\
+Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten zu betrachten. Wie bei der Exploration der Daten sind dabei einerseits die Vorhersagen in der Reihenfolge in der sie getroffen worden, und andererseits die sortierte Betrachtung von Nutzen.  
+Auf den Graphen zu cached-off0-seq \ref{fig:zeit_baselines_seq} lässt sich recht gut die Qualität der Modelle anhand der Stärke der Differenzierung erkennen. Während bei der Durchschnittsdauer gar nicht differenziert wird, können die Modelle "Lineare Regression nach Größe" und "Median aggregierte Daten" erfolgreich die größeren Gruppen von Messwerten unterscheiden. 
+Die beiden Modelle mit Fehlerklassen können zudem innerhalb einer Punktgruppe weitere Differenzierungen machen und erreichen entsprechend die besten Fehlerwerte.\\
+Nach der Sortierung nach Laufzeit \ref{fig:sortiert_baselines_seq} kann dieses Verhalten noch ein wenig deutlicher erkannt werden. Bei den beiden Modellen mit mittlere Leistung sind die Unterscheidunge, die das Modell macht, an den horizontalen Stufen erkennbar. Nach zu Hilfenahme der Fehlerklassen können feinstufigere Vorhersagen gemacht werden.
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_mean_performance.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_linreg_Size.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_median_Duration_aggregated.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_median_Duration_with_linreg_error_class_aggregated.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_median_Duration_with_good_model_error_class_aggregated.png}
+	}	
+	\caption{Triviale Modelle auf cached-off0-seq als Zeitreihe, in Blau die vom Modell vorhergesagten Werte}
+	\label{fig:zeit_baselines_seq}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_DurationToPredSorted_mean_performance.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_DurationToPredSorted_linreg_Size.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_DurationToPredSorted_median_Duration_aggregated.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_DurationToPredSorted_median_Duration_with_good_model_error_class_aggregated.png}
+	}	
+	\caption{Triviale Modelle auf cached-off0-seq nach Laufzeit sortiert (logarithmische Y-Achse)}
+	\label{fig:sortiert_baselines_seq}
+\end{figure}
+ 
+Grob ergibt sich auch ein ähnliches Bild auf dem cached-off0-rnd Datensatz. Umso größer die Verteilung der Vorhersagen, desto besser das Modell  (\ref{fig:zeit_baselines_rnd}). Die Probleme der linearen Regression werden hier sehr gut sichtbar, da einer Größe genau ein Funktionswert zugewiesen wird, ist die Abstraktionsmöglichkeit für den randomisierten Datensatz nicht mehr ausreichend. In \ref{fig:sortiert_baselines_rnd} sieht man sehr deutlich die Konzentration der vorhergesagten Werte auf einen recht kleinen Wertebereich. Dieser Umstand führt dazu, dass die Vorhersage im Vergleich zu der auf cached-off0-seq wesentlich ungenauer ist und wie oben bereits angemerkt eher mit dem Modell "Durchschnittsdauer" auf einer Stufe steht. \\
+Um die Leistungsunterschiede zwischen "Median agg" und den Fehlerklassen-Modellen zu erkennen versagt die Zeitreihe im wesentlichen. Im sortierten Graphen ist dagegen klar zu sehen, dass "Median agg" eine stärkere Streuung bei der Vorhersage der langsameren Datenpunkte aufweist. 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_linreg_Size.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_aggregated.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_linreg_error_class_aggregated.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_good_model_error_class_aggregated.png}
+	}	
+	\caption{Triviale Modelle auf cached-off0-rnd als Zeitreihe, in Blau die vom Modell vorhergesagten Werte}
+	\label{fig:zeit_baselines_rnd}
+\end{figure} 
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_mean_performance.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_linreg_Size.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_aggregated.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
+	}\\
+	\subfloat{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_good_model_error_class_aggregated.png}
+	}	
+	\caption{Triviale Modelle auf cached-off0-rnd nach Laufzeit sortiert (logarithmische Y-Achse)}
+	\label{fig:sortiert_baselines_rnd}
+\end{figure} 
+
+Auch jetzt kann durch eine Betrachtung spezifischerer Ausschnitte der Modell-Prognosen untersucht werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt. In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set. Es gibt jeweils $N$ Messungen mit Attributen aus diesem Set.\\
+In \ref{fig:densities_baselines_seq} a) ist die Vorhersage vom Modell \glqq Durchschnittsdauer\grqq{} mit dem geringsten RMAF-Wert, der erreicht wird, zu sehen. Die Vorhersage ist nicht sehr genau, der vom Modell geschätzte Wert ist für weit weniger als $10\%$ der Messungen korrekt. Die Vorhersage mit dem geringsten Fehler von \glqq LinReg G\grqq{} ist wesentlich besser. Interessanterweise ist der vorhergesagte Wert näher am Maximum der Dichte,
+als am genaueren Mittelwert des Sets.
+Die Wahl für den Median gegenüber dem arithmetischen Mittel für das Modell \glqq Median agg\grqq{} kommt in \ref{fig:densities_baselines_seq} c) zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  RMAF noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.\\
+Interessanterweise erreichen die beiden Modelle mit Fehlerklassen auf dem selben Set ihren geringsten Fehler mit etwa $1,5\%$, dabei entspricht die Vorhersage bei dem Modell mit Tupel1-Fehlerklassen (\ref{fig:densities_baselines_seq} e)) exakt dem arith. Mittel, während sie bei dem mit LinReg-Fehlerklassen direkt daneben liegt (\ref{fig:densities_baselines_seq} d)). \\
+Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_seq} f) zu sehen. Diese Vorhersage ist die ungenaueste (nach RMAF-Wert), die das Modell \glqq Median agg\grqq{} auf cached-off0-seq getroffen hat, dabei ist der Vorhergesagte Wert in direkter Umgebung des \glqq idealen\grqq{} arith. Mittel. Einem Modell, dass für alle Messungen eines Sets den selben Wert vorhersagt kann dementsprechend auf diesen Daten nicht immer einen kleinen Fehler erreichen. Eine Unterscheidung von Messungen innerhalb eines Sets kann allerdings nur durch eine Betrachtung der zeitlichen Abhängigkeit des E/A-Aufrufs von den vorherigen gelingen, es sei denn es wären weitere Systeminformationen bekannt.
+ 
+ \begin{figure}
+ 	\centering
+ 	\subfloat[Modell Durchschnittsdauer]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_mean_performance.png}
+ 	}
+ 	\subfloat[Modell LinReg G]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_linreg_Size.png}
+ 	}\\
+ 	\subfloat[Modell Median agg]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_aggregated.png}
+ 	} 	
+ 	\subfloat[Modell Median agg LinReg-Fehlerklasse]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_with_linreg_error_class_aggregated.png}
+ 	}\\
+ 	\subfloat[Modell Median agg Tupel1-Fehlerklasse]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_with_good_model_error_class_aggregated.png}
+ 	} 	
+ 	\subfloat[Modell Median agg]{
+ 		\includegraphics[width=.55\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_worst_median_Duration_aggregated.png}
+ 	} 
+ 	\caption{Triviale Modelle auf cached-off0-seq, 90\% der Werte sind größer als die grüne, 10\% sind größer als die pinke Linie, die mittlere Dauer entspricht der schwarzen Linie, die blaue Linie ist die mittlere Vorhersage des Modells für dieses Set}
+ 	\label{fig:densities_baselines_seq}
+ \end{figure} 
+
+\subsection{Analyse der höheren Modelle}
+
+\begin{table}
+	\subfloat[cached-off0-seq]{
+		\begin{tabular}{|l|l|l|l|l|l|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	} \\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|l|l|l|l|l|l|}\hline%
+			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max}%
+			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	}
+	\caption{Ergebnisse der Modelle}
+	\label{tab:agg_seq}
+\end{table}
+
+\begin{figure}
+	\centering
+	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_onlyPred_tuple1_Duration_seq.png}
+	}
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_tuple1_Duration_seq.png}
+	}\\
+	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_onlyPred_tuple1_Duration_seq.png}
+	} 
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_tuple1_Duration_seq.png}
+	} 	
+	\caption{Betrachtung der Vorhersagen von \glqq Tupel1\grqq{} auf cached-off0-seq. In blau Vorhersage der Laufzeit, rot/grün Vorhersage des Quantil 0.9/0.1}
+	\label{fig:tupel1_on_seq}
+\end{figure} 
+
+\begin{figure}
+	\centering
+	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}\\
+	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_DurationToPredSorted_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	} 
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_DurationToPredSorted_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	} 		
+	\caption{Betrachtung der Vorhersagen von \glqq Tupel1 LinReg-Fehlerklassen\grqq{} auf cached-off0-seq. In blau Vorhersage des Modells, rot bzw. grün Vorhersage des Quantil 0.9 bzw. 0.1}
+	\label{fig:tupel1_fk_on_seq}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_onlyPred_tuple1_Duration_rnd.png}
+	}
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_tuple1_Duration_rnd.png}
+	}\\
+	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_onlyPred_tuple1_Duration_rnd.png}
+	} 
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_tuple1_Duration_rnd.png}
+	} 	
+	\caption{Betrachtung der Vorhersagen von \glqq Tupel1\grqq{} auf cached-off0-rnd. In blau Vorhersage der Laufzeit, rot/grün Vorhersage des Quantil 0.9/0.1}
+	\label{fig:tupel1_on_rnd}
+\end{figure} 
+
+\begin{figure}
+	\centering
+	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}\\
+	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_DurationToPredSorted_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	} 
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
+		\includegraphics[width=.55\textwidth]{Bilder/Plots/models/Tupel1_fk_linreg/plot_DurationToPredSorted_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	} 		
+	\caption{Betrachtung der Vorhersagen von \glqq Tupel1 LinReg-Fehlerklassen\grqq{} auf cached-off0-rnd. In blau Vorhersage des Modells, rot bzw. grün Vorhersage des Quantil 0.9 bzw. 0.1}
+	\label{fig:tupel1_fk_on_rnd}
+\end{figure}
+
+\subsection{Betrachtung der neuronalen Netze}
+\begin{table}
+	\subfloat[cached-off0-seq]{
+		\begin{tabular}{|l|l|l|l|l|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+		\end{tabular}
+	} \\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|l|l|l|l|l|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+		\end{tabular}
+	}
+	\caption{Informationen über die erfolgreichsten Neuronalen Netze}
+	\label{tab:model-stats}
+\end{table}
+
+
+\section{Ensemble Lernen}
+Qualität einzelner Netze\\
+statistische Abhängigkeit mehrerer identisch gelernter Netze
 
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
