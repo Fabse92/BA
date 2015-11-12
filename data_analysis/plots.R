@@ -1,5 +1,5 @@
 
-plot_every = 10
+plot_every = 100
 png_width = 6.5
 png_height = 5
 
@@ -598,7 +598,7 @@ nof_clusters = length(unique(d.linreg_with_error_class$linreg_error_class))
 png(filename="../plots/linreg_error_clustering_seq.png", width = png_width, height = png_height, units = 'in', res = 300)
 # plot(sorted_d.linreg_with_error_class$error), col = c("1","2","3","4","5","6","7","8","9","10")[sorted_d.linreg_with_error_class$linreg_error_class])
 plot(d.linreg_with_error_class$error, col = colors[d.linreg_with_error_class$linreg_error_class], ylab = "Fehler in Sekunden",
-     main = "LinReg G", pch = c(20, rep(NA, 0)))
+     main = "LinReg G", pch = c(20, rep(NA, plot_every)))
 dev.off()
 
 png(filename="../plots/linreg_error_sorted_seq.png", width = png_width, height = png_height, units = 'in', res = 300)
@@ -613,12 +613,177 @@ plot(sorted_d.linreg_with_error_class$error, col = colors[sorted_d.linreg_with_e
      main = "LinReg G", pch = c(20, rep(NA, 0)))
 dev.off()
 
+# png(filename=paste(results_pfad,"plot_durationToPredErrorclasses_seq.png",sep = ""), width = png_width, height = png_height, units = 'in', res = 300)
+# plot(d.linreg_with_error_class$Duration, col="gray28",pch = c(20, rep(NA, plot_every)),ylim = c(quantile(d.linreg_with_error_class$Duration,0.01,names = FALSE),quantile(d.linreg_with_error_class$Duration,0.99,names = FALSE)),
+#      ylab = "Dauer in Sekunden", main = "LinReg G mit Fehlerklassen",cex.main = 0.93)
+# points(d.linreg_with_error_class$pred, col = colors[d.linreg_with_error_class$linreg_error_class],pch = c(20, rep(NA, plot_every)))
+# dev.off()
 
-png(filename=paste(results_pfad,"plot_durationToPredErrorclasses_seq.png",sep = ""), width = png_width, height = png_height, units = 'in', res = 300)
-plot(d.linreg_with_error_class$Duration, col="gray28",pch = c(20, rep(NA, plot_every)),ylim = c(quantile(d.linreg_with_error_class$Duration,0.01,names = FALSE),quantile(d.linreg_with_error_class$Duration,0.99,names = FALSE)),
-     ylab = "Dauer in Sekunden", main = "LinReg G mit Fehlerklassen",cex.main = 0.93)
-points(d.linreg_with_error_class$pred, col = colors[d.linreg_with_error_class$linreg_error_class],pch = c(20, rep(NA, plot_every)))
+####################################################################################################################################################################################
+
+####################################################################################################################################################################################
+####################################################################################################################################################################################
+####################################################################################################################################################################################
+
+best_data = baselines_rnd
+best_data = best_data[names(best_data) %in% c("Duration","mean_performance","linreg_Size","median_Duration_aggregated",
+                                              "median_Duration_with_linreg_error_class_aggregated","median_Duration_with_good_model_error_class_aggregated")] 
+d.linreg_with_error_class_rnd = d_rnd
+d.linreg_with_error_class_rnd$error = (best_data$Duration - best_data$linreg_Size)
+d.linreg_with_error_class_rnd$pred = best_data$linreg_Size
+
+best_data = baselines_seq
+best_data = best_data[names(best_data) %in% c("Duration","mean_performance","linreg_Size","median_Duration_aggregated",
+                                              "median_Duration_with_linreg_error_class_aggregated","median_Duration_with_good_model_error_class_aggregated")] 
+d.linreg_with_error_class_seq = d_seq
+d.linreg_with_error_class_seq$error = (best_data$Duration - best_data$linreg_Size)
+d.linreg_with_error_class_seq$pred = best_data$linreg_Size
+
+list_of_centers = c(rep(0,10))
+for (idx in 1:10) {
+  cluster_mean = mean(d.linreg_with_error_class_rnd$error[d.linreg_with_error_class_rnd$linreg_error_class == idx])
+  list_of_centers[idx] = cluster_mean
+}
+
+list_of_tps = c(rep(0,10))
+list_of_counts = c(rep(0,10))
+for (idx in 1:10) {
+  cluster_mean = mean(d.linreg_with_error_class_rnd$throughput[d.linreg_with_error_class_rnd$linreg_error_class == idx])
+  list_of_tps[idx] = cluster_mean
+  count = nrow(d.linreg_with_error_class_rnd[d.linreg_with_error_class_rnd$linreg_error_class == idx,])
+  list_of_counts[idx] = count
+}
+
+sort_tps = data.frame(tp = list_of_tps, idx = 1:10, center = list_of_centers, count_on_rnd = list_of_counts)
+
+sort_tps$min_error = 0
+sort_tps$mean_error = 0
+sort_tps$max_error = 0
+
+for (idx in 1:10) {
+  sort_tps$min_error[idx] = min(d.linreg_with_error_class_rnd$error[d.linreg_with_error_class_rnd$linreg_error_class == idx])
+  sort_tps$mean_error[idx] = mean(d.linreg_with_error_class_rnd$error[d.linreg_with_error_class_rnd$linreg_error_class == idx])
+  sort_tps$max_error[idx] = max(d.linreg_with_error_class_rnd$error[d.linreg_with_error_class_rnd$linreg_error_class == idx])
+}
+
+sort_tps = sort_tps[order(sort_tps$tp),]
+list_of_tps = sort_tps$center
+
+for (idx in 1:10) {
+  d.linreg_with_error_class_seq[,paste(idx,sep="")] = abs(d.linreg_with_error_class_seq$error - list_of_centers[idx])
+}
+
+distances = d.linreg_with_error_class_seq[,17:26]
+d.linreg_with_error_class_seq$linreg_error_class_from_rnd = as.numeric(colnames(distances)[apply(distances,1,which.min)])
+
+for (idx in 1:10) {
+  count = nrow(d.linreg_with_error_class_seq[d.linreg_with_error_class_seq$linreg_error_class_from_rnd == idx,])
+  list_of_counts[idx] = count
+}
+sort_tps$count_on_seq = list_of_counts
+
+colors = c("chartreuse","aquamarine","deeppink1","red","darkgoldenrod2","darkorchid2","darkblue","mediumpurple","chartreuse4","chocolate4", "coral3","cyan1","darkred","coral","black")
+# d.linreg_with_error_class_seq = d.linreg_with_error_class_seq[sample(nrow(d.linreg_with_error_class_seq)),]
+
+nof_clusters = length(unique(d.linreg_with_error_class_seq$linreg_error_class_from_rnd))
+png(filename="../plots/rnd_linreg_classes_on_seq2.png", width = png_width, height = png_height, units = 'in', res = 300)
+plot(d.linreg_with_error_class_seq$error, col = colors[d.linreg_with_error_class_seq$linreg_error_class_from_rnd],
+     ylab = "Fehler in Sekunden", #ylim = c(quantile(d.linreg_with_error_class_seq$error,probs = 0.00),quantile(d.linreg_with_error_class_seq$error,probs = 1)),
+     main = "LinReg G", pch = c(20, rep(NA, 99)))
+# for (idx in 1:10) {
+#   points(x = d.linreg_with_error_class_seq$index[d.linreg_with_error_class_seq$linreg_error_class_from_rnd == idx] ,
+#          y = d.linreg_with_error_class_seq$error[d.linreg_with_error_class_seq$linreg_error_class_from_rnd == idx], 
+#          col = colors[idx],pch = c(rep(20, 300), rep(NA,sort_tps[idx,]$count_on_seq)))
+# }
 dev.off()
+
+sort_tps$idx = NULL
+sort_tps$center = NULL
+sort_tps = format(sort_tps,digits = 2)
+names(sort_tps) = c("tp","rndcount","minerror","meanerror","maxerror","seqcount")
+
+write.table(sort_tps, paste("../csv/rnd_linreg_classes_on_seq.csv"), sep=",", row.names = FALSE,quote = FALSE)
+
+####################################################################################################################################################################################
+
+best_data = baselines_rnd
+best_data = best_data[names(best_data) %in% c("Duration","mean_performance","linreg_Size","median_Duration_aggregated",
+                                              "median_Duration_with_linreg_error_class_aggregated","median_Duration_with_good_model_error_class_aggregated")] 
+d.linreg_with_error_class_rnd = d_rnd
+d.linreg_with_error_class_rnd$error = (best_data$Duration - best_data$linreg_Size)
+d.linreg_with_error_class_rnd$pred = best_data$linreg_Size
+
+best_data = baselines_seq
+best_data = best_data[names(best_data) %in% c("Duration","mean_performance","linreg_Size","median_Duration_aggregated",
+                                              "median_Duration_with_linreg_error_class_aggregated","median_Duration_with_good_model_error_class_aggregated")] 
+d.linreg_with_error_class_seq = d_seq
+d.linreg_with_error_class_seq$error = (best_data$Duration - best_data$linreg_Size)
+d.linreg_with_error_class_seq$pred = best_data$linreg_Size
+
+list_of_centers = c(rep(0,10))
+for (idx in 1:10) {
+  cluster_mean = mean(d.linreg_with_error_class_seq$error[d.linreg_with_error_class_seq$linreg_error_class == idx])
+  list_of_centers[idx] = cluster_mean
+}
+
+list_of_tps = c(rep(0,10))
+list_of_counts = c(rep(0,10))
+for (idx in 1:10) {
+  cluster_mean = mean(d.linreg_with_error_class_seq$throughput[d.linreg_with_error_class_seq$linreg_error_class == idx])
+  list_of_tps[idx] = cluster_mean
+  count = nrow(d.linreg_with_error_class_seq[d.linreg_with_error_class_seq$linreg_error_class == idx,])
+  list_of_counts[idx] = count
+}
+
+sort_tps = data.frame(tp = list_of_tps, idx = 1:10, center = list_of_centers, count_on_seq = list_of_counts)
+
+sort_tps$min_error = 0
+sort_tps$mean_error = 0
+sort_tps$max_error = 0
+
+for (idx in 1:10) {
+  sort_tps$min_error[idx] = min(d.linreg_with_error_class_seq$error[d.linreg_with_error_class_seq$linreg_error_class == idx])
+  sort_tps$mean_error[idx] = mean(d.linreg_with_error_class_seq$error[d.linreg_with_error_class_seq$linreg_error_class == idx])
+  sort_tps$max_error[idx] = max(d.linreg_with_error_class_seq$error[d.linreg_with_error_class_seq$linreg_error_class == idx])
+}
+
+sort_tps = sort_tps[order(sort_tps$tp),]
+list_of_tps = sort_tps$center
+
+for (idx in 1:10) {
+  d.linreg_with_error_class_rnd[,paste(idx,sep="")] = abs(d.linreg_with_error_class_rnd$error - list_of_centers[idx])
+}
+
+distances = d.linreg_with_error_class_rnd[,17:26]
+d.linreg_with_error_class_rnd$linreg_error_class_from_seq = as.numeric(colnames(distances)[apply(distances,1,which.min)])
+
+for (idx in 1:10) {
+  count = nrow(d.linreg_with_error_class_rnd[d.linreg_with_error_class_rnd$linreg_error_class_from_seq == idx,])
+  list_of_counts[idx] = count
+}
+sort_tps$count_on_rnd = list_of_counts
+
+colors = c("chartreuse","aquamarine","deeppink1","red","darkgoldenrod2","darkorchid2","darkblue","mediumpurple","chartreuse4","chocolate4", "coral3","cyan1","darkred","coral","black")
+# d.linreg_with_error_class_rnd = d.linreg_with_error_class_rnd[sample(nrow(d.linreg_with_error_class_rnd)),]
+
+nof_clusters = length(unique(d.linreg_with_error_class_rnd$linreg_error_class_from_seq))
+png(filename="../plots/seq_linreg_classes_on_rnd2.png", width = png_width, height = png_height, units = 'in', res = 300)
+plot(d.linreg_with_error_class_rnd$error, col = colors[d.linreg_with_error_class_rnd$linreg_error_class_from_seq],
+     ylab = "Fehler in Sekunden", ylim = c(quantile(d.linreg_with_error_class_rnd$error,probs = 0.01),quantile(d.linreg_with_error_class_rnd$error,probs = 0.99)),
+     main = "LinReg G", pch = c(20, rep(NA, 99)))
+# for (idx in 1:10) {
+#   points(x = d.linreg_with_error_class_rnd$index[d.linreg_with_error_class_rnd$linreg_error_class_from_seq == idx] ,
+#          y = d.linreg_with_error_class_rnd$error[d.linreg_with_error_class_rnd$linreg_error_class_from_seq == idx], 
+#          col = colors[idx],pch = c(rep(20, 300), rep(NA,sort_tps[idx,]$count_on_rnd)))
+# }
+dev.off()
+
+sort_tps$idx = NULL
+sort_tps$center = NULL
+sort_tps = format(sort_tps,digits = 2)
+names(sort_tps) = c("tp","seqcount","minerror","meanerror","maxerror","rndcount")
+
+write.table(sort_tps, paste("../csv/seq_linreg_classes_on_rnd.csv"), sep=",", row.names = FALSE,quote = FALSE)
 
 ####################################################################################################################################################################################
 
@@ -659,11 +824,11 @@ plot(sorted_d.linreg_with_error_class$error, col = colors[sorted_d.linreg_with_e
 dev.off()
 
 
-png(filename=paste(results_pfad,"plot_durationToPredErrorclasses_rnd.png",sep = ""), width = png_width, height = png_height, units = 'in', res = 300)
-plot(d.linreg_with_error_class$Duration, col="gray28",pch = c(20, rep(NA, plot_every)),ylim = c(quantile(d.linreg_with_error_class$Duration,0.01,names = FALSE),quantile(d.linreg_with_error_class$Duration,0.99,names = FALSE)),
-     ylab = "Dauer in Sekunden", main = "LinReg G mit Fehlerklassen",cex.main = 0.93)
-points(d.linreg_with_error_class$pred, col = colors[d.linreg_with_error_class$linreg_error_class],pch = c(20, rep(NA, plot_every)))
-dev.off()
+# png(filename=paste(results_pfad,"plot_durationToPredErrorclasses_rnd.png",sep = ""), width = png_width, height = png_height, units = 'in', res = 300)
+# plot(d.linreg_with_error_class$Duration, col="gray28",pch = c(20, rep(NA, plot_every)),ylim = c(quantile(d.linreg_with_error_class$Duration,0.01,names = FALSE),quantile(d.linreg_with_error_class$Duration,0.99,names = FALSE)),
+#      ylab = "Dauer in Sekunden", main = "LinReg G mit Fehlerklassen",cex.main = 0.93)
+# points(d.linreg_with_error_class$pred, col = colors[d.linreg_with_error_class$linreg_error_class],pch = c(20, rep(NA, plot_every)))
+# dev.off()
 
 ####################################################################################################################################################################################
 

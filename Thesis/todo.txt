@@ -69,7 +69,9 @@ Angenommen das ErrorClass-Modell Read+Write (Sequentiell) wird gelernt (via samp
 => Zugehörigkeit der Messung zu Klassen ausgeben:
 => 3000 Punkte in Klasse1, .... , 2000 Punkte in Klasse N
 
-Plotte die Verteilung der Datenpunkte über Klassen.
+Plotte die Verteilung der Datenpunkte über Klassen.					??????
+
+
 Jetzt wenden wir dieses Model auf Read+Write (Random) an, schauen welche Klassen kommen raus.
 => Erwartung ist, es kommen die langsamen Klassen heraus.
 d.h. für Write:
