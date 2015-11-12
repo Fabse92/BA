@@ -264,7 +264,7 @@ Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie belieblige kontinui
 
 \chapter{Verwandte Arbeiten}
 \textit{%
-	Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.  
+	Es finden sich keine wissenschaftlichen Veröffentlichungen die sich auch mit dem Einsatz von neuronalen Netzen zur Vorhersage von E/A-Leistung im Hochleisungsrechnen befassen. Jedoch werden die verschiedenen Teilgebiete des Themas behandelt. Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.  
 	Mini-Gliederung was jetzt kommt. Einleitung ist OPTIONAL!!!!
 	In Sektion X steht, in Y steht.
 }
@@ -272,13 +272,30 @@ Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie belieblige kontinui
 
 \section{Leistungsvorhersage von Ein-/Ausgabe}
 
+\subsection{Kategorisierung}
+	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen ein Modell des Festplattensystems zu erstellen, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten, bekannt sind oder entsprechende Parameter werden durch gezielte Untersuchung approximiert. (\textbf{stimmt das? Referenz?}) Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und so deren Aufwand vorhergesagt werden. \\ Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das aus gemessenen Leistungswerten von Festplattenzugriffen die Werte von neuen Zugriffen ableitet. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz (in der Fachliteratur etwa als analytic device modeling und simulation modeling bezeichnet)
+, bei dem versucht wird das Festplattensystem nachzubilden und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (Quelle? Fourier assisted ml)
+	
+\subsection{Modellierungssansatz gegenüber Regressionsansatz}
+	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
+	Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System eine etwas schlechtere Präzision. \\ Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. "Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads" \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).\\
+	
+	Eine weitere Arbeit, in der ein Modellierungsansatz genutzt wird stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}.\\ 
+	Bei Arbeiten, in denen ein Interpolationsansatz genutzt wird, werden verschiedene Data-Mining bzw. stochastischen Methoden angewandt, beispielsweise eine Kombination aus regression trees und support vector mashines  \cite{Dai:2012:SDP:2477169.2477214}, bagging classification und regression trees \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.\\
 
-\section{Leistungsvorhersage mit Maschinellem Lernen}
+\subsection{Fourier-Assisted Machine Learning}
+Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten in der Erkennung von periodischen Mustern liegt. Diese Annahme ist für eine einzelne Festplatte gerechtfertigt, da man die Zugriffstzeit grob in zwei Teile aufteilen kann, zum einen die Bewegung des Lesekopfs auf die richtige Spur und die Bewegung des Kopfes entlang der Spur zum richtigen Punkt, auch wenn diese beiden Bewegungen in der Realität überlappen. Jede Festplattenspur hat entsprechend des Radius eine andere Periodendauer.\\
+Durch eine Fourier Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
+Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anzahl Perioden nur ein kleiner Ausschnitt der Festplatte in seiner Gesamtheit, also alle möglichen Paare von Ausgangs- und Endspuren, untersucht werden kann. Die Priorität solcher Frequenzen für die exakte Leistungsvorhersage, ist im komplexen HPC-E/A-System zunächst einmal nicht zu erwarten, müsste allerdings untersucht werden.
+
+\section{Leistungsvorhersage mit neuronalen Netzen}
 Artificial neural networks for modelling and control of non-linear systems
 \url{https://books.google.de/books?hl=de&lr=&id=tmTTBwAAQBAJ&oi=fnd&pg=PR9&dq=%22neural+networks%22+storage&ots=KyYA14xY1w&sig=yAQG0zn41xAHccDNaUWYd3L_ywI}
 
 
-\section{Neuronale Netzen im Hochleistungsrechnen}
+\section{Leistungsvorhersage im Hochleistungsrechnen}
+
+	Im HPC Bereich ist die Leistungsanalyse generell ein wichtiger Punkt, so wird beispielsweise das Scheduling-Algorithmen vom Dateisystem simuliert \cite{Liu_towardssimulation}, hier wird DiskSim \cite{Bucy08thedisksim} zur Vorhersage der Festplattenzugriffszeiten genutzt, dabei nutzt DiskSim einen Modellierungssansatz (analytical simulation). \\
 
 Viele Projekte verwenden Neuronale Netze für die Modellierung vom Gehirn....
 http://world-comp.org/p2012/PDP3003.pdf
@@ -295,25 +312,7 @@ ABER sie werden nur unzureichend eingesetzt für I/O und deswegen braucht es die
 
 10-20 andere literatur
 
-
-\section{Kategorisierung (woanders hin?)}
-	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen ein Modell des Festplattensystems zu erstellen, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten, bekannt sind oder entsprechende Parameter werden durch gezielte Untersuchung approximiert. (\textbf{stimmt das? Referenz?}) Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und so deren Aufwand vorhergesagt werden. \\ Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das aus gemessenen Leistungswerten von Festplattenzugriffen die Werte von neuen Zugriffen ableitet. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz (in der Fachliteratur etwa als analytic device modeling und simulation modeling bezeichnet)
-, bei dem versucht wird das Festplattensystem nachzubilden und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (Quelle? Fourier assisted ml)
-	
-\section{Modellierungssansatz gegenüber Regressionsansatz}
-	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
-	Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System eine etwas schlechtere Präzision. \\ Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. "Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads" \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).
-
-\section{xxx}
-	Im HPC Bereich ist die Leistungsanalyse generell ein wichtiger Punkt, so wird beispielsweise das Scheduling-Algorithmen vom Dateisystem simuliert \cite{Liu_towardssimulation}, hier wird DiskSim \cite{Bucy08thedisksim} zur Vorhersage der Festplattenzugriffszeiten genutzt, dabei nutzt DiskSim einen Modellierungssansatz (analytical simulation). Eine weitere Arbeit, in der ein Modellierungsansatz genutzt wird stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}.\\ 
-	Bei Arbeiten, in denen ein Interpolationsansatz genutzt wird, werden verschiedene Data-Mining bzw. stochastischen Methoden angewandt, beispielsweise eine Kombination aus regression trees und support vector mashines  \cite{Dai:2012:SDP:2477169.2477214}, bagging classification und regression trees \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.
-
-\section{Fourier-Assisted Machine Learning}
-Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten in der Erkennung von periodischen Mustern liegt. Diese Annahme ist für eine einzelne Festplatte gerechtfertigt, da man die Zugriffstzeit grob in zwei Teile aufteilen kann, zum einen die Bewegung des Lesekopfs auf die richtige Spur und die Bewegung des Kopfes entlang der Spur zum richtigen Punkt, auch wenn diese beiden Bewegungen in der Realität überlappen. Jede Festplattenspur hat entsprechend des Radius eine andere Periodendauer.\\
-Durch eine Fourier Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
-Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anzahl Perioden nur ein kleiner Ausschnitt der Festplatte in seiner Gesamtheit, also alle möglichen Paare von Ausgangs- und Endspuren, untersucht werden kann. Die Priorität solcher Frequenzen für die exakte Leistungsvorhersage, ist im komplexen HPC-E/A-System zunächst einmal nicht zu erwarten, müsste allerdings untersucht werden.
-
-\section{Predicting Performance of Non-Contiguos I/O with Machine Learning}
+\subsection{Predicting Performance of Non-Contiguos I/O with Machine Learning}
 Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et. al \cite{UMLTPTPONI15}. Hier wird versucht mit Hilfe von decision trees die performantesten Parameter für nicht zusammenhängende Zugriffe auf Dateien durch ROMIO, einer Implementierung von MPI-2 I/O, zu finden. Dabei sagen sie mit den decision trees die Performance für die verschiedenen Parameter auf den Daten voraus, sodass sie anhand dieser Vorhersagen die besten Parameter finden. (\textbf{habe ich das richtig verstanden}?) Mit dieser Methode haben sie es geschafft zufriedenstellende Ergebnisse zu erzielen. Die Simplizität von decision trees, beispielsweise können diese nur Entscheidungen als eine Aneinanderreihung von linearen Separationen des Werteraums treffen, lässt vermuten, dass mit Hilfe von komplexeren Data Mining - Methoden, wie neuronalen Netzen noch bessere Ergebnisse erzielt werden könnten. Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelorarbeit.
 
 \paragraph{Zusammenfassung:}
@@ -322,55 +321,82 @@ Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et
 
 \chapter{Gestaltung der Analyse}
 \textit{%
-	test
+	Was wird warum und auf welche Weise gemacht? Konzepte aufschreiben
 }
 \bigskip
 
 \section{Modell der Ein-/Ausgabe}
 Zeit zum Bewegen des Lesekopfes + Zeit zum rotieren + lese-/schreibzeit + Aufrufprozedur mit festem Beitrag; t = tNetwork + tHDD +tMem \\
 mit tHDD(deltaOffset, sizeInBlocks) = tBus(size) + f(deltaOffset)\\
-track-to-track-seek-time, rotational time
+track-to-track-seek-time, rotational time\\
 Welche Abhängigkeiten gibt es, oder könnte es geben? Z.B. Umso größer die Size, desto länger die Lese-/Schreibzeit, umso größer Offset, desto größer die Seekzeit
 
 \section{Leistungs- und Ausreißervorhersage}
-Die Beiden Dinge, die ich versuche vorherzusagen. Warum? Unterschiede. 
-\textbf{Macht es Sinn zu versuchen Ausreißer vorherzusagen?}
+Die Beiden Dinge, die ich versuche vorherzusagen. Warum? Unterschiede. \\
+\subsection{Attribut Selektion und Generierung}
+Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)\\
+Definiton von Attribut-Set\\
 
-\section{Attribut Selektion und Generierung}
-Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)
+\section{Fehlerklassen}
+Die Idee, Prognosen
 
 \section{Modellklassen}
-Zeitreihenanalyse, Aggregierung, Hybride
+\subsection{Zeitreihen- und Aggregierungs-Modelle}
+Agregierungsmodelle haben (unfaire -> aber ok, da nur für baselines) globale Sicht\\
+\subsection{Triviale- und Höhere-Modelle}
+\subsection{Fehlerklassen-Modelle}
+
+\section{Ensemble Lernen}
+Konzept und Anwendung, was soll damit erreicht werden?\\
 
 \section{Leistungsmetriken}
-Welche Leistungsmerkmale werden warum untersucht?
+mathematische Definitionen\\
+
+Welche Leistungsmerkmale werden warum untersucht?\\
 
 \paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}\\
 
 
 \chapter{Implementierung}
 \textit{%
-	test
+	Details: wie ist die Analyse tatsächlich umgesetzt?
 }
 \bigskip
 
 \section{Untersuchte Modelle}
-jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten, was die Idee davon ist ( warum macht es Sinn, dies zu testen), (wie soll die Performance hier untersucht werden?, Design?)
+\label{impl:modelle}
+jedes Modell beschreiben\\
+welche Attribute hat das Modell\\
+jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten\\
+was die Idee davon ist\\
+warum macht es Sinn, dies zu testen\\
+wie soll die Performance hier untersucht werden?\\
 
-\section{Bagging zur Leistungssteigerung}
-Konzept und Anwendung
-
-\section{Anwendung? und Parameter}
-Wie wird mit Ausreißern umgegangen, wie werden sie definiert, Cross-Validation, Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen,
+\section{Anwendung und Parameter}
+Wie werden die richtigen Parameter für jedes Modell gefunden? -> Systematisches Testen der Parameter
+Wie wird mit Ausreißern umgegangen, wie werden sie definiert\\
+Aufteilung der Daten in Lern-und Testdatensatz, Cross-Validation\\ 
+Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen\\
 
 \section{Verwendete Programmiersprache und Bibliotheken}
-
-\section{Aufbau der Benchmark-Tests}
+R,neuralnet etc.
 
 \section{Testsystem, Mistral}
-Speziell die Hardware von Mistral, von hier kommen die Benchmarks
-Zur Evaluation verschieben: Testsystem
+\label{impl:testsystem}
+Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
+
+Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom Juni 2015 auf Platz 56 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
+
+\section{Aufbau der Benchmark-Tests}
+Wie wurden dei Daten gewonnen?\\
+Einführung von cached-off0-seq und rnd\\
+
+Das Testsystem \ref{impl:testsystem} muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
+Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
+Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
+Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer festen Anzahl an Wiederholungen hintereinader mit der gleichen Zugriffsgröße durchgeführt (\textbf{Wie Oft?}). Die Testdatei ist 10GiB groß. Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd. 
+
 
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
@@ -1043,7 +1069,7 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{tab:model-stats}
 \end{table}
 
-\section{Ausreisser Vorhersage}
+\section{Ausreißer Vorhersage}
 Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
 
 \begin{table}
@@ -1077,8 +1103,9 @@ statistische Abhängigkeit mehrerer identisch gelernter Netze
 
 \chapter{Fazit}
 \label{Fazit}
-Welche Modelle sind für welchen Fall erfolgsversprechend?
+Welche Modelle sind für welchen Fall erfolgsversprechend?\\
 Eignen sich Neuronale Netze zum Vorhersagen von E/A-Leistung im HPC?\\
+Was ist die Bedeutung der Ergebnisse aus den Fehlerklassen?\\
 Wo könnten die Ergebnisse eingesetzt werden?\\
 Was müsste als nächstes getan werden?\\
 
