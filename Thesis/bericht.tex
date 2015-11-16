@@ -697,6 +697,13 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 
 \section{Analyse der Fehlerklassen}
 
+Die in \textbf{VERWEIS} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Fehlers von LinReg G entstanden sind.
+In \ref{fig:error_class_clustering_seq} a), sowie \ref{fig:error_class_clustering_rnd} a) ist in Zeitreihe der Fehler aufgezeichnet, den LinReg G auf cached-off0-seq, bzw cached-off0-rnd, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten gemacht hat. In \ref{fig:error_class_clustering_seq} c) und \ref{fig:error_class_clustering_rnd} c) ist das gleiche gezeichnet, allerdings sind die größten und kleinsten Werte weggelassen. Dabei können auf dem Graph zum sequentiellen Datensatz Phasen mit guten und schlechten Vorhersagen erkannt werden. Hier wird ein Verhalten visualisiert, das darauf rückschließen lässt, dass das Modell die Laufzeiten mancher Attribut-Sets besser modelliert hat, als das von anderen. Denn hier wird das selbe Attribut-Set vielfach hintereinander getestet. Der Dateizugriffsort ändert sich bei jedem Zugriff auf dem randomisierten Datensatz und entsprechend ist dieses Verhalten hier nicht so stark ausgeprägt. Auf diesem Datensatz ist dagegen eine unterschiedlich gute Modellierung für Lese- und Schreibzugriffe erkennbar, denn die erste Hälfte der Fehler hat einen flacheren und gleichmäßigeren Verlauf, als die zweite Hälfte, in der die schreibenden Messungen sichtbar sind. \textbf{LÜCKE RECHTs}
+In den Graphen jeweils rechts neben den beschriebenen ist durch farbliche Markierung die Zugehörigkeit der Messpunkte zu den unterschiedlichen Klassen erkennbar. Die Unterscheidung in verschiedene Klassen findet in horizontalen Linien statt. Eine Klasse deckt einen bestimmten Bereich der Fehlerwerte ab, die abgedeckten Bereiche lassen sich aus \ref{tab:error_classes_switched} entnehmen. 
+Bei der Betrachtung der Graphen mit nach Fehler sortierten Punkten ( \ref{fig:error_class_clustering_seq} e) und f), sowie \ref{fig:error_class_clustering_rnd} e) und f) ) können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden (die exakten Zahlen sind auch \ref{tab:error_classes_switched} zu entnehmen). In beiden Fällen enthält eine Klasse den Großteil der Punkte (jeweils etwa $3/4$), die Klassen, dessen Bereich leicht abweichen, enthalten noch einen kleinen Anteil der Messdaten. Die Ausreißer in beide Richtungen machen quantitativ fast nichts aus, werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten \textbf{WERT} \% der Daten auf cached-off0-rnd in 6 Klassen aufgeteilt.\\
+Das Modell scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln. Es gibt allerdings einige Datenpunkte, die das Modell sehr schlecht vorhersagen konnte. Die Annahme ist nun, dass die voneinander stark abweichenden Datenpunkte grundsätzlich unterschiedlich vom System verarbeitet wurden. Sodass die Fehlerklassen die unterschiedlichen E/A-Wege im System repräsentieren. 
+Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzuordnungen vornimmt, sollte die Ausreißer, die LinReg G schlecht bestimmt hat, wesentlich besser vorhersagen können. Für die Vorhersage der vielen Datenpunkte, die sich in der jeweils größten Klasse befinden, hat ein Modell mit Fehlerklasseninformationen jedoch keine weiteren Vorteile. 
+
 \begin{figure}
 	\centering
 	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, in Zeitreihe]{
@@ -745,6 +752,10 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 	\label{fig:error_class_clustering_rnd}
 \end{figure} 
 
+Anhand einer weiteren Betrachtung der Fehlerklassen sollen die Unterschiede zwischen den Klassen auf den beiden Datensätzen analysiert werden.
+In Abbildung \ref{fig:error_classes_switched} sind die Punkte den Klassen aus dem jeweils anderen Datensatz zugeordnet worden. Die Neuzuordnung wurde ebenso durchgeführt, wie es der K-Means Algorithmus bei der Erstzuordnung gemacht hat. Für alle Klassen wurde der mittlere Fehlerwert nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse mit dem Mittelwert zugeordnet, der am nächsten an seinem eigenen Fehlerwert liegt.\\ 
+Für cached-off0-seq ist deutlich zu sehen (\ref{fig:error_classes_switched} c) ), dass 99\% der Punkte der selben Fehlerklasse zugeordnet worden. Dagegen wird bei cached-off-rnd in dem Bereich mit kleinerem Fehler nun stärker als zuvor (\ref{fig:error_class_clustering_rnd} d) ) differenziert, während alle größeren Fehler die selbe Klasse haben.
+
 \begin{figure}
 	\centering
 	\subfloat[Klassen aus cached-off0-rnd auf cached-off0-seq]{
@@ -763,6 +774,11 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 	\label{fig:error_classes_switched}
 \end{figure} 
 
+In \ref{tab:error_classes_switched} wurden die Fehlerklassen nun nach mittleren Durchsatz sortiert. (\textbf{WARUM?}) \textbf{BESCHREIBUNG DER TABLLE}
+In der Tabelle ist ablesbar, was ich zuvor bereits anhand des Graphen gedeutet habe, für cached-off0-seq befinden sich mit vertauschten Fehlerklassen 399709 von 400000 Punkten in der selben Klasse. Dies ist die Klasse, die den geringsten Durchsatz hat und in der LinReg G zuvor auf dem randomisierten Datensatz den größten Fehler gemacht hat.
+Die Fehlerklassen von cached-off0-seq sind dagegen sogar recht gut zur Differenzierung der Datenpunkte auf cached-off0-rnd nutzbar, wie in Tabelle \ref{tab:error_classes_switched} b) an den Werten für \glqq Anzahl auf rnd \grqq{} zu entnehmen ist. Dies ist dem Umstand geschuldet, dass die Fehlerklassen von cached-off0-seq in dem Bereich mit kleinem Fehler stark differenziert und die meisten Punkte sich auch auf cached-off0-rnd dort befinden.
+Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden Datensätzen nicht eignen. Auf cached-off0-seq, da sich praktisch alle Punkte in der selben Klasse befinden und auf cached-off0-rnd, weil in den entscheidenden schlechteren Vorhersagen von LinReg G keine Unterscheidung stattfindet.
+
 \begin{table}
 	\scriptsize
 	\subfloat[cached-off0-seq]{
@@ -778,10 +794,10 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Anzahl & Anzahl auf rnd \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/error_class/seq_linreg_classes_on_rnd.csv}{tp=\tp,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount}%
-			{\thecsvrow & \tp & \rndcount & \minerror & \meanerror & \maxerror & \seqcount}%
+			{\thecsvrow & \tp & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 		\end{tabular}
 	}
-	\caption{Verwendung der Fehlerklassen, die aus aus dem jeweils anderen Datensatz stammen.\\ Informationen der Klasse auf dem ursprünglichen Datensatz: Mittlerer Durchsatz, minimaler, mittlerer und maximaler Wert, sowie Anzahl der Punkte, die dieser Klasse zugeordnet wurden.\\ 
+	\caption{Verwendung der Fehlerklassen, die aus aus dem jeweils anderen Datensatz stammen. Sortiert nach Durchsatz\\ Informationen der Klasse auf dem ursprünglichen Datensatz: Mittlerer Durchsatz, minimaler, mittlerer und maximaler Wert, sowie Anzahl der Punkte, die dieser Klasse zugeordnet wurden.\\ 
 	Angewendet auf den anderen Datensatz: Anzahl zugeordneter Messpunkte auf dem Datensatz.}
 	\label{tab:error_classes_switched}
 \end{table}
@@ -955,7 +971,39 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
  	\label{fig:densities_baselines_seq}
  \end{figure} 
 
+\clearpage
+
 \subsection{Analyse der höheren Modelle}
+
+Die Analyse zu den aufwendigeren Modellen, die auf neuronalen Netzen basieren, ist viergeteilt. 
+Zunächst eine kurze Betrachtung der Struktur des erfolgreichsten neuronalen Netzes zu dem Modell. Der wesentliche Bestandteil ist dann die Untersuchung der Qualität der Vorhersagen. Und zuletzt wird jeweils zusätzlich die Ausreißer-Vorhersage genauer studiert.
+Die Metainformationen der Netze befinden sich in \ref{tab:model-stats}. Dort sind Informationen zum Aufbau der besten Netze, die Anzahl der verdeckten Schichten, sowie die Anzahl Neuronen, die jede Schicht enthält. Zudem sind Informationen über das Training der Netze mit der Anzahl Iterationen, die der Algorithmus gebraucht hat, bis der Schwellenwert für die Konvergenz erreicht war, und die Trainingsdauer, also wie lange die Berechnung des Netzes tatsächlich gedauert hat.
+In Tabelle \ref{tab:results} sind für alle Modelle die Werte der verschiedenen Fehlermetriken angegeben.
+Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage betrachtet.
+Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. 
+Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative mittlere quadratische Abweichung zu den Vorhersagen der Quantile an, sowie den Anteil der korrekt vorhergesagten Ausreißer.
+
+\begin{table}
+	\scriptsize
+	\subfloat[cached-off0-seq]{
+		\begin{tabular}{|r|r|r|r|r|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+		\end{tabular}
+	} \\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|r|r|r|r|r|}\hline%
+			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_rnd_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+		\end{tabular}
+	}
+	\caption{Informationen über die erfolgreichsten Neuronalen Netze}
+	\label{tab:model-stats}
+\end{table}
 
 \begin{table}
 	\scriptsize
@@ -976,7 +1024,29 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 		\end{tabular}
 	}
 	\caption{Ergebnisse der Modelle}
-	\label{tab:agg_seq}
+	\label{tab:results}
+\end{table}
+
+\begin{table}
+	\scriptsize
+	\subfloat[cached-off0-seq]{
+	\begin{tabular}{|r|r|r|r|r|r|}\hline%
+		Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
+		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+	\end{tabular}
+	}\\
+	\subfloat[cached-off0-rnd]{
+		\begin{tabular}{|r|r|r|r|r|r|}\hline%
+			Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%)\\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_rnd_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
+			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+		\end{tabular}
+	}
+	\caption{Informationen über die Ausreißervorhersage der höheren Modelle}
+	\label{tab:outlier}
 \end{table}
 
 \begin{figure}
@@ -1148,6 +1218,8 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{fig:tupel1_fk_on_rnd}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 	\centering
 	\subfloat{
@@ -1190,8 +1262,6 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{fig:ema_biggest_smallest_rnd}
 \end{figure} 
 
-\clearpage
-
 \begin{figure}
 	\centering
 	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
@@ -1222,54 +1292,7 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 	\label{fig:tupel2_biggest_smallest_rnd}
 \end{figure} 
 
-
-\subsection{Betrachtung der neuronalen Netze}
-\begin{table}
-	\scriptsize
-	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|r|r|r|r|r|}\hline%
-			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
-			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
-		\end{tabular}
-	} \\
-	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|r|r|r|r|r|}\hline%
-			Modell & verdeckte Schichten & Neuronen & Iterationen & Trainingsdauer (s) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
-			{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
-		\end{tabular}
-	}
-	\caption{Informationen über die erfolgreichsten Neuronalen Netze}
-	\label{tab:model-stats}
-\end{table}
-
-\section{Ausreißer Vorhersage}
-Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
-
-\begin{table}
-	\scriptsize
-	\subfloat[cached-off0-seq]{
-	\begin{tabular}{|r|r|r|r|r|r|}\hline%
-		Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%) \\\hline\hline
-		\csvreader[late after line=\\\hline]%
-		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
-		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
-	\end{tabular}
-	}\\
-	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|r|r|r|r|r|r|}\hline%
-			Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%)\\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_rnd_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
-			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
-		\end{tabular}
-	}
-	\caption{Informationen über die Ausreißervorhersage der höheren Modelle}
-	\label{tab:outlier}
-\end{table}
+\clearpage
 
 \section{Ensemble Lernen}
 Qualität einzelner Netze\\
