@@ -1,3 +1,5 @@
 Modell,QRMAF,QRMQA,LRMAF,LRMQA,Korrekt
-Tupel1,-1,  -1, -1,  -1,-100
-Tupel1 LinReg-Fehlerklasse,86,1128,105,1168,  31
+Tupel1, 54, 135, 56, 135,43
+Tupel1 LinReg-Fehlerklasse, 86,1128,105,1168,31
+Tupel1 gleitender Durchsatz,109, 785,146,1108,45
+Tupel2,149,1528,191,1935,46
