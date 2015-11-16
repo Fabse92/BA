@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1445889816129.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "17375EA8",
+    "lastKnownWriteTime" : 1935765544,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "p6xs0su3in",
+        "caption" : "best_data",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=best_data&cache_key=p6xs0su3in",
+        "displayedObservations" : 400000,
+        "environment" : "",
+        "object" : "best_data",
+        "totalObservations" : 400000,
+        "variables" : 3
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

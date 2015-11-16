@@ -1,0 +1,5 @@
+Modell,verdeckte Schichten,Neuronen,Iterationen,Trainingsdauer
+Tupel1, 8, 5, 980, 930
+Tupel1 LinReg-Fehlerklasse,11,21,4659,1316
+Tupel1 gleitender Durchsatz, 9, 5, 564, 991
+Tupel2,10,21,4644, 686

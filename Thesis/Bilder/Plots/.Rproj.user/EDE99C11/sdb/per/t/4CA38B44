@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1445889823765.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4CA38B44",
+    "lastKnownWriteTime" : 177365712,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "rtfgq45dq4",
+        "caption" : "best_results",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=best_results&cache_key=rtfgq45dq4",
+        "displayedObservations" : 22,
+        "environment" : "",
+        "object" : "best_results",
+        "totalObservations" : 22,
+        "variables" : 34
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}
