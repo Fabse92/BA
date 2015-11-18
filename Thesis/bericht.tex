@@ -975,12 +975,14 @@ Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_s
 
 \subsection{Analyse der höheren Modelle}
 
-Die Analyse zu den aufwendigeren Modellen, die auf neuronalen Netzen basieren, ist viergeteilt. 
-Zunächst eine kurze Betrachtung der Struktur des erfolgreichsten neuronalen Netzes zu dem Modell. Der wesentliche Bestandteil ist dann die Untersuchung der Qualität der Vorhersagen. Und zuletzt wird jeweils zusätzlich die Ausreißer-Vorhersage genauer studiert.
+Die Analyse zu den aufwendigeren Modellen, die auf neuronalen Netzen basieren, ist dreigeteilt. 
+Zunächst eine kurze Betrachtung der Struktur des erfolgreichsten neuronalen Netzes zu dem Modell. 
+Dann die Untersuchung der Qualität der Vorhersagen.
+Und zuletzt wird jeweils zusätzlich die Ausreißer-Vorhersage genauer studiert.
 Die Metainformationen der Netze befinden sich in \ref{tab:model-stats}. Dort sind Informationen zum Aufbau der besten Netze, die Anzahl der verdeckten Schichten, sowie die Anzahl Neuronen, die jede Schicht enthält. Zudem sind Informationen über das Training der Netze mit der Anzahl Iterationen, die der Algorithmus gebraucht hat, bis der Schwellenwert für die Konvergenz erreicht war, und die Trainingsdauer, also wie lange die Berechnung des Netzes tatsächlich gedauert hat.
 In Tabelle \ref{tab:results} sind für alle Modelle die Werte der verschiedenen Fehlermetriken angegeben.
 Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage betrachtet.
-Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. 
+Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. 
 Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative mittlere quadratische Abweichung zu den Vorhersagen der Quantile an, sowie den Anteil der korrekt vorhergesagten Ausreißer.
 
 \begin{table}
@@ -1049,6 +1051,14 @@ Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative 
 	\label{tab:outlier}
 \end{table}
 
+Als erstes wird das Modell Tupel1 untersucht. 
+Das erfolreichste neuronale Netz des Modells auf den sequentiellen Daten hat 12 verdeckte Schichten mit jeweils 13 Neuronen, es wurde über 23 Minuten in 3292 Iterationen entwickelt. Trotz der komplexereren Struktur von cached-off0-rnd kommt das Modell hier mit 8 verdeckten Schichten mit 5 Neuronen aus, zudem wurde es schneller berechnet. Da die Leistungswerte des Modells gleichzeitig schlechter sind, wäre eine Erklörung dafür, dass die Modellierung dieses Problems nicht so erfolgreich ist, sodass ein simples abstrakteres Netz den umfangreicheren Netzen überlegen ist, die die Modellierung detailreilreicher abbilden. Das Modell scheint stärker von der Tiefe der Schichten des neuronalen Netzes zu profitieren, als an der Anzahl Neuronen. 
+
+Auf cached-off0-seq kann das Modell sehr gut die Häufungspunkte der Messungen identifizieren (\ref{fig:tupel1_on_seq} (a) ), denn die meisten Gruppen enthalten auch Vorhersagen, die in der Gruppe liegen. Das Modell ist also in der Lage die verschiedenen Attribut-Sets zu unterscheiden. Innerhalb einer Häufung kann das Modell jedoch keine weitere Differenzierung durchführen, denn die Vorhersagen sind nicht in dem Bereich der Häufung verteilt. Stattdessen wird für eine Häufung immer der selbe Wert vorhergesagt. Dieses Verhalten entspricht dem des Modells mit linearer Regression, tatsächlich sind die Graphen (\ref{fig:zeit_baselines_rnd}) mit Zeitreihendarstellung der beiden Modelle kaum zu unterscheiden. Allerdings erreicht das Tupel1-Modell wesentlich bessere Leistungswerte, mit einem RMAF von 13.8\% gegenüber 35.2\% und einem RMQA von 23\% gegenüber 43\%.
+Den Grund hierfür kann man in der sortierten, logarithmischen Darstellung der Vorhersagen erkennen. In den langsameren Bereichen, die in der Zeitreihendarstellung besonders präsent sind, kann Tupel1 nur unwesentlich besser differenzieren als LinReg, in den unteren Bereichen sind wesentlich mehr horizontale Linien bei Tupel1.
+Das Verhalten von Tupel1 entspricht insgesamt der Erwartung. Das Modell hat keine Informationen, die es ermöglichen könnten Messungen innerhalb eines Attribut-Sets zu unterscheiden. Im gegensatz zu den LinReg-Modellen kann es jedoch auch nicht lineare Zusammenhänge modellieren, sodass die Vorhersagen für die unterschiedlichen Attribut-Sets wesentlich besser sind. In \ref{fig:tupel1_biggest_smallest_seq} bestätigt sich anhand der Darstellung der besten und schlechtesten Vorhersagen das beschriebene Verhalten von Tupel1. Den größten \textbf{RELATIVEN?} Fehler macht das Modell in den Außenbereichen der Häufungen. Während die kleinsten Fehler in den Bereichen mit gleichbleibender Dauer erzielt werden. Der Fehler hängt von der Stärke der Varianz der Laufzeiten eines Attribut-Sets ab.
+
+
 \begin{figure}
 	\centering
 	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
@@ -1077,6 +1087,41 @@ Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative 
 	}
 	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-seq. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
 	\label{fig:tupel1_biggest_smallest_seq}
+\end{figure} 
+
+Bei der Leistungsvorhersage auf cached-off0-rnd setzt sich Tupel1 mit 45\% RMAF und 122\% RMQA nun wesentlich vom linearen Modell mit 5019.1\% und 13188\% ab. Hier war LinReg G nicht mehr in der Lage die Häufungspunkte korrekt zu differenzieren. Tupel1 hingegen modelliert alle Häufungen korrekt (\ref{fig:tupel1_on_rnd}). Dadurch dass die Häufungen bei den randomisierten Messungen nicht mehr alle dem selben Attribut-Set angehören, sondern sich durch die Zugriffsort in der Datei unterscheiden, hat Tupel1 Informationen, um innerhalb einer Häufung verschiedene Vorhersagen zu treffen. Die Abhängigkeit der Laufzeit von Delta-Abstand ist jedoch sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten. Die Stärken und Schwächen des Modells liegen
+in den selben Bereichen, wie bei den sequentiellen Messungen.\\
+Das Unvermögen innerhalb eines Attribut-Sets zu unterscheiden spiegelt sich auch darin wieder, dass 100\% der Vorhersagen von Tupel1 auf cached-off0-seq zwischen den tatsächlichen 0.1 und 0.9 Quantil des Sets liegt, idealerweise wenn alle Ausreißer richtig erkannt werden würden, wäre dieser Wert bei 80\%. Auf cached-off0-rnd ist dieser Wert nicht sehr Ausdrucksstark, denn zu jedem Attribut-Set gibt es jeweils nur wenige Messungen \textbf{WIE VIELE?}, sodass die Quantile recht willkürlich sind.
+Wie erwartet fällt die Vorhersage der Quantile leicht
+
+\begin{figure}
+	\centering
+	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_onlyPred_tuple1_Duration_rnd.png}
+	}
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_tuple1_Duration_rnd.png}
+	}\\
+	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_onlyPred_tuple1_Duration_rnd.png}
+	} 
+	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_tuple1_Duration_rnd.png}
+	} 	
+	\caption{Betrachtung der Vorhersagen von \glqq Tupel1\grqq{} auf cached-off0-rnd. In blau Vorhersage der Laufzeit, rot/grün Vorhersage des Quantil 0.9/0.1}
+	\label{fig:tupel1_on_rnd}
+\end{figure} 
+
+\begin{figure}
+	\centering
+	\subfloat{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_biggest1_errors_tuple1_Duration_rnd.png}
+	}
+	\subfloat{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_smallest1_errors_tuple1_Duration_rnd.png}
+	}
+	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-rnd. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
+	\label{fig:tupel1_biggest_smallest_rnd}
 \end{figure} 
 
 \begin{figure}
@@ -1169,36 +1214,6 @@ Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative 
 	\label{fig:tupel2_biggest_smallest_seq}
 \end{figure} 
 
-
-\begin{figure}
-	\centering
-	\subfloat[Nur die Vorhersage der Laufzeit, in Zeitreihe]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_onlyPred_tuple1_Duration_rnd.png}
-	}
-	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, in Zeitreihe]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_tuple1_Duration_rnd.png}
-	}\\
-	\subfloat[Nur die Vorhersage der Laufzeit, sortiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_onlyPred_tuple1_Duration_rnd.png}
-	} 
-	\subfloat[Vorhersagen der Laufzeit und der beiden Quantile, sortiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_DurationToPredSorted_tuple1_Duration_rnd.png}
-	} 	
-	\caption{Betrachtung der Vorhersagen von \glqq Tupel1\grqq{} auf cached-off0-rnd. In blau Vorhersage der Laufzeit, rot/grün Vorhersage des Quantil 0.9/0.1}
-	\label{fig:tupel1_on_rnd}
-\end{figure} 
-
-\begin{figure}
-	\centering
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_biggest1_errors_tuple1_Duration_rnd.png}
-	}
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/Tupel1/plot_smallest1_errors_tuple1_Duration_rnd.png}
-	}
-	\caption{Analyse der Stärken und Schwächen des Modells auf cached-off0-rnd. In rot (grün): Die Laufzeiten, die zu den 1\% der schlechtesten (besten) Vorhersagen gehören}
-	\label{fig:tupel1_biggest_smallest_rnd}
-\end{figure} 
 
 \begin{figure}
 	\centering
