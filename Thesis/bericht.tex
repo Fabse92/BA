@@ -164,7 +164,7 @@ Besondere herausforderungen
 \medskip
 
 Man spricht von Hochleistungsrechnen, wenn der Rechenaufwand eines Programms außerhalb dessen liegt, was ein einzelner Desktop-Computer in vertretbarer Zeit bearbeiten kann.
-Die im Hochleistungsrechnen verwendeten Computer werden als Superrechner bezeichnet (wiki Superrechner), hierbei handelt es sich heutzutage üblicherweise um Rechnerverbünde (englisch: Cluster) in denen große Anzahlen Prozessoren und Speichermedien zusammengeschaltet werden.
+Die im Hochleistungsrechnen verwendeten Computer werden als Superrechner bezeichnet (wiki Superrechner), hierbei handelt es sich heutzutage üblicherweise um Rechnerverbünde (englisch: Cluster) in denen große Anzahlen Prozessoren und Speichermedien zusammengeschaltet werden. Die übliche Struktur sieht dabei so aus, dass eine vielzahl Rechnerknoten durch eine gemeinsame Verwaltung zusammengeschaltet werden. Ein Rechnerknoten ist dabei ein Mehrprozessorsystem mit gemeinsamen Speicher. Jeder Prozessor im Knoten hat einen eigenen Cache mit dem er arbeiten kann, zudem gibt es einen Speicher, auf den alle Prozessoren gemeinsam zugreifen. (\textbf{BILD}) Der Cluster von Rechnerknoten, der den Hochleistungsrechner bildet, verfügt wiederum über einen gemeinsamen Speicher.
 Notwendig wird Hochleistungsrechnen in der Forschung für die Simulation von numerischen Modellen aus verschiedensten Bereichen, beispielsweise zur Mehrkörpersimulation in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen.
 Wichtige Themen im Hochleistungsrechnen sind die Ausnutzung der zur Verfügung stehenden Leistung, das Erkennen und Beheben von Fehlern des genutzten Programmcodes, die Bereitstellung der Rechen- und Speicherkapazitäten, sowie die Energieeffizienz von Hard- und Software.
 Um den Superrechner gut ausnutzen zu können ist eine effiziente Ein-/Ausgabe bei vielen Anwendungen von großer Wichtigkeit, da die Menge der anfallenden Datenmengen wesentlich stärker ansteigt, als die Geschwindigkeit der Verbindungen zwischen den verschiedenen Speichermedien und -orten. So steigt beispielsweise die Rechenleistung und die Speicherkapazität beim dem Superrechner des Deutschen Klimarechenzentrum (DKRZ) gegenüber dem Vorgänger wesentlich stärker an, als der mögliche Datendurchsatz (\textbf{Verweis}).
@@ -183,13 +183,7 @@ Die Erfassung dieser Informationen wäre sehr aufwendig, sodass dies zur Zeit ni
 %their automatic enactment.
 
 \section{Maschinelles Lernen}
-Wozu c
-Verschiedene Klassen, un -/ supervised c
-kmeans
-regresson trees
-neuronale netze -> verweis
-Bagging
-
+\label{ML}
 Maschinelles Lernen gehört in die Bereiche künstliche Intelligenz und automatisierte Wissensgenerierung. Verfahren dieser Disziplin versuchen durch intelligentes lernen von Mustern Vorhersagen und Entscheidungen, wie die Zuordnung zu einer bestimmten Klasse, zu treffen. Intelligent bedeutet hierbei (beispielweise), dass vorgegebene Informationen nicht schlicht auswendig gelernt und wiedergegeben werden, sondern von diesen Informationen abstrahiert wird, um Gesetzmäßigkeiten innerhalb der Trainingsdaten zu erkennen. Ein Verfahren oder Algorithmus des maschinellen Lernens erstellt ein Modell, welches Aussagen über die Datenmenge trifft, die zu Verfügung stand und eventuell Vorhersagen über Daten trifft, die ihm beim Lernen nicht bekannt waren. 
 Zu unterscheiden sind Verfahren des überwachten und des unüberwachten Lernens. Während beim überwachten Lernen die idealen Ausgaben zu den Eingabedaten vorgegeben werden, wird beim unüberwachten Lernen kein bestimmtes Ergebnis erwartet, stattdessen muss der Algorithmus versuchen den Informationen inhärente Abhängigkeiten und Zusammenhänge zu erkennen.
 Je nach Art der behandelten Daten sind die Modelle von Verfahren, die Vorhersagen über neue Daten treffen sollen, Klassifikationsmodelle oder Regressionsmodelle. Das Klassifikationsmodell ordnet Datenpunkte einer Klasse von Daten mit ähnlichen Eigenschaften zu, die verschiedenen Klassen müssen beim Erstellen des Modells bekannt sein und Beispiele als Datenpunkte dieser Klasse vorgegeben werden. Es wird also eine qualitative Aussage anhand dieser Einordnung in Gruppen über die einzelnen Datenpunkte getroffen. Dagegen wird beim Regressionsmodell eine quantitative Aussage über die Zusammenhänge zwischen den Attributen der Daten getroffen. Das Modell sagt einen bestimmten Wert für ein Attribut der Datenpunkte voraus.  
@@ -264,17 +258,16 @@ Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie belieblige kontinui
 
 \chapter{Verwandte Arbeiten}
 \textit{%
-	Es finden sich keine wissenschaftlichen Veröffentlichungen die sich auch mit dem Einsatz von neuronalen Netzen zur Vorhersage von E/A-Leistung im Hochleisungsrechnen befassen. Jedoch werden die verschiedenen Teilgebiete des Themas behandelt. Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.  
-	Mini-Gliederung was jetzt kommt. Einleitung ist OPTIONAL!!!!
-	In Sektion X steht, in Y steht.
+	Es finden sich keine wissenschaftlichen Veröffentlichungen die sich auch mit dem Einsatz von neuronalen Netzen zur Vorhersage von E/A-Leistung im Hochleisungsrechnen befassen. Jedoch werden die verschiedenen Teilgebiete des Themas behandelt. Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.
 }
 \bigskip
 
 \section{Leistungsvorhersage von Ein-/Ausgabe}
 
 \subsection{Kategorisierung}
-	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen ein Modell des Festplattensystems zu erstellen, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten, bekannt sind oder entsprechende Parameter werden durch gezielte Untersuchung approximiert. (\textbf{stimmt das? Referenz?}) Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und so deren Aufwand vorhergesagt werden. \\ Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das aus gemessenen Leistungswerten von Festplattenzugriffen die Werte von neuen Zugriffen ableitet. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz (in der Fachliteratur etwa als analytic device modeling und simulation modeling bezeichnet)
-, bei dem versucht wird das Festplattensystem nachzubilden und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (Quelle? Fourier assisted ml)
+	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen das Festplattensystem in einem Modell nachzubilden, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten bekannt sind oder entsprechende Parameter durch gezielte Untersuchung approximiert werden. Mit diesem möglichst exakten Modell können dann Zugriffe simuliertd und die Laufzeit des Modells gemessen werden. Diese Messung kann daraufhin als Vorhersage für das reale System verwendet werden.\\
+Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht,
+das das Verhalten des Systems möglichst genau beschreibt. Zur Entwicklung des mathematischen Modells werden gemessene Leistungswerte von Festplattenzugriffen untersucht, um daraus passende Parameter für das Modell abzuleiten. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz, bei dem versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als analytic device modeling bzw. simulation modeling bezeichnet) und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (\textbf{Quelle}? Fourier assisted ml)
 	
 \subsection{Modellierungssansatz gegenüber Regressionsansatz}
 	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
@@ -325,34 +318,112 @@ Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et
 }
 \bigskip
 
+\section{Vorgehensweise}
+** Daten exploriert\\
+
+
 \section{Modell der Ein-/Ausgabe}
-Zeit zum Bewegen des Lesekopfes + Zeit zum rotieren + lese-/schreibzeit + Aufrufprozedur mit festem Beitrag; t = tNetwork + tHDD +tMem \\
-mit tHDD(deltaOffset, sizeInBlocks) = tBus(size) + f(deltaOffset)\\
-track-to-track-seek-time, rotational time\\
-Welche Abhängigkeiten gibt es, oder könnte es geben? Z.B. Umso größer die Size, desto länger die Lese-/Schreibzeit, umso größer Offset, desto größer die Seekzeit
+Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.\\
+Anhand der Verarbeitung eines Leseaufrufs gehe ich die Stufen des E/A-Systems durch. Wie in \ref{E/A} beschrieben hängt die Zugriffszeit davon ab, in welcher Speicherebene die angefragte Datei befindet. Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die angefragte Datei bereits innerhalb des anfragenden Rechnerknoten befindet oder diese von einer Festplatte außerhalb des Knotens geholt werden muss.
+Falls die sich die Datei nicht im Speicher des Rechnerknotens befindet, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden. Der Verwaltungsaufwand der Anfrage sollte im wesentlichen für alle Aufrufe konstant sein, denn sie sieht strukturell für aufwendige Aufrufe nicht anders aus, als für weniger aufwendige.
+Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere) auf der die gewünschte Datei liegt. Der Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei stark von der Struktur des Netzwerkes abhängig. Die Festplatte liest die Datei aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt wird.
+Ebenso wie in dem Fall, in dem keine Anfrage außerhalb des Rechnerknotens gestellt werden musste, muss nun der erforderliche Teil der angefragen Datei noch aus dem Arbeitsspeicher des Knotens in den Cache des Prozessors geladen werden, auf dem der Prozess die Datei angefragt wurde. Für einen Schreibzugriff gilt im Wesentlichen ein ähnlicher Ablauf, der Datenfluss ist nur umgekehrt.\\
+Es können also drei voneinander unabhängige Anteile der Zugriffszeit unterschieden werden. Die Zeit, die für die Verwaltung der E/A-Anfrage und die Dateiübertragung über das Netzwerk benötigt wird (tNetzwerk), sowie für die Verarbeitung auf der Festplatte (tHDD) und für das Lesen/Schreiben von dem Arbeitsspeicher (tMem).\\
+In allen Bereichen gibt es jeweils einen konstanten Anteil und einen Anteil, der von der aufgerufenen Datei abhängt. 
+Der Anteil der Zugriffszeit, die für jeden Aufruf konstant ist, ist für die Modellierung weniger spannend und sollte bereits durch einfache linerare Modelle darstellbar sein, dieser Teil wird im Folgenden nicht weiter berücksichtigt.
+
+Der Netzwerkabhängige Teil ist zum einen von der genauen Lokalität der aufgerufenen Datei, sowie der größe der Datei abhängig. Der Datenfluss über das Netzwerk hängt von dessem Durchsatz ab, dieser sollte nach kurzer Verbindungsaufbauphase konstant sein. Im Rahmen meiner Instrumentierungsmöglichkeiten ist es nicht möglich die Abhängigkeit der Zugriffszeit von Speicherort im Netzwerk direkt vorherzusagen. Dazu wäre ein Einblick in eine Datenbank notwendig, aus der sich solche Informationen ableiten ließen, oder eine solche Wissensbasis müsste selbst aufgebaut werden. \textbf{(allerdings greifen wir ja eh immer auf die gleiche Datei zu, sodass das Netzwerk keine Rolle spiel?)}
+tMem ist am einfachsten zu modellieren, denn der Direktzugriffsspeicher (engl. Random-Access Memory) kennzeichnet sich gerade dadurch, dass der Zugriff auf alle Datenblöcke mit geichem Aufwand verbunden ist. Ansonsten hängt die Zugriffszeit vom Durchsatz des Speichers ab, der auch linear von Größe des angefragten Dateibereichs abhängt.
+Die Festplatte ist ähnlich Komplex wie das Netzwerk, kann allerdings im Rahmen der durchgeführten Testläufe näher untersucht werden, indem immer wieder auf der selben Platte gearbeitet wird. Wie beim Netzwerk ist die Zugriffszeit zum einen von dem genauen Ort der angefragten Datenblöcke und zum anderen vom Durchsatz der Festplatte abhängig. Die Abhängigkeit vom Ort schlägt sich in dem Abstand des Aufenthaltsortes des Lesekopfes vor dem Aufruf zu dem Zielort auf der Festplatte nieder, im Folgenden wird dieser Abstand als Delta-Abstand bezeichnet. Der zeitliche Aufwand des Überwinden des Delta-Abstandes ist Hardwarecharakteristika der Festplatte abhängig. Zum einen die Zeit, die der Lesekopf benötigt, um von der aktuellen Festplatten-Spur zur Zielspur zu kommen und zum anderen, die Rotationszeit der Magnetscheibe, die den Lesekopf in der Horizontalen zur richtigen Stelle befördert. Dabei geschehen Spurwechsel und Rotation auch gleichzeitig. Ansonsten ist die Zugriffszeit linear von dem Durchsatz der Festplatte und der Größe des angefragen Abschnittes abhängig.
+
+Während also tMem vollständig lineares Modell dargstellt werden können müsste, ist dies für tNetzwerk und tHDD nur bedingt der Fall. Netzwerk und Festplatte haben einen bestimmenden linearen Anteil, jedoch auch einen Speicherort abhängigen.
+Die Durchsätze von tMem, sowie tHDD sind Hardware bedingt von der Art des Zugriffs abhängig, es muss also zwischen Lese- und Schreibzugriffen unterschieden werden, dies ist im Folgenden der Operationstyp (OpTyp).
+Das Modell für die Ein-/Ausgabe in dieser Arbeit entspricht letztendlich
+
+\begin{align*}
+&tGesamt = tNetzwerk + tMem + tHDD\\
+&\text{mit}\\
+&tNetzwerk(Grö\text{ß}e, Netzwerkspeicherort)\\
+&tMem(Grö\text{ß}e,OpTyp)\\
+&tHDD(Grö\text{ß}e,OpTyp,Delta\text{-}Abstand)\\
+\end{align*}
+
+Die Vermutung in dieser Arbeit ist, dass sich E/A-Aufrufe in verschiedene Pfade unterteilen lassen, dabei entspricht der Pfad der Verbindung vom aufrufenden Prozess zur aufgerufenen Datei. Ein perfektes Modell könnte unter Kenntnis dieses Pfades und der Dateiattribute die Dauer des Zugriffs exakt vorhersagen.\\
+Im Benchmark-Test (\ref{benchmark}) wird zu jeder gemessenen E/A-Prozedur die Größe des gelesenen/geschriebenen Bereichs, der Operationstyp und der Delta-Abstand gemessen.
+Das Tripel $(Größe,OpTyp,Delta-Abstand)$ bezeichne ich als Attribut-Set der Messung.
 
 \section{Leistungs- und Ausreißervorhersage}
-Die Beiden Dinge, die ich versuche vorherzusagen. Warum? Unterschiede. \\
-\subsection{Attribut Selektion und Generierung}
-Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)\\
-Definiton von Attribut-Set\\
+Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den Aufwand der E/A-Aufrufe vorherzusagen. 
+Die im Benchmark-Test gemachten Messungen werden dabei genutzt. Zunächst kann das Modell einen Teil der Daten zum Lernen nutzen und dann können die Vorhersagen des Modells zu ungesehenen Messungen mit den tatsächlichen Werten verglichen werden. Dies ist die Leistungsvorhersage vom Modell zum System. 
+Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist, denn es wird schlicht intern die Zeit von Anfang bis Ende eines E/A-Aufrufs gemessen. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
+Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
+Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht. Da die Informationen, die den Modellen zur Verfügung stehen allerdings nicht für eine verlässliche Ausreißervorhersage ausreichen sollten (beispielsweise wäre dazu Wissen über parallel laufende Prozesse unter anderem von anderen Benutzern des Hochleistungsrechners notwendig), könnte dieser Test auch ein Maß für eine zu starke Adaption an die Trainingsdaten sein.
 
-\section{Fehlerklassen}
-Die Idee, Prognosen
 
 \section{Modellklassen}
+
+Es können verschiedene Klassen von Modellen unterschieden werden...
+
+Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.
+
+\subsection{Attribut Selektion und Generierung}
+Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)\\
+
 \subsection{Zeitreihen- und Aggregierungs-Modelle}
 Agregierungsmodelle haben (unfaire -> aber ok, da nur für baselines) globale Sicht\\
 \subsection{Triviale- und Höhere-Modelle}
 \subsection{Fehlerklassen-Modelle}
+Die Idee, Prognosen\\
 
-\section{Ensemble Lernen}
-Konzept und Anwendung, was soll damit erreicht werden?\\
+Um einerseits die Leistungsvorhersage zu optimieren, aber um andererseits auch die These zu untersuchen, dass sich E/A-Aufrufe im System mit unterschiedlichen Pfaden ausdrücken lassen, werden Modelle mit Kenntnis von Fehlerklassen analysiert.
 
-\section{Leistungsmetriken}
-mathematische Definitionen\\
+Fehlerklassen werden mit Hilfe der Vorhersagen eines Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
 
+\section{Untersuchte Modelle}
+\label{impl:modelle}
+
+zunächst die trivialen dann höhere \\
+
+** Erste Modelle gebastelt\\
+jedes Modell beschreiben\\
+welche Attribute hat das Modell\\
+jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten\\
+was die Idee davon ist\\
+warum macht es Sinn, dies zu testen\\
+wie soll die Performance hier untersucht werden?\\
+
+\section{Anwendung und Parameter}
+Wie werden die richtigen Parameter für jedes Modell gefunden? -> Systematisches Testen der Parameter
+Wie wird mit Ausreißern umgegangen, wie werden sie definiert\\
+Aufteilung der Daten in Lern-und Testdatensatz, Cross-Validation; 40.000 Punkte von 400.000\\ 
+-- *** Lernen von Read \& Write zusammen oder getrennt\\
+
+Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen\\
+
+
+Alle Modelle haben einen Trainingsdatensatz, sowie einen Testdatensatz von Messungen 
+
+\section{Validierung der Modelle}
+*** Sampling der Datenmenge\\
 Welche Leistungsmerkmale werden warum untersucht?\\
+*** Welche Fehlermetriken verwenden wir?\\
+mathematische Definitionen der metriken\\
+**** Relativen Fehler, |Abs Fehler|, Summary von residuals summary(mess - pred), Summary (relative)\\
+*** Ensemble Lernen\\
+Zudem Vergleich mit durchschnittlicher Leistung von Netzen mit gleihen Parametern\\
+- abhängigkeit von auswahl der trainingsdaten und lokaler konvergenz\\
+Konzept und Anwendung, was soll damit erreicht werden? -> lin abh der netze\\
+
+
+\section{Aufbau der Benchmark-Tests}
+\label{benchmark}
+Wie wurden dei Daten gewonnen?\\
+Einführung von cached-off0-seq und rnd\\
+
+Das Testsystem (\ref{impl:testsystem}) muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
+Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
+Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
+Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer festen Anzahl an Wiederholungen hintereinader mit der gleichen Zugriffsgröße durchgeführt (\textbf{Wie Oft?}). Die Testdatei ist 10GiB groß. Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd. 
 
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}\\
@@ -364,21 +435,6 @@ Welche Leistungsmerkmale werden warum untersucht?\\
 }
 \bigskip
 
-\section{Untersuchte Modelle}
-\label{impl:modelle}
-jedes Modell beschreiben\\
-welche Attribute hat das Modell\\
-jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten\\
-was die Idee davon ist\\
-warum macht es Sinn, dies zu testen\\
-wie soll die Performance hier untersucht werden?\\
-
-\section{Anwendung und Parameter}
-Wie werden die richtigen Parameter für jedes Modell gefunden? -> Systematisches Testen der Parameter
-Wie wird mit Ausreißern umgegangen, wie werden sie definiert\\
-Aufteilung der Daten in Lern-und Testdatensatz, Cross-Validation\\ 
-Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen\\
-
 \section{Verwendete Programmiersprache und Bibliotheken}
 R,neuralnet etc.
 
@@ -387,15 +443,6 @@ R,neuralnet etc.
 Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
 
 Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom Juni 2015 auf Platz 56 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
-
-\section{Aufbau der Benchmark-Tests}
-Wie wurden dei Daten gewonnen?\\
-Einführung von cached-off0-seq und rnd\\
-
-Das Testsystem \ref{impl:testsystem} muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
-Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
-Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
-Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer festen Anzahl an Wiederholungen hintereinader mit der gleichen Zugriffsgröße durchgeführt (\textbf{Wie Oft?}). Die Testdatei ist 10GiB groß. Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd. 
 
 
 \paragraph{Zusammenfassung:}
@@ -804,8 +851,8 @@ Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden
 
 \section{Leistungsvorhersage}
 Zu jedem Modell schreiben, welche Attribute und Parameter sich als geeignet herausgestellt haben. Ergebnisse anhand von Graphen veranschaulichen.\\
-Ergebnisse für verschiedene Fälle vergleichen, seq,rnd,mistral vs pc?\\
-Jeweils schreiben, ob bagging etwas bringt.
+Ergebnisse für verschiedene Fälle vergleichen, seq,rnd\\
+Ergebnisse von bagging
 
 \subsection{Analyse der trivialen Modelle}
 

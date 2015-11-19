@@ -7,7 +7,7 @@
 ** Baselines
 ** Validierung
 *** Sampling der Datenmenge
-** Fehlermetriken verwenden wir?
+** Welche Fehlermetriken verwenden wir?
 *** Relativen Fehler, |Abs Fehler|, Summary von residuals summary(mess - pred), Summary (relative)
 ** Erste Modelle gebastelt
 ** Entscheidungen zu treffen:
