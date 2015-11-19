@@ -1,5 +1,5 @@
 Modell,MAF,RMAF,RMQA,Q3,Max,Bereich
-Tupel1 LinReg-Fehlerklasse,1.9e-05, 6.5, 11, 7.8,  262,0.90
-Tupel1 gleitender Durchsatz,6.7e-05,13.3, 23,15.6, 2232,0.99
-Tupel1,6.7e-05,13.8, 23,16.1,  483,1.00
-Tupel2,6.2e-05,15.6,133,11.1,40144,0.80
+Tupel1 LinReg-Fehlerklasse,1.9e-05, 6.5, 11, 7.8,  262,90
+Tupel1 gleitender Durchsatz,6.7e-05,13.3, 23,15.6, 2232,99
+Tupel1,6.7e-05,13.8, 23,16.1,  483,100
+Tupel2,6.2e-05,15.6,133,11.1,40144,80

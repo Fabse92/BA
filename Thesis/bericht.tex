@@ -781,24 +781,24 @@ Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden
 
 \begin{table}
 	\scriptsize
-	\subfloat[cached-off0-seq]{
+	\subfloat[Fehlerklassen von cached-off0-seq]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Anzahl & Anzahl auf seq \\\hline\hline
+			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/error_class/rnd_linreg_classes_on_seq.csv}{tp=\tp,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount}%
-			{\thecsvrow & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount}%
+			{CSV/error_class/seq_linreg_classes_on_rnd.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount}%
+			{\idx & \tp & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 		\end{tabular}
-	} \\
-	\subfloat[cached-off0-rnd]{
+	}\\
+	\subfloat[Fehlerklassen von cached-off0-rnd]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Anzahl & Anzahl auf rnd \\\hline\hline
+			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/error_class/seq_linreg_classes_on_rnd.csv}{tp=\tp,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount}%
-			{\thecsvrow & \tp & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
+			{CSV/error_class/rnd_linreg_classes_on_seq.csv}{tp=\tp,idx = \idx, rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount}%
+			{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount}%
 		\end{tabular}
 	}
-	\caption{Verwendung der Fehlerklassen, die aus aus dem jeweils anderen Datensatz stammen. Sortiert nach Durchsatz\\ Informationen der Klasse auf dem ursprünglichen Datensatz: Mittlerer Durchsatz, minimaler, mittlerer und maximaler Wert, sowie Anzahl der Punkte, die dieser Klasse zugeordnet wurden.\\ 
-	Angewendet auf den anderen Datensatz: Anzahl zugeordneter Messpunkte auf dem Datensatz.}
+	
+	\caption{Fehlerklassen sortiert von kleinem zu großem Zentrum des Clusters (Durchschnittlicher Fehler). Einmal die Anzahl Punkte, die den Klassen auf dem Datensatz zugeordnet wurden, von dem sie auch stammen. Zudem die Anzahl Punkte, die den Klassen auf dem anderen Datensatz zugeordnet werden würden.}
 	\label{tab:error_classes_switched}
 \end{table}
 
@@ -983,7 +983,7 @@ Die Metainformationen der Netze befinden sich in \ref{tab:model-stats}. Dort sin
 In Tabelle \ref{tab:results} sind für alle Modelle die Werte der verschiedenen Fehlermetriken angegeben.
 Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage betrachtet.
 Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. 
-Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative mittlere quadratische Abweichung zu den Vorhersagen der Quantile an, sowie den Anteil der korrekt vorhergesagten Ausreißer.
+Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative mittlere quadratische Abweichung zu den Vorhersagen der Quantile an, sowie den Anteil der korrekt vorhergesagten Ausreißer und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden, in der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive, TP und FP).
 
 \begin{table}
 	\scriptsize
@@ -1032,19 +1032,19 @@ Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative 
 \begin{table}
 	\scriptsize
 	\subfloat[cached-off0-seq]{
-	\begin{tabular}{|r|r|r|r|r|r|}\hline%
-		Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%) \\\hline\hline
+	\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+		Modell & Q0.1 RMAF (\%) &Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & TP (\%) & FP (\%) \\\hline\hline
 		\csvreader[late after line=\\\hline]%
-		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
-		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt, FalschPositiv = \FalschPositiv}%
+		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt & \FalschPositiv}%
 	\end{tabular}
 	}\\
 	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|r|r|r|r|r|r|}\hline%
-			Modell & Q0.1 RMAF (\%) & Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & Korrekt (\%)\\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & Q0.1 RMAF (\%) &Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & TP (\%) & FP (\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_rnd_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt}%
-			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt}%
+			{CSV/models/latex_rnd_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt, FalschPositiv = \FalschPositiv}%
+			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt & \FalschPositiv}%
 		\end{tabular}
 	}
 	\caption{Informationen über die Ausreißervorhersage der höheren Modelle}
@@ -1091,8 +1091,11 @@ Das Verhalten von Tupel1 entspricht insgesamt der Erwartung. Das Modell hat kein
 
 Bei der Leistungsvorhersage auf cached-off0-rnd setzt sich Tupel1 mit 45\% RMAF und 122\% RMQA nun wesentlich vom linearen Modell mit 5019.1\% und 13188\% ab. Hier war LinReg G nicht mehr in der Lage die Häufungspunkte korrekt zu differenzieren. Tupel1 hingegen modelliert alle Häufungen korrekt (\ref{fig:tupel1_on_rnd}). Dadurch dass die Häufungen bei den randomisierten Messungen nicht mehr alle dem selben Attribut-Set angehören, sondern sich durch die Zugriffsort in der Datei unterscheiden, hat Tupel1 Informationen, um innerhalb einer Häufung verschiedene Vorhersagen zu treffen. Die Abhängigkeit der Laufzeit von Delta-Abstand ist jedoch sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten. Die Stärken und Schwächen des Modells liegen
 in den selben Bereichen, wie bei den sequentiellen Messungen.\\
-Das Unvermögen innerhalb eines Attribut-Sets zu unterscheiden spiegelt sich auch darin wieder, dass 100\% der Vorhersagen von Tupel1 auf cached-off0-seq zwischen den tatsächlichen 0.1 und 0.9 Quantil des Sets liegt, idealerweise wenn alle Ausreißer richtig erkannt werden würden, wäre dieser Wert bei 80\%. Auf cached-off0-rnd ist dieser Wert nicht sehr Ausdrucksstark, denn zu jedem Attribut-Set gibt es jeweils nur wenige Messungen \textbf{WIE VIELE?}, sodass die Quantile recht willkürlich sind.
-Wie erwartet fällt die Vorhersage der Quantile leicht
+Das Unvermögen innerhalb eines Attribut-Sets zu unterscheiden spiegelt sich auch darin wieder, dass 100\% der Vorhersagen von Tupel1 auf cached-off0-seq zwischen den tatsächlichen 0.1 und 0.9 Quantil des Sets liegt, idealerweise wenn alle Ausreißer richtig erkannt werden würden, wäre dieser Wert bei 80\%. Entsprechend sagt das Modell keine Ausreißer voraus, sodass TP und FP bei 0\% liegen. Auf cached-off0-rnd sind diese Werte nicht sehr Ausdrucksstark, denn zu jedem Attribut-Set gibt es jeweils nur ein bis drei Messungen, sodass die Quantile recht willkürlich sind.
+Wie erwartet fällt die Vorhersage der Quantile auf cached-off0-seq leicht. Dort gibt es bloß 76 verschiedene Attribut-Sets, das Netz muss die entsprechenden Werte bloß \glqq merken\grqq{} und richtig zuordnen. Dies gelingt dem Netz mit wenigen Prozent Abweichung. 
+Auf cached-off0-rnd dagegen gibt es 260 000 unterschiedliche Attribut-Sets, sodass das Netz mit seinem Trainingsdatenausschnitt von 40 000 Messungen nicht alle Sets gesehen hat und interpolieren muss. Die Fehlerwerte sind entsprechend ein vielfaches größer.\\
+Insgesamt zeigt das Modell trotz seiner Einfachheit bereits eine gute Leistung bei der Vorhersage der Laufzeiten der E/A-Aufrufe. Es kann, ähnlich wie die Modelle mit linearer Regression, nicht innerhalb eines Attribut-Sets differenzieren, ist diesem aber durch die Modellierung nicht-linearer Zusammenhänge und durch ein besseres \glqq Erinnerungsvermögen\grqq{} überlegen. 
+
 
 \begin{figure}
 	\centering
@@ -1307,6 +1310,11 @@ Wie erwartet fällt die Vorhersage der Quantile leicht
 	\label{fig:tupel2_biggest_smallest_rnd}
 \end{figure} 
 
+\paragraph{Zusammenfassung:}
+\textit{
+	Lineare Modelle sind unzureichend, Vergleich von Tupel1 zu LinReg
+	Wir haben gesehen, dass Ausreißer-Vorhersage nur auf den sequentiellen Messungen mit Hilfe der Quantile zu sinnvollen Ergebnissen geführt hat, da die Anzahl Messungen pro Attribut-Set für den randomisierten Datensatz nicht aussagekräftig sind.
+	}
 \clearpage
 
 \section{Ensemble Lernen}
