@@ -318,11 +318,6 @@ Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et
 }
 \bigskip
 
-\section{Vorgehensweise}
-** Daten exploriert\\
-
-
-
 \section{Modell der Ein-/Ausgabe}
 \label{ea_modell}
 Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.\\
@@ -357,7 +352,7 @@ Das Tripel $(Grö\text{ß}e,OpTyp,Delta-Abstand)$ bezeichne ich als Attribut-Set
 \section{Leistungs- und Ausreißervorhersage}
 Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den Aufwand der E/A-Aufrufe vorherzusagen. 
 Die im Benchmark-Test gemachten Messungen werden dabei genutzt. Zunächst kann das Modell einen Teil der Daten zum Lernen nutzen und dann können die Vorhersagen des Modells zu ungesehenen Messungen mit den tatsächlichen Werten verglichen werden. Dies ist die Leistungsvorhersage vom Modell zum System. 
-Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist, denn es wird schlicht intern die Zeit von Anfang bis Ende eines E/A-Aufrufs gemessen. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
+Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. In unseren Messdaten werden die langsamsten und die schnellsten $10\%$ der Messungen jedes Attribut-Sets als Ausreißer bezeichnet. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist, denn es wird schlicht intern die Zeit von Anfang bis Ende eines E/A-Aufrufs gemessen. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
 Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
 Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht. Da die Informationen, die den Modellen zur Verfügung stehen allerdings nicht für eine verlässliche Ausreißervorhersage ausreichen sollten (beispielsweise wäre dazu Wissen über parallel laufende Prozesse unter anderem von anderen Benutzern des Hochleistungsrechners notwendig), könnte dieser Test auch ein Maß für eine zu starke Adaption an die Trainingsdaten sein.
 
@@ -388,9 +383,10 @@ Wenn das Modell, das zur Generierung der Fehlerklassen genutzt wurde, und das Mo
 
 \section{Untersuchte Modelle}
 \label{impl:modelle}
-Agregierungsmodelle haben (unfaire -> aber ok, da nur für baselines) globale Sicht\\
+Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die zu Messdaten exploriert (siehe \ref{exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
+Wenn es darum geht gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden. Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keine Aussage über die andere zulässt. Bei einer Korrelation von 1 dagegen, kann eine Funktion angegeben werden aus der sich der Wert der einen Variablen direkt der Wert der anderen berechnen lässt. Somit ist eine hohe Korrelation eine Hinweis auf ein Attribut, dass zur Vorhersage des anderen Attributs verwendet werden sollte. Allerdings wird bei der Korrelation bloß die lineare Abhängigkeit betrachtet, ein komplexerer Zusammenhang zweier Variablen wird dadurch schlecht repräsentiert.
 
-Ich stelle kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die trivialen Modelle durch, dann die höheren.
+Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die trivialen Modelle durch, dann die höheren.
 
 Das einfachste Modell ist \textit{Durchschnitt}, das Modell kennt den globalen arithmetischen Mittelwert aller gemessen Messungen und ist in sofern unfair. Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle anderen Modelle bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, mit schlechterer Leistung könnte unterstellt werden zufällige Vorhersagen zu machen und man kann auf eine Fehlfunktion schließen.
 
@@ -414,39 +410,60 @@ Das Modell muss sich nicht bloß die Laufzeiten zu den Attribut-Sets \textit{mer
 
 \textit{Tupel2} bekommt nicht nur die Attribute der Messung, dessen Leistung es vorhersagen soll, sondern auch die Attribute und die Laufzeit der vorherigen Messung. Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, würde sich dies an der vergangenen E/A-Leistung niederschlagen. Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
 
-Eine tieferliegende Periodizität könnte unter Umständen durch \textit{Tupel1 gleitender Durchsatz} ausgenutzt werden.
+Eine tieferliegende Periodizität könnte unter Umständen durch \textit{Tupel1 EMA Durchsatz} ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average}(EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort. Dadurch kann mit dessen Funktionswert ein Einblick in den generellen Trend gewährt werden und temporäre Spitzen geglättet werden. Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im wesentlichen von den direkten Vorgängern beeinflusst wird, in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen. In hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat die aus dem Arbeitsspeicher des Rechnerknoten geholt werden müssen, da der Arbeitsspeicher jedoch gerade durch einen anderen Prozessor ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Caches gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass ein kommender Aufruf in den weiterhin ausgelasteten Arbeitsspeicher eventuell genauer gemacht werden könnte.
+Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz wird berechnet sich als $Durchsatz = Zugriffsgrö\text{ß}e / Laufzeit$.\\
+In \cite{kantardzic2011data} (S. 40) ist EMA rekursiv definiert:
+\begin{align*}
+	EMA(i,m) &= p*t(i)+(1-p)*EMA(i-1,m-1)\\
+	EMA(i,1) &= t(i)
+\end{align*}
+Dabei ist $p$ also die Gewichtung für den direkten Vorgängerwert und $1-p$ die Gewichtung für alle vergangenen Werte, $i$ ist der aktuelle Messwert und es werden die letzten $m$ Messungen berücksichtigt. Nummerieren wir alle Messungen durch $1:n$ und berücksichtigen immer alle bisherigen Messungen, also $i = m$ so sind die ersten Werte:
+\begin{align*}
+EMA(1,1) &= t(1)\\
+EMA(2,2) &=  p*t(2)+(1-p)*t(1)\\
+EMA(3,3) &=  p*t(3)+(1-p)*(p*t(2)+(1-p)*t(1))
+\end{align*}
+Das Modell \textit{Tupel1 EMA Durchsatz} bekommt alle Attribute als Eingabe, die auch \textit{Tupel1} hat, also die drei Werte der Attribut-Sets und zudem den EMA mit $p=0.5$ der vergangenen Durchsätze.
 
-\subsection{Attribut Selektion und Generierung}
-Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)\\
-
-jedes Modell beschreiben\\
-welche Attribute hat das Modell\\
-jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten\\
-was die Idee davon ist\\
-warum macht es Sinn, dies zu testen\\
+Zusätzlich gibt es parallel zu den trivialen Modellen auch zwei höhere Modelle, die Fehlerklassen mit arbeiten. Die beiden Modelle bekommen das Attribut-Set der Messungen und zudem deren Fehlerklasse als Informationen. \textit{Tupel1 LinReg-FK} mit den Fehlerklassen aus dem trivialen Modell \textit{LinReg G} und \textit{Tupel1 Tupel1-FK} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem RMQA (siehe \ref{Validierung}) berechnet wurden.
 
 \section{Anwendung und Parameter}
-Wie werden die richtigen Parameter für jedes Modell gefunden? -> Systematisches Testen der Parameter
-Wie wird mit Ausreißern umgegangen, wie werden sie definiert\\
-Aufteilung der Daten in Lern-und Testdatensatz, Cross-Validation; 40.000 Punkte von 400.000\\ 
--- *** Lernen von Read \& Write zusammen oder getrennt\\
+Nachdem die Modelle, die untersucht werden sollen, bestimmt worden sind, stellt sich die Frage, wie sie am besten angewendet werden können. Dazu müssen zunächst für die neuronalen Netze der höheren Modelle gute Parameter gefunden werden.
+Während manche Parameter durch Heuristiken oder nach einigen Testdurchläufen schnell ermittelt werden können, sind andere stark abhängig von den tatsächlichen Trainingsdaten, der Anzahl Datenpunkte und den verwendeten Attributen. 
 
-Anzahl berechneter Netze pro Modell, threshold, Größe der Netze, lern- und fehler-funktionen\\
+Als Funktion zur Fehlerrückführung wird in allen Netzen eine resilente Backpropagation genutzt, nämlich \textit{Rprop+} (\textit{resilent backpropagation with weightbacktracking}) \ref{gunther2010neuralnet} (S. 32). Um Unterschied zur normalen Backpropagation wird jedes Gewicht mit einer individuellen Lernrate verändert, zudem bestimmt nicht die Größe des Gradienten in der Fehlerfunktion wie stark die Gewichte angepasst werden, stattdessen wird bloß das Vorzeichen des Gradienten betrachtet. Durch das merken der Gewichte (engl. weightbacktracking) der vergangenen Iteration kann der letzte Aktualisierungsschritt rückgängig gemacht werden, falls das Fehlerminimum überschritten wurde, in diesem Fall wird dann stattdessen ein kleinerer Schritt durchgeführt. \ref{gunther2010neuralnet} (S. 32)
 
+Als Fehlerfunktion bietet sich die mittlere quadratische Abweichung der Ausgabe des Netzes zur idealen Ausgabe an.
+Für die Aktivierungsfunktion wird die logistische Funktion verwendet, die sich durch einen weicheren Übergang als die Stufenfunktion zwischen minimalen und maximalen Wert auszeichnet, sodass ein Neuron nicht ganz oder gar nicht feuert, sondern auch etwas dazwischen möglich ist. Bei der logistischen Funktion handelt es sich um eine Sigmoidfunktion, sie hat daher eine wohldefinierte Ableitung, was für die Fehlerrückführung benötigt wird. 
 
-Alle Modelle haben einen Trainingsdatensatz, sowie einen Testdatensatz von Messungen 
+Die Anzahl verdeckter Schichten und die Anzahl der Neuronen pro Schicht aus denen das neuronale Netz aufgebaut ist, sowie der Schwellenwert für die partiellen Ableitungen des Fehlergradienten, der als Haltekriterium für den Lernalgorithmus verwendet wird \ref{gunther2010neuralnet} (S. 33), müssen durch systematisches Durchsuchen des Parameterraums für jedes Modell herausgefunden werden.
+Dabei werden zunächst Netze in einer großen Spannweite der Parameterwerte berechnet, um die Parameter dann immer weiter einzugrenzen, wenn sich ein Trend für besonders gute Ergebnisse in einem Wertebereich ergibt.
+
 
 \section{Validierung der Modelle}
-*** Sampling der Datenmenge\\
-Welche Leistungsmerkmale werden warum untersucht?\\
-*** Welche Fehlermetriken verwenden wir?\\
-mathematische Definitionen der metriken\\
-**** Relativen Fehler, |Abs Fehler|, Summary von residuals summary(mess - pred), Summary (relative)\\
-*** Ensemble Lernen\\
-Zudem Vergleich mit durchschnittlicher Leistung von Netzen mit gleihen Parametern\\
-- abhängigkeit von auswahl der trainingsdaten und lokaler konvergenz\\
-Konzept und Anwendung, was soll damit erreicht werden? -> lin abh der netze\\
+\label{Validierung}
 
+Die Modelle werden jeweils auf den zwei Datensätzen, also sowohl lesende als auch schreibende E/A-Zugriffe, der beiden getesteten Anwendungsfälle (\ref{benchmark}) gelernt. Jeder Datensatz umfasst 200000 Messungen, sodass 400000 zu beiden Fällen zur Verfügung stehen. Die neuronalen Netze bekommen 40000 zufällig bestimmte Datenpunkte davon als Trainingsdatensatz. Dies sollte eine relevante Stichprobe der Messdaten sein, andererseits ist der Trainingsaufwand für die Netze so in einem angemessen Aufwand von meist einigen Minuten bis wenigen Stunden. Die restlichen 360000 Datenpunkte werden zur Berechnung der Fehlermetriken (\ref{Validierung}) verwendet.
+
+Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden. Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt. Je nachdem mit welchen Gewichten das Netz startet ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
+
+Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
+\textit{MAF} ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
+Der \textit{RMAF} ist der relative \textit{MAF}, also der \textit{MAF} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit. Diese beiden Metriken geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
+Um ein Verständnis für die Streuung der Vorhersagefehler zu bekommen ist der relative mittlere quadratische absolute Fehler gemittelt über alle Vorhersagen (\textit{RMQA}) nützlich. Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise sehr gut und teilweise sehr schlecht agiert.
+Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich. \textit{Q3} gibt das obere Quartil des absoluten relativen Fehlers über alle Vorhersagen an und \textit{Max}
+den größten relativen Fehler vom Modell gemacht wurde.
+Der Wert von \textit{Bereich} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen. Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre dieser Wert also bei 80\%. An \textit{Bereich} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
+
+Neben der Vorhersage der Leistung wird in den höheren Modellen selbst auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. Zur Evaluierung der Ausreißer-Vorhersage werden weitere Fehlermetriken genutzt.
+Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF}) und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
+Sowie den Anteil der korrekt vorhergesagten Ausreißer und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden, in der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive, \textit{TP} und \textit{FP}).
+Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
+
+%*** Ensemble Lernen\\
+%Zudem Vergleich mit durchschnittlicher Leistung von Netzen mit gleihen Parametern\\
+%%- abhängigkeit von auswahl der trainingsdaten und lokaler konvergenz\\
+%Konzept und Anwendung, was soll damit erreicht werden? -> lin abh der netze\\
 
 \section{Aufbau der Benchmark-Tests}
 \label{benchmark}
@@ -468,14 +485,21 @@ Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer f
 \section{Verwendete Programmiersprache und Bibliotheken}
 R,neuralnet etc.
 
-\section{Modell-Parameter}
- systematisch erkundet
+Die Aufbereitung der Messdaten, die Berechnung der Modelle, sowie die Auswertung der Ergebnisse wurden mit R gemacht.
+Die neuronalen Netze wurden mit dem \textit{neuralnet} Paket \ref{gunther2010neuralnet} berechnet. Der Lernvorgang der Netze ist sehr aufwendig und kann mehrere Stunden in Anspruch nehmen, gleichzeitig sind die idealen Parameterwerte nicht bekannt, sodass viele Netze berechnet werden müssen, um gute Werte zu finden. Der Zeitaufwand kann durch die parallele Berechnung mehrerer Netze deutlich reduziert werden, sodass die Mehrkernprozessoren der Rechner, auf denen gearbeitet wird, ausgenutzt werden. Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher am einfachsten durch die Parallelisierung von Schleifen erreicht werden. Dafür verwende ich die Pakete \textit{doParallel} und \textit{foreach} \ref{weston2014getting}.
+Die \textit{EMA}-Werte für \textit{Tupel1 EMA Durchsatz} werden mit dem Paket \textit{TTR} berechnet.
+
+\section{Implementationsdetails}
+Um die neuronalen Netze am effektivsten zu Nutzen sollten die Eingabewerte normiert werden, ansonsten werden Attributen mit höheren Werte-Domänen eine größere Bedeutung vom Gradientienverfahren beigemessen. Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. Bei der Exploration der Daten (\ref{exploration}) wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt. Tatsächlich lässt sich in einem Graphen mit sortierten Laufzeiten kaum ein Unterschied in den Laufzeiten der ersten ~100000 Messungen ausmachen (\ref{Laufzeiten_Sortiert_nolog}). Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird. Gleiches gilt für die Zugriffsgrößen, deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
+Die Ergebnisse der neuronalen Netze müssen mit passenden Umkehrfunktionen ihrer Vorverarbeitung entsprechend wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.
+
+Da die neuronalen Netze nur ein Haltekriterium haben, das von dessen Konvergenz abhängt, kann es beliebig lange bis zum Abbruch dauern. Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst groß gewählt, wenn sich zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
 
 \section{Testsystem, Mistral}
 \label{impl:testsystem}
 Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
 
-Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom Juni 2015 auf Platz 56 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
+Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
 
 
 \paragraph{Zusammenfassung:}
@@ -488,6 +512,7 @@ Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurd
 \bigskip
 
 \section{Exploration der Daten}
+\label{exploration}
 Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln. In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Größe und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer. Alle Datensätze bestehen aus 200.000 Messungen.\\
 
 \begin{table}
@@ -918,12 +943,6 @@ Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Re
 	\caption{Ergebnisse der trivialen Modelle}
 	\label{tab:triv}
 \end{table}
-MAF $\rightarrow$ Mittlerer arithmetischer absoluter Fehler \\
-RMAF $\rightarrow$ Relativer mittlerer arithmetischer absoluter Fehler\\
-RMQA $\rightarrow$ Relative mittlere quadratische absolute Abweichung\\
-Q3 $\rightarrow$ oberes Quartil des absoluten relativen Fehlers\\
-Max $\rightarrow$ Maximaler relativer absoluter Fehler\\
-\\
 Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten zu betrachten. Wie bei der Exploration der Daten sind dabei einerseits die Vorhersagen in der Reihenfolge in der sie getroffen worden, und andererseits die sortierte Betrachtung von Nutzen.  
 Auf den Graphen zu cached-off0-seq \ref{fig:zeit_baselines_seq} lässt sich recht gut die Qualität der Modelle anhand der Stärke der Differenzierung erkennen. Während bei der Durchschnittsdauer gar nicht differenziert wird, können die Modelle "Lineare Regression nach Größe" und "Median aggregierte Daten" erfolgreich die größeren Gruppen von Messwerten unterscheiden. 
 Die beiden Modelle mit Fehlerklassen können zudem innerhalb einer Punktgruppe weitere Differenzierungen machen und erreichen entsprechend die besten Fehlerwerte.\\
@@ -1062,8 +1081,6 @@ Und zuletzt wird jeweils zusätzlich die Ausreißer-Vorhersage genauer studiert.
 Die Metainformationen der Netze befinden sich in \ref{tab:model-stats}. Dort sind Informationen zum Aufbau der besten Netze, die Anzahl der verdeckten Schichten, sowie die Anzahl Neuronen, die jede Schicht enthält. Zudem sind Informationen über das Training der Netze mit der Anzahl Iterationen, die der Algorithmus gebraucht hat, bis der Schwellenwert für die Konvergenz erreicht war, und die Trainingsdauer, also wie lange die Berechnung des Netzes tatsächlich gedauert hat.
 In Tabelle \ref{tab:results} sind für alle Modelle die Werte der verschiedenen Fehlermetriken angegeben.
 Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage betrachtet.
-Neben der Vorhersage der Leistung wurde in den höheren Modellen auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. 
-Die Tabelle gibt dem relativen mittleren arithmetischen Fehler und die relative mittlere quadratische Abweichung zu den Vorhersagen der Quantile an, sowie den Anteil der korrekt vorhergesagten Ausreißer und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden, in der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive, TP und FP).
 
 \begin{table}
 	\scriptsize
@@ -1396,10 +1413,6 @@ Insgesamt zeigt das Modell trotz seiner Einfachheit bereits eine gute Leistung b
 	Wir haben gesehen, dass Ausreißer-Vorhersage nur auf den sequentiellen Messungen mit Hilfe der Quantile zu sinnvollen Ergebnissen geführt hat, da die Anzahl Messungen pro Attribut-Set für den randomisierten Datensatz nicht aussagekräftig sind.
 	}
 \clearpage
-
-\section{Ensemble Lernen}
-Qualität einzelner Netze\\
-statistische Abhängigkeit mehrerer identisch gelernter Netze
 
 \paragraph{Zusammenfassung:}
 \textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
