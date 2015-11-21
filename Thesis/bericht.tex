@@ -322,7 +322,9 @@ Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et
 ** Daten exploriert\\
 
 
+
 \section{Modell der Ein-/Ausgabe}
+\label{ea_modell}
 Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.\\
 Anhand der Verarbeitung eines Leseaufrufs gehe ich die Stufen des E/A-Systems durch. Wie in \ref{E/A} beschrieben hängt die Zugriffszeit davon ab, in welcher Speicherebene die angefragte Datei befindet. Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die angefragte Datei bereits innerhalb des anfragenden Rechnerknoten befindet oder diese von einer Festplatte außerhalb des Knotens geholt werden muss.
 Falls die sich die Datei nicht im Speicher des Rechnerknotens befindet, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden. Der Verwaltungsaufwand der Anfrage sollte im wesentlichen für alle Aufrufe konstant sein, denn sie sieht strukturell für aufwendige Aufrufe nicht anders aus, als für weniger aufwendige.
@@ -350,7 +352,7 @@ Das Modell für die Ein-/Ausgabe in dieser Arbeit entspricht letztendlich
 
 Die Vermutung in dieser Arbeit ist, dass sich E/A-Aufrufe in verschiedene Pfade unterteilen lassen, dabei entspricht der Pfad der Verbindung vom aufrufenden Prozess zur aufgerufenen Datei. Ein perfektes Modell könnte unter Kenntnis dieses Pfades und der Dateiattribute die Dauer des Zugriffs exakt vorhersagen.\\
 Im Benchmark-Test (\ref{benchmark}) wird zu jeder gemessenen E/A-Prozedur die Größe des gelesenen/geschriebenen Bereichs, der Operationstyp und der Delta-Abstand gemessen.
-Das Tripel $(Größe,OpTyp,Delta-Abstand)$ bezeichne ich als Attribut-Set der Messung.
+Das Tripel $(Grö\text{ß}e,OpTyp,Delta-Abstand)$ bezeichne ich als Attribut-Set der Messung.
 
 \section{Leistungs- und Ausreißervorhersage}
 Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den Aufwand der E/A-Aufrufe vorherzusagen. 
@@ -361,36 +363,67 @@ Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten a
 
 
 \section{Modellklassen}
+Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.\\
 
-Es können verschiedene Klassen von Modellen unterschieden werden...
+Da es sich bei der E/A-Leistungsvorhersage um ein komplexes Problem handelt, steht nicht a priori fest, wie eine passende Modellierung auszusehen hat. 
+In dieser Arbeit wurden daher verschiedene Ansätze getestet. Um besser zu verstehen, welche Ideen einem Modell zugrunde liegen und zur einfacheren Beschreibung der Modelle führe ich verschiedene Kategorien von Modellen ein die jeweils einem bestimmten Ansatz entsprechen.
+Die Modellklassen unterscheiden sich in ihrer Herangehensweise ans Problem. Modelle, die den selben Klassen zugehören, unterscheiden sich an den Informationen, die ihnen über die Messdaten zur Verfügung stehen.
 
-Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.
+\subsection{Triviale und höhere Modelle}
+Triviale Modelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet. Die höheren Modelle in dieser Arbeit basieren dagegen auf neuronalen Netzen und müssen aufwendig trainiert werden.\\
+Die trivialen Modelle sind zum einen beim Erkunden sinnvoller Ansätze hilfreich, zum anderen dienen sie dem Vergleich der aufwendigeren Modelle und stellen eine untere Schranke für deren Leistungen dar. So kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können. Die Erwartung ist, dass die höheren Modelle wesentlich bessere Ergebnisse zeigen, als die trivialen. Wenn dies nicht der Fall ist, war entweder die Modellierung schlecht oder die zur Verfügung stehenden Messdaten sind unzureichend für eine zufriedenstellende Beschreibung.
+Eine Ausnahme bilden dabei unfaire triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Beispielsweise sind dies Modelle, die Testdaten bereits kennen. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
+
+\subsection{Zeitreihen- und Aggregierungs-Modelle}
+Für Aggregierungsmodelle werden die Trainingsdaten stark vereinfacht. Sie verfolgen den Ansatz, dass es nicht möglich ist innerhalb eines Attribut-Sets zu differenzieren. Sodass verschiedene Messungen eines Sets alle die selbe Vorhersage zugewiesen bekommen. Dazu werden alle Trainingsdatenpunkte zusammengefasst, die zum selben Set gehören.
+
+Bei Zeitreihen-Modellen hingegen findet keine Aggregierung statt. Zu verschiedenen Messungen eines Attribut-Sets gibt es entsprechend \glqq widersprüchliche\grqq{} Informationen, da sich ihre Laufzeit unterscheidet. Das Modell muss dann entweder intern die Daten zusammenfassen, um doch die selbe Vorhersage für jede Messung eines Sets zu machen oder es versucht anhand weiterer Informationen über den Systemzustand eine Differenzierung durchzuführen. Dieses zusätzliche Wissen über den aktuellen Zustand des Systems kann allerdings nur über die Kenntnis der vorherigen E/A-Aufrufe abgeleitet werden, denn die in \ref{ea_modell} beschriebenen Attribute bleiben die einzigen Informationen, die zu einer Messung zur Verfügung gestellt werden.
+Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt, wenn dieses Verhalten erkannt wird, könnte die Vorhersage erheblich verbessert werden.
+
+\subsection{Fehlerklassen-Modelle}
+Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit unterschiedlichen Pfaden ausdrücken lassen und die verbesserten Vorhersagen zu untersuchen, die unter Kenntnis dieser Pfade gemacht werden können, werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
+Fehlerklassen werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
+Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. (\textbf{WARUM?})
+Wenn das Modell, das zur Generierung der Fehlerklassen genutzt wurde, und das Modell, das mit Wissen über diese Fehlerklassen, neue Vorhersagen macht ähnlich funktionieren, sollten die Ergebnisse dadurch wesentlich besser werden. Das liegt daran, dass das Modell bereits \glqq weiß\grqq{}, welchen Fehler es bei einer Vorhersage ohne Berücksichtigung der Fehlerklasse machen würde. 
+
+\section{Untersuchte Modelle}
+\label{impl:modelle}
+Agregierungsmodelle haben (unfaire -> aber ok, da nur für baselines) globale Sicht\\
+
+Ich stelle kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die trivialen Modelle durch, dann die höheren.
+
+Das einfachste Modell ist \textit{Durchschnitt}, das Modell kennt den globalen arithmetischen Mittelwert aller gemessen Messungen und ist in sofern unfair. Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle anderen Modelle bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, mit schlechterer Leistung könnte unterstellt werden zufällige Vorhersagen zu machen und man kann auf eine Fehlfunktion schließen.
+
+Eine ähnliche Methode verwendet das Modell \textit{Median agg}. Dies ist auch ein unfaires Modell, dass Kenntnis über alle Messungen in den Datensätzen hat. Es berechnet für jedes Attribut-Set den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen dieses Sets. Dieses Modell stimmt mit dem Ansatz überein, eine Datenbank aufzubauen, in der alle E/A-Aufrufe und deren Laufzeiten gespeichert werden würden. Diese triviale Variante ist der Idealfall dazu, bei dem es zu allen auftretenden Attribut-Sets bereits einen gespeicherten Mittelwert gibt.
+
+Während die ersten beiden Modelle Aggregations-Modelle sind, sind die Modelle, denen lineare Regression zugrunde liegt Zeitreihen-Modelle.
+Lineare Regression ist ein einfaches numerisches Verfahren, dass eine lineare Funktion berechnet, die den Fehler zu den bekannten Messpunkten minimiert. Die Funktion ist eine Gerade der Form $f(x) = a + b*x$, mit der Verschiebung a und Steigung b. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
+Ich probiere drei verschiedene lineare Modelle aus.
+\textit{LinReg G} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
+\textit{LinReg GA} enthält auch die Werte zu Delta-Abstand und \textit{LinReg GAO} berücksichtigt zudem den Operationstyp der Messungen.
+Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Sets unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
+
+Zuletzt gibt es noch zwei weitere Aggregations-Modelle, die Fehlerklassen ausnutzen.
+Sie funktionieren genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für jedes Attribut-Set berechnet, die zur selben Fehlerklasse gehören.
+\textit{Median agg LinReg-FK} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{Median agg Tupel1-FK} die Klassen der besten Instanz von \textit{Tupel1}.
+
+Das Aggregations-Modell \textit{Tupel1 agg} entspricht der fairen Variante zu \textit{Median agg}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten. Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Mess-Attribute interpolieren. Das neuronale Netz des Modells bekommt als Eingabedaten alle Attribut-Sets mit aggregierten Laufzeiten aus seinen Trainingsdaten. Das Netz lernt dann das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
+Das Modell muss sich nicht bloß die Laufzeiten zu den Attribut-Sets \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Sets sinnvoll vorhersagen zu können.
+
+Ähnlich dazu agiert das Modell Zeitreihen-Modell \textit{Tupel1}. Die Eingabedaten werden allerdings nicht aggregiert. Es versucht also direkt das beschriebene Tripel auf die zugehörigen Laufzeiten abzubilden. Es hat sonst keine weiteren Informationen, sodass es ebenso wenig, wie das Aggregationsmodell, zwischen Messungen mit gleichen Attributen unterscheiden kann.
+
+\textit{Tupel2} bekommt nicht nur die Attribute der Messung, dessen Leistung es vorhersagen soll, sondern auch die Attribute und die Laufzeit der vorherigen Messung. Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, würde sich dies an der vergangenen E/A-Leistung niederschlagen. Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
+
+Eine tieferliegende Periodizität könnte unter Umständen durch \textit{Tupel1 gleitender Durchsatz} ausgenutzt werden.
 
 \subsection{Attribut Selektion und Generierung}
 Korrelationen untersuchen, neues Attribute generieren (wesentlich für die verschiedenen Modelle)\\
 
-\subsection{Zeitreihen- und Aggregierungs-Modelle}
-Agregierungsmodelle haben (unfaire -> aber ok, da nur für baselines) globale Sicht\\
-\subsection{Triviale- und Höhere-Modelle}
-\subsection{Fehlerklassen-Modelle}
-Die Idee, Prognosen\\
-
-Um einerseits die Leistungsvorhersage zu optimieren, aber um andererseits auch die These zu untersuchen, dass sich E/A-Aufrufe im System mit unterschiedlichen Pfaden ausdrücken lassen, werden Modelle mit Kenntnis von Fehlerklassen analysiert.
-
-Fehlerklassen werden mit Hilfe der Vorhersagen eines Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
-
-\section{Untersuchte Modelle}
-\label{impl:modelle}
-
-zunächst die trivialen dann höhere \\
-
-** Erste Modelle gebastelt\\
 jedes Modell beschreiben\\
 welche Attribute hat das Modell\\
 jeweils Beschreiben, wie die Daten hierfür vorbereitet werden mussten\\
 was die Idee davon ist\\
 warum macht es Sinn, dies zu testen\\
-wie soll die Performance hier untersucht werden?\\
 
 \section{Anwendung und Parameter}
 Wie werden die richtigen Parameter für jedes Modell gefunden? -> Systematisches Testen der Parameter
@@ -417,9 +450,6 @@ Konzept und Anwendung, was soll damit erreicht werden? -> lin abh der netze\\
 
 \section{Aufbau der Benchmark-Tests}
 \label{benchmark}
-Wie wurden dei Daten gewonnen?\\
-Einführung von cached-off0-seq und rnd\\
-
 Das Testsystem (\ref{impl:testsystem}) muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
 Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
 Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
@@ -437,6 +467,9 @@ Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer f
 
 \section{Verwendete Programmiersprache und Bibliotheken}
 R,neuralnet etc.
+
+\section{Modell-Parameter}
+ systematisch erkundet
 
 \section{Testsystem, Mistral}
 \label{impl:testsystem}
@@ -860,7 +893,7 @@ Die Ergebnisse der in \textbf{ABSCHNITT} beschriebenen trivialen Modelle sind in
 Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Fehlerwerte höher sind. Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren, hier sind die Werte $30-140$ mal höher. Eine Ausnahme ist "Median agg LinReg-Fehlerklasse", das Modell kann eine weiterhin sehr gute mittlere Vorhersage treffen, nur die Ausreißer nach oben scheinen zugenommen zu haben, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.\\
 Allgemein sind die Ergebnisse bereits überraschend gut. Ein durchschnittlicher Fehler von $5\%$ auf cached-off0-seq bzw. $7-12\%$ auf cached-off0-rnd durch die Modelle, die Fehlerklassen ausnutzen, deutet daraufhin, dass die Vorgänge im E/A-System im Wesentlichen korrekt repräsentiert werden. Ob über eine größere Messreihe ein geringerer durchschnittlicher Fehler als $5\%$ überhaupt erreicht werden kann, ist fraglich, da das Messrauschen durch unvorhersehbare Ereignisse sowohl auf System-, als auch Bauteilebene, in diesen Bereichen eine zu große Bedeutung zukommt.\\
 Die Modelle mit linearer Regression führen auf cached-off0-seq auch bereits zu zufriedenstellenden Ergebnissen, während sie auf cached-off0-rnd kaum sinnvolle Vorhersagen machen zu scheinen. Die Modelle lassen sich für die Datensätze jeweils in drei Gruppen (gut, mittel, schlecht) unterteilen. Auf beiden Datensätzen führen die beiden Modelle mit Fehlerklasse zu einer guten Vorhersage. "Median agg" hat jeweils eine mittel gute Leistung, während "Durchschnitt" jeweils schlecht ist. Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende mittlel gute Vorhersage macht, während die Vorhersage auf dem randomisierten Messungen kaum besser als des Durschnitts-Modell ist. \\ 
-Das Modell, das immer die Durchschnittsdauer vorhersagt ist als absolute untere Grenze für angewendete Modelle zu verstehen, da hier praktisch keine Expertise über die Daten eingeht. Einem Modell mit schlechterer Leistung, als das Durchschnitts-Modell müsste unterstellt werden zufällige Vorhersagen zu machen.
+Das Modell, das immer die Durchschnittsdauer vorhersagt ist als absolute untere Grenze für angewendete Modelle zu verstehen, da hier praktisch keine Expertise über die Daten eingeht. 
 Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind somit gerechtfertigt. \\
 Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.\\
 
