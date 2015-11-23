@@ -198,31 +198,41 @@ Zur Anwendung eines Verfahrens des maschinellen Lernens müssen zunächst Kriter
 Oft is es notwendig die zur Verfügung stehenden Daten aufzubereiten, bevor ein maschineller Lernalgorithmus effizient und korrekt Informationen aus diesen ableiten kann. Ein Problem können fehlerhafte Daten sein, die durch zufälligen Messfehler oder eine systematisch inkorrekte Messung entstehen können \cite{Alpaydin:2010:IML:1734076} (Seite 13-15). Zudem schreibt Alpaydin, dass Teile der Daten überflüssig sein können, da sie redundant sind oder keine relevanten Informationen enthalten. Problematisch sind auch widersprüchliche Datenpunkte, hierbei stellen mehrere Datenpunkte dem maschinellen Entscheider die ununterscheidbare Eingabewerte zur Verfügung, sie haben jedoch unterschiedliche zugehörige Ausgabewerte \cite{Alpaydin:2010:IML:1734076} (Seite 14).
 Mit all diesen Problemen muss, unter Beachtung der Eigenschaften des vorliegenden Datensatzes, bei der Aufbereitung der Daten sinnvoll umgegangen werden. So können beispielsweise Ausreißer bei den Daten aussortiert werden, da diese eventuell durch eine Fehlmessung entstanden sind. Widersprüchliche Datenpunkte können zusammengefasst werden, indem sie zusammen einen neuen Datenpunkt mit eindeutigen Ausgabewerten bilden (dies könnten die Mittelwerte sein).
 
-Unüberwachtes Lernen findet bei der Clusteranalyse statt, Kantardzic beschreibt Clusteranalyse folgendermaßen: "Cluster analysis is the formal study of methods and algorithms for natural grouping, or clustering, of objects according to measured or perceived intrinsic characteristics or similarities." \cite{kantardzic2011data} (Seite 250). Ein einfaches und anschauliches Beispiel sind Punkte im zweidimesionnalen Raum, die hinsichtlich ihrer Position gruppiert werden. ( \textbf{BILDER SELBER MACHEN HIERZU} )
-Ein einfacher Clustering-Algorithmus ist der k-Means-Algorithmus. Bei diesem muss zunächst die Anzahl Cluster $k$ festgelegt werden. Die $k$ Mittelwerte der Cluster mit zufälligen Werten initialisiert. Dann wird jeder Datenpunkt dem Cluster zugeordnet, dessen Mittelwert seinem am dichtesten ist. Danach werden die Mittelwerte der Cluster anhand der Ihnen zugeordneten Punkte mit einer beliebigen Metrik berechnet und gesetzt. Das Neuzuordnen der Punkte und Berechnen der Mittelwerte wird nun solange wiederholt, bis sich keine Änderung der Zuordnung mehr ergibt. Als Endergebnis eines Cluster-Algorithmus erhält man eine Gruppierung der Datenpunkte in Mengen mit möglichst niedriger Varianz innerhalb der Menge und möglichst großer Varianz zwischen den Mengen. \\
-Die Aggregierung der Vorhersagen gesuchter Ausgabewerte von überwachten Lernalgorithmen ist eine recht simple Möglichkeit ein zuverlässigeres und exakteres Endergebnis zu erhalten. Verschiedene Modelle im Bereich des Ensemble Lernens verfolgen diesen Ansatz. Ein Ensemble ist dabei eine Menge von Vorhersage-Modellen. Nach Kantardzic \cite{kantardzic2011data} (Seite 236) kann ein solches Ensemble eine bessere Vorhersage treffen, als eines der in ihm enthaltenen einzelnen Modelle, wenn das Ensemble aus voneinander unabhängigen Modellen besteht, die mit einer Wahrscheinlichkeit größer als $0,5$ das richtige Ergebnis vorhersagen. Wobei er sich hier auf Klassifizierende Modelle bezieht, bei einem Regressionsmodell kann eine solche Wahrscheinlichkeit für die exakt richtige Ausgabe nicht erreicht werden, hier würde man eventuell von der Wahrscheinlichkeit sprechen, dass die Vorhersage in einem bestimmten Fehlerrahmen liegt. 
-An einem einfachen Beispiel verdeutlicht Kantardzic \cite{kantardzic2011data} (Seite 237) weshalb seine Behauptung gilt. Angenommen man hat $15$ voneinander unabhängige Modelle, jeweils mit einer Fehlerrate $\epsilon = 0,3$, das Ensemble bestehend aus diesen $15$ Modellen sagt die Klasse für einen Datenpunkt voraus, für die die Mehrheit der Modelle stimmt. Entsprechend liegt die Vorhersage des Ensembles falsch, wenn mehr als die Hälfte der Modelle eine falsche Vorhersage gemacht haben. Somit ergibt sich als Fehlerrate des Ensembles: 
-Der Fehler der einzelnen Modelle von $0,3$ konnte also um ein wesentliches Stück verkleinert werden.
-\begin{align*}
-	\epsilon _{ensemble}=\sum{15,i=8}{n\choose k}\epsilon^i(1-\epsilon)^(15-i) = 0,05
-\end{align*}
-\\
-\textbf{(generell , statt . bei Zahlen)}
+Unüberwachtes Lernen findet bei der Clusteranalyse statt, Kantardzic beschreibt Clusteranalyse folgendermaßen: "Cluster analysis is the formal study of methods and algorithms for natural grouping, or clustering, of objects according to measured or perceived intrinsic characteristics or similarities." \cite{kantardzic2011data} (Seite 250). Ein einfaches und anschauliches Beispiel sind Punkte im zweidimensionalen Raum, die hinsichtlich ihrer Position gruppiert werden (siehe Abbildung \ref{fig:clustering_beispiel}).
+
+\begin{figure}
+	\subfloat{
+		\includegraphics[width=.5\textwidth]{Bilder/test_clustering_points.png}
+	}
+	\hfill
+	\subfloat{
+		\includegraphics[width=.5\textwidth]{Bilder/test_clustering.png}
+	}	
+	\caption{Datenpunkte mit je einem Wert für x und y-Dimension. Rechts farbliche Markierung für die Zugehörigkeit zu drei vom k-Means-Algorithmus bestimmte Cluster. Ein Kreuz markiert den Mittelpunkt des Clusters (Mittelwert aller zugehörigen Punkte)}
+	\label{fig:clustering_beispiel}
+\end{figure} 
+
+Ein einfacher Clustering-Algorithmus ist der k-Means-Algorithmus. Bei diesem muss zunächst die Anzahl Cluster $k$ festgelegt werden. Die $k$ Mittelwerte der Cluster mit zufälligen Werten initialisiert. Dann wird jeder Datenpunkt dem Cluster zugeordnet, dessen Mittelwert seinem am dichtesten ist. Danach werden die Mittelwerte der Cluster anhand der Ihnen zugeordneten Punkte berechnet und gesetzt. Das Neuzuordnen der Punkte und Berechnen der Mittelwerte wird nun solange wiederholt, bis sich keine Änderung der Zuordnung mehr ergibt. Als Endergebnis eines Cluster-Algorithmus erhält man eine Gruppierung der Datenpunkte in Mengen mit möglichst niedriger Varianz innerhalb eines Clusters und möglichst großer Varianz zwischen den Clustern.
+
+%Die Aggregierung der Vorhersagen gesuchter Ausgabewerte von überwachten Lernalgorithmen ist eine recht simple Möglichkeit ein zuverlässigeres und exakteres Endergebnis zu erhalten. Verschiedene Modelle im Bereich des Ensemble Lernens verfolgen diesen Ansatz. Ein Ensemble ist dabei eine Menge von Vorhersage-Modellen. Nach Kantardzic \cite{kantardzic2011data} (Seite 236) kann ein solches Ensemble eine bessere Vorhersage treffen, als eines der in ihm enthaltenen einzelnen Modelle, wenn das Ensemble aus voneinander unabhängigen Modellen besteht, die mit einer Wahrscheinlichkeit größer als $0,5$ das richtige Ergebnis vorhersagen. Wobei er sich hier auf Klassifizierende Modelle bezieht, bei einem Regressionsmodell kann eine solche Wahrscheinlichkeit für die exakt richtige Ausgabe nicht erreicht werden, hier würde man eventuell von der Wahrscheinlichkeit sprechen, dass die Vorhersage in einem bestimmten Fehlerrahmen liegt. 
+%An einem einfachen Beispiel verdeutlicht Kantardzic \cite{kantardzic2011data} (Seite 237) weshalb seine Behauptung gilt. Angenommen man hat $15$ voneinander unabhängige Modelle, jeweils mit einer Fehlerrate $\epsilon = 0,3$, das Ensemble bestehend aus diesen $15$ Modellen sagt die Klasse für einen Datenpunkt voraus, für die die Mehrheit der Modelle stimmt. Entsprechend liegt die Vorhersage des Ensembles falsch, wenn mehr als die Hälfte der Modelle eine falsche Vorhersage gemacht haben. Somit ergibt sich als Fehlerrate des Ensembles: 
+%Der Fehler der einzelnen Modelle von $0,3$ konnte also um ein wesentliches Stück verkleinert werden.
+%\begin{align*}
+%	\epsilon _{ensemble}=\sum{15,i=8}{n\choose k}\epsilon^i(1-\epsilon)^(15-i) = 0,05
+%\end{align*}
+%\\
+%\textbf{(generell , statt . bei Zahlen)}
 
 \section{Künstliche Neuronale Netze}
-Data Mining kurz allg.
-zu lösende Problemklasse 
-lineare serperabilität, -> mächtigkeit von NN
-RNN
-Vor- und Nachteile
-
-Bei künstlichen neuronalen Netzen, im Folgenden oft nur neuronale Netze genannt, handelt es sich um eine Methode aus dem Bereich des maschinellen Lernens zum Approximieren einer unbekannten Funktion, die der Relation zwischen zwei Datenmengen zugrunde liegt. Die Methode ist inspiriert von biologischen neuronalen Netzen, wie sie im Gehirn vorkommen. 
-Dafür verwenden sie einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.\\
+\label{hintergrund_nn}
+Bei künstlichen neuronalen Netzen, im Folgenden nur neuronale Netze genannt, handelt es sich um eine Methode aus dem Bereich des maschinellen Lernens zum Approximieren einer unbekannten Funktion, die der Relation zwischen zwei Datenmengen zugrunde liegt. Die Methode ist inspiriert von biologischen neuronalen Netzen, wie sie im Gehirn vorkommen. 
+Sie verwenden einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.
 Rojas \cite{Rojas:1996:NNS:235222} vergleicht neuronale Netze mit einer Black Box, also einem System mit beobachtbarer Ein- und Ausgabe, aber unbekannter innerer Verarbeitung der Informationen. 
-Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabevektoren $E \in \mathbb{R}^n$ mit jeweils zugehörigem Ausgabevektor $A \in \mathbb{R}^m$ vor und dieses versucht eine passende Funktion $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$ zu finden. Dementsprechend handelt es sich hierbei um überwachtes Lernen, da eine gewünschte ideale Ausgabe vorgegeben wird.\\
-Ein feedforward-Netz neuronales Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe \ref{fig:Schichten}), wobei die Verbindungen aus jeder Schicht jeweils nur in die nächsthöhere Schicht gehen. 
-Die Eingabeschicht besteht meiner vorherigen Definition entsprechend aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet. Die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter, bis die Ergebnisse der Ausgabeschicht als Ausgabevektor interpretiert werden.\\
-Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen zu zurückliegenden Schichten vorkommen, dadurch ist die Berechnung mehr deterministisch bestimmt. Es müssen Berechnungs- und Determinierungsregeln festgelegt werden. 
+Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabevektoren $E \in \mathbb{R}^n$ mit jeweils zugehörigem Ausgabevektor $A \in \mathbb{R}^m$ vor und dieses versucht eine passende Funktion $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$ zu finden. Dementsprechend handelt es sich hierbei um überwachtes Lernen, da eine gewünschte ideale Ausgabe vorgegeben wird.
+Ein feedforward-Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe \ref{fig:Schichten}), wobei die Verbindungen aus jeder Schicht jeweils nur in die Nächsthöhere gehen. 
+Die Eingabeschicht besteht meiner vorherigen Definition entsprechend aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet. Die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter.
+Die Ergebnisse der Ausgabeschicht bilden den Ausgabevektor mit Länge $m$.
+Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen zu zurückliegenden Schichten vorkommen, dadurch ist die Berechnung zu einem Eingabevektor nicht mehr deterministisch bestimmt. Es müssen Berechnungs- und Determinierungsregeln festgelegt werden. 
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
@@ -230,94 +240,99 @@ Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen z
 	\caption{Zweischichtiges Netz (wiki)}
 	\label{fig:Schichten}
 \end{figure}
-Ein jedes Neuron rechnet die hineinkommenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("unlimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
-\\
+Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("unlimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/ArtificialNeuronModel_deutsch.png}
 	\end{center}
 	\caption{Schema eines künstlichen Neurons (wiki)}
 	\label{fig:Neuron}
-\end{figure} \\
+\end{figure}
+Die Aktivierungsfunktion berechnet eventuell mit oder ohne einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht weitergegeben wird.
+Die Aktivierungsfunktion kann beispielsweise eine simple Stufenfunktion sein, die allen Netzeingbaben kleiner des Schwellwertes eine Null und allen Eingaben größer gleich des Schwellwertes eine Eins zuweist.
+Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion und einer Stufenfunktion mit Schwellwert als Aktivierungsfunktion wird von Rojas \textit{Perzeptron} bezeichnet \cite{Rojas:1996:NNS:235222} (S. 60).
+Ein feedforward-Netzwerk aus Perzeptrons, in dem jedes Neuron mit allen Neuronen der folgenden Schicht verbunden ist, wird als \textit{multilayer perceptron} (kurz MLP) bezeichnet.
+Ein neuronales Netz lernt die Abbildung zwischen den vorgegebenen Paaren von Eingabe- und Ausgabedaten durch Anpassung der Gewichte an den Kanten, nachdem es mit zufällig initialisierten Kantengewichten gestartet ist.
+Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagation). Dabei wird der mittlere quadratische Fehler der berechneten Ausgabe gegenüber der vorgegebenen Ausgabe ermittelt und daraufhin unter Rücksichtnahme auf eine Lernrate mit Hilfe des Gradientenverfahren minimiert.
 
-Die Aktivierungsfunktion berechnet eventuell mit einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht gegeben wird. Die Aktivierungsfunktion kann beispielsweise eine simple Stufenfunktion sein, die allen Netzeingbaben kleiner des Schwellwertes eine Null und allen Eingaben größer gleich des Schwellwertes eine Eins zuweist.\\
-Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion und einer Stufenfunktion mit Schwellwert als Aktivierungsfunktion wird von Rojas Perzeptron bezeichnet \cite{Rojas:1996:NNS:235222} (Seite 60).
-Ein feedforward-Netzwerk aus Perzeptrons, in dem jedes Neuron mit allen Neuronen der folgenden Schicht verbunden ist, wird als multilayer perceptron (kurz MLP) bezeichnet.
-Ein neuronales Netz lernt die Abbildung zwischen den vorgegebenen Paaren von Eingabe- und Ausgabedaten durch Anpassung der Gewichte an den Kanten, nachdem es mit zufällig initialisierten Kantengewichten gestartet ist. Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagation). Dabei wird der mittlere quadratische Fehler der berechneten Ausgabe gegenüber der vorgegebenen Ausgabe ermittelt und daraufhin unter Rücksichtnahme auf eine Lernrate mit Hilfe des Gradientenverfahren minimiert.
-Vor der Anwendung eines künstlichen neuronalen Netzes für ein Problem stellt sich die Frage, ob dieses für das Problem geeignet ist. Dazu gibt es einige interessante mathematische Beweise.
-Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren \cite{Rojas:1996:NNS:235222} (Seite 62-63). 
-Wobei lineare Separierbarkeit definiert ist als: Zwei Mengen von Pukten A und B .. (auf deutsch? ) \\
+Vor der Anwendung von künstlichen neuronalen Netzen für ein Problem stellt sich die Frage, ob diese für das Problem geeignet sind. Dazu gibt es einige interessante mathematische Beweise.
+Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren \cite{Rojas:1996:NNS:235222} (S. 62-63). 
+Wobei lineare Separierbarkeit definiert ist als:
+
+Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, wenn $n + 1$ reelle Zahlen $w_1,...,w_{n+1}$ existieren, sodass für jeden Punkt $(x_1,x_2,...,x_n) \in A$ die Ungleichung $\sum_{i=1}^{n} w_ix_i \ge w_{n+1}$ gilt und für jeden Punkt $(x_1,x_2,...,x_n) \in B$ $\sum_{i=1}^{n} w_ix_i < w_{n+1}$ \cite{Rojas:1996:NNS:235222} (S. 63)
 
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/Lineare_Separierbarkeit.png}
 	\end{center}
 	\caption{Lineare Separierbarkeit von Funktionen (wiki)}
-	\label{fig:Neuron}
+	\label{fig:Separierbarkeit}
 \end{figure} 
 
 Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen \cite{Rojas:1996:NNS:235222} (Seite 37).
-Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie belieblige kontinuierliche Funktionen auf einer kompakten Teilmenge des euklidischen Raums $\mathbb{R}^n$ approximieren kann. Der entsprechende Satz hierzu ist das "universal approximation theorem".
+Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie beliebige kontinuierliche Funktionen auf einer kompakten Teilmenge des euklidischen Raums $\mathbb{R}^n$ approximieren kann. Der entsprechende Satz hierzu ist das \textit{universal approximation theorem}.
 
 \bigskip
 \paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+\textit{ 
+	Das Kapitel hat einen kurzen Abriss der für diese Thesis relevanten Themen geliefert. Es wurde festgestellt, dass die Vorhersage von E/A-Laufzeiten im Hochleistungsrechnen eine komplexe Aufgabe ist. Zusätzlich zu dem ohnehin aufwendigen E/A-System eines normalen Rechners müssen die Komplilkationen durch die Vernetzung des Hochleistungsrechners in Betracht gezogen werden.
+	Solange die E/A-Leistung durch eine kontinuierliche Funktion beschrieben werden kann und alle dafür benötigten Informationen zur Verfügung stehen, kann ein künstliches neuronales Netz das Problem lösen.
+}
 
 
 \chapter{Verwandte Arbeiten}
 \textit{%
-	Es finden sich keine wissenschaftlichen Veröffentlichungen die sich auch mit dem Einsatz von neuronalen Netzen zur Vorhersage von E/A-Leistung im Hochleisungsrechnen befassen. Jedoch werden die verschiedenen Teilgebiete des Themas behandelt. Um weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach erwähne ich kurz einige Arbeiten, dessen Themen sich mit dem dieser Arbeit überschneiden, und danach gehe ich noch etwas detailierter auf Veröffentlichungen mit hoher Ähnlichkeit und Relevanz ein.
+	Es finden sich keine wissenschaftlichen Veröffentlichungen die sich auch mit dem Einsatz von neuronalen Netzen zur Vorhersage von E/A-Leistung im Hochleisungsrechnen befassen. Jedoch werden die verschiedenen Teilgebiete des Themas behandelt. Als Erstes gehe ich auf einige Arbeiten ein, die allgemeine E/A-Leistungsvorhersage behandeln, um dabei weniger Umschreiben zu müssen führe ich zunächst zwei Kategorien von Lösungsansätzen ein. Danach gehe ich kurz auf die Verwendung von neuronalen Netzen zur Leistungsvorhersage und die Leistungsmodellierung im Hochleistungsrehcnen ein.
 }
 \bigskip
 
 \section{Leistungsvorhersage von Ein-/Ausgabe}
 
 \subsection{Kategorisierung}
-	Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden.\\ Zum einen kann man versuchen das Festplattensystem in einem Modell nachzubilden, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten bekannt sind oder entsprechende Parameter durch gezielte Untersuchung approximiert werden. Mit diesem möglichst exakten Modell können dann Zugriffe simuliertd und die Laufzeit des Modells gemessen werden. Diese Messung kann daraufhin als Vorhersage für das reale System verwendet werden.\\
-Der zweite Ansatz ist auch der dieser Arbeit, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht,
-das das Verhalten des Systems möglichst genau beschreibt. Zur Entwicklung des mathematischen Modells werden gemessene Leistungswerte von Festplattenzugriffen untersucht, um daraus passende Parameter für das Modell abzuleiten. Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz, bei dem versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als analytic device modeling bzw. simulation modeling bezeichnet) und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da hier ohne Wissen über die inneren Zustände des Systems modelliert wird, wird dieser Ansatz auch black-box modeling bezeichnet. (\textbf{Quelle}? Fourier assisted ml)
-	
-\subsection{Modellierungssansatz gegenüber Regressionsansatz}
-	Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere daran, dass sie aufwendig zu konfigurieren sind "In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device" \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}. \\
-	Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System eine etwas schlechtere Präzision. \\ Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. "Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads" \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).\\
-	
-	Eine weitere Arbeit, in der ein Modellierungsansatz genutzt wird stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}.\\ 
-	Bei Arbeiten, in denen ein Interpolationsansatz genutzt wird, werden verschiedene Data-Mining bzw. stochastischen Methoden angewandt, beispielsweise eine Kombination aus regression trees und support vector mashines  \cite{Dai:2012:SDP:2477169.2477214}, bagging classification und regression trees \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.\\
+Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden \cite{Crume:2013:FML:2538542.2538561} (S. 1). Zum einen kann man versuchen das Festplattensystem in einem Modell nachzubilden, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten bekannt sind oder entsprechende Parameter durch gezielte Untersuchung approximiert werden. Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und die Laufzeit des Modells gemessen werden. Diese Messung kann daraufhin als Vorhersage für das reale System verwendet werden.
+Der zweite Ansatz ist auch der in dieser Arbeit evaluierte, es wird von dem eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das das Verhalten des Systems möglichst genau beschreibt.
+Zur Entwicklung des mathematischen Modells werden gemessene Leistungswerte von Festplattenzugriffen untersucht, um daraus passende Parameter für das Modell abzuleiten.
+Ich unterscheide daher im Folgenden zwischen dem Modellierungssansatz, bei dem versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als \textit{analytic device modeling} und \textit{simulation modeling} bzw. allgemeiner als white-box modeling bezeichnet) und dem Interpolationsansatz, bei dem ein numerisches Modell entwickelt wird. Da man hier ohne Wissen über die inneren Zustände des Systems modelliert, wird dieser Ansatz auch als \textit{black-box modeling} bezeichnet. 
 
-\subsection{Fourier-Assisted Machine Learning}
-Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten in der Erkennung von periodischen Mustern liegt. Diese Annahme ist für eine einzelne Festplatte gerechtfertigt, da man die Zugriffstzeit grob in zwei Teile aufteilen kann, zum einen die Bewegung des Lesekopfs auf die richtige Spur und die Bewegung des Kopfes entlang der Spur zum richtigen Punkt, auch wenn diese beiden Bewegungen in der Realität überlappen. Jede Festplattenspur hat entsprechend des Radius eine andere Periodendauer.\\
-Durch eine Fourier Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
-Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anzahl Perioden nur ein kleiner Ausschnitt der Festplatte in seiner Gesamtheit, also alle möglichen Paare von Ausgangs- und Endspuren, untersucht werden kann. Die Priorität solcher Frequenzen für die exakte Leistungsvorhersage, ist im komplexen HPC-E/A-System zunächst einmal nicht zu erwarten, müsste allerdings untersucht werden.
+\subsection{Modellierungssansatz gegenüber Regressionsansatz}
+Die Nachteile von Modellen mit Modellierungssansatz liegen insbesondere darin, dass sie aufwendig zu konfigurieren sind \glqq In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S.1) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind, wie z.B. hier gezeigt \cite{Ruemmler94anintroduction}.
+
+Der Interpolationsansatz ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System ungenauere Prognosen. Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems zu aufwendig wird. \glqq Furthermore, [...] building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads\grqq{} \cite{DBLP:conf/npc/ZhangLZJC10} (S.2, Zeile 20-24).
+
+Eine weitere Arbeit, in der ein Modellierungsansatz genutzt wird stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}. Darin wird besonders auf ein Verfahren eingegangen, das dafür sogt, dass E/A-Anfragen in einer Reihenfolge abgearbeitet werden, die die notwendigen Bewegungen des Lese-/Schreibkopf möglichst gering hält.
+
+Bei Arbeiten, in denen ein Interpolationsansatz genutzt wird, werden verschiedene Data-Mining bzw. stochastischen Methoden angewandt, beispielsweise eine Kombination aus Regressionsbäumen und Stützvektormaschinen \cite{Dai:2012:SDP:2477169.2477214} oder Bagging Klassifikation und Regressionsbäumen \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.
+Ein in diesem Kontext beachtenswertes Patent \cite{gough2012predicting} zeigt ein Anwendungsbeispiel für E/A-Leistungsvorhersage mit Regressionsansatz. Dabei wird mit Hilfe maschinellen Lernens ein Überwachungssystem für Festplatten entwickelt, das einen Ausfall des Systems anhand der beobachteten internen Zustände vorhersagt. 
 
 \section{Leistungsvorhersage mit neuronalen Netzen}
-Artificial neural networks for modelling and control of non-linear systems
-\url{https://books.google.de/books?hl=de&lr=&id=tmTTBwAAQBAJ&oi=fnd&pg=PR9&dq=%22neural+networks%22+storage&ots=KyYA14xY1w&sig=yAQG0zn41xAHccDNaUWYd3L_ywI}
 
+Wie bereits im Kapitel \ref{hintergrund_nn} beschrieben wurde, gibt es einige Forschung zu der Frage der Mächtigkeit von neuronalen Netzen. \cite{Rojas:1996:NNS:235222} und \cite{cybenko:mcss} behandeln die Modellierung von nicht-linearen Systemen. Darüber hinaus \cite{suykens2012artificial} hat \textit{universal approximation theorem} für neuronale Netze bewiesen. Es ist nicht bekannt, welche Komplexität für die exakte Beschreibung eines Hochleistungs-E/A-System benötigt wird. Der Mächtigkeit von neuronalen Netzen sollte allerdings zumindest zur Bestimmung einer Näherung mit Berücksichtigung der wesentlichen Einflüsse ausreichen.
+
+Ein mathematisch anspruchsvolles Verfahren mit Interpolationsansatz unter der Verwendung von neuronalen Netzen wurde von Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} entwickelt. Sie gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten in der Erkennung von periodischen Mustern liegt. Diese Annahme ist für eine einzelne Festplatte gerechtfertigt, da man die Zugriffszeit grob in zwei Teile aufteilen kann, zum einen die Bewegung des Lesekopfs auf die richtige Spur und die Bewegung des Kopfes entlang der Spur zum richtigen Punkt, auch wenn diese beiden Bewegungen in der Realität überlappen. Jede Festplattenspur hat entsprechend des Radius eine andere Periodendauer.
+Durch eine Fourier-Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
+Eine Schwierigkeit in dieser Arbeit ist unter anderem, dass durch die große Anzahl Perioden nur ein kleiner Ausschnitt der Festplatte in seiner Gesamtheit, also alle möglichen Paare von Ausgangs- und Endspuren, untersucht werden kann.
+
+In einer weiteren Arbeit führen Crume und Maltzahn diesen Ansatz fort \cite{crumeadammaltzahncarlos2015}. Sie zeigen, dass die Periodizität der Festplattenlatenzen auch ohne Fourier-Analyse von neuronalen Netzen ausgenutzt werden kann. Dazu geben sie den verwendeten Netzen zusätzliche Sinuskurven als Eingabeattribute.
+
+Der hohe Aufwand für das Auffinden interessanter Frequenzen in einer einzelnen Festplatte zeigt, dass dieser Ansatz für das komplexe E/A-System im Hochleistungsrechner zunächst einmal nicht geeignet erscheint.
 
 \section{Leistungsvorhersage im Hochleistungsrechnen}
 
-	Im HPC Bereich ist die Leistungsanalyse generell ein wichtiger Punkt, so wird beispielsweise das Scheduling-Algorithmen vom Dateisystem simuliert \cite{Liu_towardssimulation}, hier wird DiskSim \cite{Bucy08thedisksim} zur Vorhersage der Festplattenzugriffszeiten genutzt, dabei nutzt DiskSim einen Modellierungssansatz (analytical simulation). \\
+Im Hochleistungsrechnen ist die Leistungsanalyse eine wichtige Aufgabe. Mit dessen Hilfe können Aussagen darüber gemacht werden, wie effizient die Hardware ausgenutzt wird und Optimierungen vorgeschlagen werden. 
 
-Viele Projekte verwenden Neuronale Netze für die Modellierung vom Gehirn....
-http://world-comp.org/p2012/PDP3003.pdf
+So simulieren Liu et. al \cite{liu2011towards} beispielsweise den Scheduling-Algorithmus vom Dateisystem. Dazu verwenden sie DiskSim \cite{Bucy08thedisksim} zur Vorhersage von Festplattenzugriffszeiten.
 
-Machine Learning for Machines: Data-Driven Performance Tuning at Runtime Using Sparse Coding
-SJ Tarsa - 2015 - dash.harvard.edu
-... 83 5.2 Workload Models and Data Collection . . . . . 85 5.3 Predicting Storage
-Performance with CART . . . . . 87 5.3.1 Applying CART to Multi-Tenant Scenarios . . . . .
-87 5.3.2 Variation-Tolerant CART Using Workload Labels . . . . . ... 
+Interessant ist die Arbeit von Molina-Estolano, Maltzahn, Bent und Brandt in der sie ein Simulationsprogramm für parallele Dateisysteme vorstellen \cite{molina2009building}. Sie ermöglichen es auf einem vergleichsweise kleinen Rechner, dass Dateisystem eines Hochleistungsrechners abzubilden. Mit dieser Simulation kann mit wenig Aufwand ein großes Dateisystem analysiert werden, um die Ergebnisse anschließend am richtigen System umzusetzen. Das verwendete Modell ist dabei naturgemäß eine Abstraktion des richtigen E/A-Systems und eignet sich daher nicht dafür das Leistungsverhalten im Detail zu untersuchen.
 
-Predicting disk drive failure at a central processing facility using an evolving disk drive failure prediction algorithm
-
-ABER sie werden nur unzureichend eingesetzt für I/O und deswegen braucht es die Arbeit.
-
-10-20 andere literatur
-
-\subsection{Predicting Performance of Non-Contiguos I/O with Machine Learning}
-Direkt aus dem Bereich des Hochleistungsrechnens stammt die Arbeit von Kunkel et. al \cite{UMLTPTPONI15}. Hier wird versucht mit Hilfe von decision trees die performantesten Parameter für nicht zusammenhängende Zugriffe auf Dateien durch ROMIO, einer Implementierung von MPI-2 I/O, zu finden. Dabei sagen sie mit den decision trees die Performance für die verschiedenen Parameter auf den Daten voraus, sodass sie anhand dieser Vorhersagen die besten Parameter finden. (\textbf{habe ich das richtig verstanden}?) Mit dieser Methode haben sie es geschafft zufriedenstellende Ergebnisse zu erzielen. Die Simplizität von decision trees, beispielsweise können diese nur Entscheidungen als eine Aneinanderreihung von linearen Separationen des Werteraums treffen, lässt vermuten, dass mit Hilfe von komplexeren Data Mining - Methoden, wie neuronalen Netzen noch bessere Ergebnisse erzielt werden könnten. Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelorarbeit.
+Eine Arbeit aus dem Hochleistungsrechnen, die sich mit Vorhersage von E/A-Leistung befasst ist die von Kunkel et. al \cite{UMLTPTPONI15}. Hier wird versucht mit Hilfe von Entscheidungsbäumen die performantesten Parameter für nicht zusammenhängende Zugriffe auf Dateien durch ROMIO, einer Implementierung von MPI-2 I/O, zu finden.
+Dabei sagen sie mit Entscheidungsbäumen die Leistung für verschiedene Parameter auf den Daten voraus. Dies geht schneller, als die Parameter in der Anwendung zu testen. Anhand der Vorhersagen können dann die besten Parameter gewählt werden. (\textbf{habe ich das richtig verstanden}?) 
+Entscheidungsbäume können keine sehr komplexen Probleme lösen, sie können nur Entscheidungen als eine Aneinanderreihung von linearen Separationen des Werteraums treffen. Dennoch sind die mit dieser Methode erzielten Ergebnisse zufriedenstellend. Dies lässt vermuten, dass mit Hilfe von komplexeren Methoden des maschinellen Lernens, wie neuronalen Netzen noch bessere Ergebnisse erzielt werden könnten.
+Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelorarbeit.
 
 \paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
+\textit{
+	Nach der Betrachtung verwandter Arbeiten kann resümiert werden, dass E/A-Leistungsvorhersage mit neuronalen Netzen kein neuer Ansatz ist und bereits einige Erfolge erreicht hat. Die Übertragung der Konzepte im Detail scheint dagegen aufgrund der Analyse eines komplexen E/A-Systems eines Hochleistungsrechners schwierig zu sein.
+}
 
 
 \chapter{Gestaltung der Analyse}
