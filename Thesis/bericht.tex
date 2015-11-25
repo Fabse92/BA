@@ -334,107 +334,143 @@ Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelo
 	Nach der Betrachtung verwandter Arbeiten kann resümiert werden, dass E/A-Leistungsvorhersage mit neuronalen Netzen kein neuer Ansatz ist und bereits einige Erfolge erreicht hat. Die Übertragung der Konzepte im Detail scheint dagegen aufgrund der Analyse eines komplexen E/A-Systems eines Hochleistungsrechners schwierig zu sein.
 }
 
-
 \chapter{Gestaltung der Analyse}
-\textit{%
-	Was wird warum und auf welche Weise gemacht? Konzepte aufschreiben
+\textit{
+In diesem Kapitel wird darauf eingegangen, wie die Ziele dieser Arbeit erreicht werden sollen und welche Ansätze dabei verfolgt werden.
+Zunächst wird dargestellt, welche die Modellvorstellung des untersuchten Systems 	den weiteren Untersuchtungen zugrunde liegt.
+Dann gehe ich auf die beiden verwendeten Methoden der Leistungsvorhersage ein, zum einen die direkte Vorhersage von Leistung als E/A-Laufzeiten, zum anderen die Vorhersage von Ausreißern über Laufzeitbereiche. 
+Daraufhin wird das Kernstück dieser Arbeit behandelt. Die unterschiedlichen untersuchten Modelle. Die Modelle werden in Klassen unterteilt. Die Analyse der verschiedenen Klassen geschieht zu unterschiedlichen Zwecken und sollen in einer bestimmten Weise Einsicht über das komplexe E/A-System eines Hochleistungsrechners geben. Als letztes werden die verwendeten Modelle im Detail gezeigt und auf deren Anwendung eingegangen.
 }
 \bigskip
 
 \section{Modell der Ein-/Ausgabe}
 \label{ea_modell}
-Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.\\
-Anhand der Verarbeitung eines Leseaufrufs gehe ich die Stufen des E/A-Systems durch. Wie in \ref{E/A} beschrieben hängt die Zugriffszeit davon ab, in welcher Speicherebene die angefragte Datei befindet. Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die angefragte Datei bereits innerhalb des anfragenden Rechnerknoten befindet oder diese von einer Festplatte außerhalb des Knotens geholt werden muss.
-Falls die sich die Datei nicht im Speicher des Rechnerknotens befindet, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden. Der Verwaltungsaufwand der Anfrage sollte im wesentlichen für alle Aufrufe konstant sein, denn sie sieht strukturell für aufwendige Aufrufe nicht anders aus, als für weniger aufwendige.
-Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere) auf der die gewünschte Datei liegt. Der Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei stark von der Struktur des Netzwerkes abhängig. Die Festplatte liest die Datei aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt wird.
-Ebenso wie in dem Fall, in dem keine Anfrage außerhalb des Rechnerknotens gestellt werden musste, muss nun der erforderliche Teil der angefragen Datei noch aus dem Arbeitsspeicher des Knotens in den Cache des Prozessors geladen werden, auf dem der Prozess die Datei angefragt wurde. Für einen Schreibzugriff gilt im Wesentlichen ein ähnlicher Ablauf, der Datenfluss ist nur umgekehrt.\\
-Es können also drei voneinander unabhängige Anteile der Zugriffszeit unterschieden werden. Die Zeit, die für die Verwaltung der E/A-Anfrage und die Dateiübertragung über das Netzwerk benötigt wird (tNetzwerk), sowie für die Verarbeitung auf der Festplatte (tHDD) und für das Lesen/Schreiben von dem Arbeitsspeicher (tMem).\\
+Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, um die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.
+
+Anhand der Verarbeitung eines Leseaufrufs gehe ich die Stufen des E/A-Systems durch. Wie in \ref{E/A} beschrieben hängt die Zugriffszeit davon ab, in welcher Speicherebene sich die angefragten Daten befinden.
+Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die angefragten Daten bereits innerhalb des anfragenden Rechnerknoten befinden oder diese von einer Festplatte außerhalb des Knotens geholt werden müssen.
+Falls die Daten sich nicht im Speicher des Rechnerknotens befinden, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden.
+Dort ist der reine Verwaltungsaufwand der Anfrage im wesentlichen für alle Aufrufe konstant sein, denn sie sieht strukturell für aufwendige Aufrufe nicht anders aus, als für weniger aufwendige.
+Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere) auf der die relevante Datei liegt. Der Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei von der Struktur des Netzwerkes abhängig. Die Festplatte liest die Daten aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt werden.
+Nun müssen die angefragen Daten aus dem Arbeitsspeicher des Knotens über die Cache-Ebenen in den Prozessor geladen werden. 
+Falls die Daten bereits im Arbeitsspeicher oder einem der Caches liegen, werden entsprechend weniger Schritte durchgeführt.
+Für einen Schreibzugriff gilt im Wesentlichen ein ähnlicher Ablauf, der Datenfluss ist nur umgekehrt.
+
+Es können drei voneinander unabhängige Anteile der Zugriffszeit unterschieden werden. Die Zeit, die für die Verwaltung der E/A-Anfrage und die Dateiübertragung über das Netzwerk benötigt wird (tNetzwerk), sowie für die Verarbeitung auf der Festplatte (tHDD) und für das Lesen/Schreiben von dem Arbeitsspeicher und der Caches (tMem).
+
 In allen Bereichen gibt es jeweils einen konstanten Anteil und einen Anteil, der von der aufgerufenen Datei abhängt. 
 Der Anteil der Zugriffszeit, die für jeden Aufruf konstant ist, ist für die Modellierung weniger spannend und sollte bereits durch einfache linerare Modelle darstellbar sein, dieser Teil wird im Folgenden nicht weiter berücksichtigt.
 
-Der Netzwerkabhängige Teil ist zum einen von der genauen Lokalität der aufgerufenen Datei, sowie der größe der Datei abhängig. Der Datenfluss über das Netzwerk hängt von dessem Durchsatz ab, dieser sollte nach kurzer Verbindungsaufbauphase konstant sein. Im Rahmen meiner Instrumentierungsmöglichkeiten ist es nicht möglich die Abhängigkeit der Zugriffszeit von Speicherort im Netzwerk direkt vorherzusagen. Dazu wäre ein Einblick in eine Datenbank notwendig, aus der sich solche Informationen ableiten ließen, oder eine solche Wissensbasis müsste selbst aufgebaut werden. \textbf{(allerdings greifen wir ja eh immer auf die gleiche Datei zu, sodass das Netzwerk keine Rolle spiel?)}
-tMem ist am einfachsten zu modellieren, denn der Direktzugriffsspeicher (engl. Random-Access Memory) kennzeichnet sich gerade dadurch, dass der Zugriff auf alle Datenblöcke mit geichem Aufwand verbunden ist. Ansonsten hängt die Zugriffszeit vom Durchsatz des Speichers ab, der auch linear von Größe des angefragten Dateibereichs abhängt.
-Die Festplatte ist ähnlich Komplex wie das Netzwerk, kann allerdings im Rahmen der durchgeführten Testläufe näher untersucht werden, indem immer wieder auf der selben Platte gearbeitet wird. Wie beim Netzwerk ist die Zugriffszeit zum einen von dem genauen Ort der angefragten Datenblöcke und zum anderen vom Durchsatz der Festplatte abhängig. Die Abhängigkeit vom Ort schlägt sich in dem Abstand des Aufenthaltsortes des Lesekopfes vor dem Aufruf zu dem Zielort auf der Festplatte nieder, im Folgenden wird dieser Abstand als Delta-Abstand bezeichnet. Der zeitliche Aufwand des Überwinden des Delta-Abstandes ist Hardwarecharakteristika der Festplatte abhängig. Zum einen die Zeit, die der Lesekopf benötigt, um von der aktuellen Festplatten-Spur zur Zielspur zu kommen und zum anderen, die Rotationszeit der Magnetscheibe, die den Lesekopf in der Horizontalen zur richtigen Stelle befördert. Dabei geschehen Spurwechsel und Rotation auch gleichzeitig. Ansonsten ist die Zugriffszeit linear von dem Durchsatz der Festplatte und der Größe des angefragen Abschnittes abhängig.
+Der Netzwerkabhängige Teil ist zum einen vom genauen Speicherort der aufgerufenen Datei, sowie der Größe der Datei abhängig. Der Datenfluss über das Netzwerk hängt von dessem Durchsatz ab, dieser sollte nach kurzer Verbindungsaufbauphase konstant sein. Im Rahmen meiner Instrumentierungsmöglichkeiten ist es nicht möglich die Abhängigkeit der Zugriffszeit von Speicherort im Netzwerk direkt vorherzusagen. Dazu wäre ein Einblick in eine Datenbank notwendig, aus der sich solche Informationen ableiten ließen, oder eine solche Wissensbasis müsste selbst aufgebaut werden.
+tMem ist am einfachsten zu modellieren, denn der hier auftretende Direktzugriffsspeicher (engl. Random-Access Memory) kennzeichnet sich gerade dadurch, dass der Zugriff auf alle Datenblöcke mit geichem Aufwand verbunden ist.
+Ansonsten hängt die Zugriffszeit vom Durchsatz des Speichers ab.
+Eigentlich handelt es sich bei tMem um die Zusammensetzung der Zeitanteile von Arbeitsspeicher und der Caches, es wird im Modell jedoch vom langsamsten Speicher dominiert, der angesprochen werden muss. Die höheren Ebenen der Zwischenspeicher bleiben jeweils unbeachtet.
+Die Festplatte ist ähnlich Komplex wie das Netzwerk. Wie beim Netzwerk ist die Zugriffszeit zum einen von dem genauen Speicherort der angefragten Datenblöcke und zum anderen vom Durchsatz der Festplatte abhängig.
+Die Abhängigkeit von der Speicherposition schlägt sich in dem Abstand des Aufenthaltsortes des Lesekopfes vor dem Aufruf zu dem Zielort auf der Festplatte nieder. Die zu überwindende Strecke des Lesekopfes hängt dabei grob von dem Abstand der zuletzt zugegriffenen Speicherposition zur nächsten gesuchten Speicherposition ab. Dieser Abstand im Folgenden wird dieser Abstand als Delta-Abstand bezeichnet.
+Der zeitliche Aufwand zum Überwinden des Delta-Abstandes ist von Hardwarecharakteristika der Festplatte abhängig. Zum einen die Zeit, die der Lesekopf benötigt, um von der aktuellen Festplatten-Spur zur Zielspur zu kommen und zum anderen, die Rotationszeit der Magnetscheibe, die den Lesekopf in der Horizontalen zur richtigen Stelle befördert. 
+Dieser Spurwechsel und die Rotation geschehen dabei gleichzeitig. Ansonsten ist die Zugriffszeit linear von dem Durchsatz der Festplatte und der Größe des angefragen Abschnittes abhängig.
 
-Während also tMem vollständig lineares Modell dargstellt werden können müsste, ist dies für tNetzwerk und tHDD nur bedingt der Fall. Netzwerk und Festplatte haben einen bestimmenden linearen Anteil, jedoch auch einen Speicherort abhängigen.
-Die Durchsätze von tMem, sowie tHDD sind Hardware bedingt von der Art des Zugriffs abhängig, es muss also zwischen Lese- und Schreibzugriffen unterschieden werden, dies ist im Folgenden der Operationstyp (OpTyp).
+tMem müsste nach diesem Modell vollständig durch ein lineares Modell dargstellt werden können. Dagegen ist dies für tNetzwerk und tHDD nur bedingt der Fall.
+Netzwerk und Festplatte haben einen je nach Zugriffsgröße dominierenden linearen Anteil, jedoch auch einen Speicherort abhängigen.
+Die Durchsätze von tMem, sowie tHDD sind Hardware bedingt von der Art des Zugriffs abhängig, es muss also zwischen Lese- und Schreibzugriffen unterschieden werden, dies ist geschieht im Folgenden über den Operationstyp (OpTyp).
 Das Modell für die Ein-/Ausgabe in dieser Arbeit entspricht letztendlich
 
 \begin{align*}
-&tGesamt = tNetzwerk + tMem + tHDD\\
-&\text{mit}\\
-&tNetzwerk(Grö\text{ß}e, Netzwerkspeicherort)\\
-&tMem(Grö\text{ß}e,OpTyp)\\
-&tHDD(Grö\text{ß}e,OpTyp,Delta\text{-}Abstand)\\
+tGesamt &= tHDD + tNetzwerk + tMem\\
+\text{mit}\\
+tHDD &= \frac{Zugriffsgrö\text{ß}e}{Festplattendurchsatz(OpTyp)} + Festplattenlatenz(Delta\text{-}Abstand) \\
+tNetzwerk &= \frac{Zugriffsgrö\text{ß}e}{Netzwerkdurchsatz} + Netzwerklatenz(Netzwerkspeicherort) \\
+tMem &= \frac{Zugriffsgrö\text{ß}e}{Speicherdurchsatz(OpTyp)} + Speicherlatenz
 \end{align*}
 
-Die Vermutung in dieser Arbeit ist, dass sich E/A-Aufrufe in verschiedene Pfade unterteilen lassen, dabei entspricht der Pfad der Verbindung vom aufrufenden Prozess zur aufgerufenen Datei. Ein perfektes Modell könnte unter Kenntnis dieses Pfades und der Dateiattribute die Dauer des Zugriffs exakt vorhersagen.\\
-Im Benchmark-Test (\ref{benchmark}) wird zu jeder gemessenen E/A-Prozedur die Größe des gelesenen/geschriebenen Bereichs, der Operationstyp und der Delta-Abstand gemessen.
-Das Tripel $(Grö\text{ß}e,OpTyp,Delta-Abstand)$ bezeichne ich als Attribut-Set der Messung.
+Latenz bezeichnet die Verzögerungszeit, bis die Datenübertragung angelaufen ist.
+Die Vermutung in dieser Arbeit ist, dass sich E/A-Aufrufe in verschiedene Pfade unterteilen lassen, dabei entspricht der Pfad der Verbindung vom aufrufenden Prozess zur aufgerufenen Datei. Die Zugriffszeit eines solchen Pfades wird von der langsamsten Komponente auf dem Weg dominiert. 
+Ein perfektes Modell könnte unter Kenntnis dieses Pfades und der Dateiattribute die Dauer des Zugriffs exakt vorhersagen.
+
+Relevante und Messbare Größen sind nach diesem Modell die Größe des gelesenen/geschriebenen Bereichs, der Operationstyp und der Delta-Abstand. 
+Das Tripel $(Zugriffsgrö\text{ß}e,OpTyp,Delta\text{-}Abstand)$ bezeichne ich als Attribut-Set, es charakterisiert einen E/A-Aufruf. Alle Messungen zu Speicheraufrufen mit dem selben Attribut-Set hätten nach diesem Modell idealerweise die selbe Laufzeit. 
 
 \section{Leistungs- und Ausreißervorhersage}
 Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den Aufwand der E/A-Aufrufe vorherzusagen. 
-Die im Benchmark-Test gemachten Messungen werden dabei genutzt. Zunächst kann das Modell einen Teil der Daten zum Lernen nutzen und dann können die Vorhersagen des Modells zu ungesehenen Messungen mit den tatsächlichen Werten verglichen werden. Dies ist die Leistungsvorhersage vom Modell zum System. 
-Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. In unseren Messdaten werden die langsamsten und die schnellsten $10\%$ der Messungen jedes Attribut-Sets als Ausreißer bezeichnet. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist, denn es wird schlicht intern die Zeit von Anfang bis Ende eines E/A-Aufrufs gemessen. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
+Für die Berechnung eines Modells werden jeweils Informationen über das zu beschreibende System benötigt. Dies wird durch die Vermessung E/A-Aufrufen geschehen.
+Die Vermessung wird als Benchmark-Test bezeichnet und wird in der Evaluation entwickelt. 
+Wenn Messdaten vorliegen, kann das Modell einen Teil der Daten als Trainingsdatensatz zum Lernen nutzen, die restlichen Daten sind dem Modell unbekannt und bilden den Testdatensatz. Die Vorhersagen der Modelle zum Testdatensatz können dann mit den tatsächlichen Werten verglichen werden. Dies ist die Leistungsvorhersage vom Modell zum System. 
+Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. In unseren Messdaten werden die langsamsten und die schnellsten $10\%$ der Messungen jedes Attribut-Sets als Ausreißer bezeichnet. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
 Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
-Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht. Da die Informationen, die den Modellen zur Verfügung stehen allerdings nicht für eine verlässliche Ausreißervorhersage ausreichen sollten (beispielsweise wäre dazu Wissen über parallel laufende Prozesse unter anderem von anderen Benutzern des Hochleistungsrechners notwendig), könnte dieser Test auch ein Maß für eine zu starke Adaption an die Trainingsdaten sein.
-
+Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. 
+Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht. Da die Informationen, die den Modellen zur Verfügung stehen allerdings nicht für eine verlässliche Ausreißervorhersage ausreichen sollten (beispielsweise wäre dazu Wissen über parallel laufende Prozesse von anderen Benutzern des Hochleistungsrechners notwendig), könnte dieser Test auch ein Maß für eine zu starke Adaption an die Trainingsdaten sein.
 
 \section{Modellklassen}
-Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.\\
-
+Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.
 Da es sich bei der E/A-Leistungsvorhersage um ein komplexes Problem handelt, steht nicht a priori fest, wie eine passende Modellierung auszusehen hat. 
-In dieser Arbeit wurden daher verschiedene Ansätze getestet. Um besser zu verstehen, welche Ideen einem Modell zugrunde liegen und zur einfacheren Beschreibung der Modelle führe ich verschiedene Kategorien von Modellen ein die jeweils einem bestimmten Ansatz entsprechen.
+In dieser Arbeit wurden daher verschiedene Ansätze getestet.
+
+Um besser zu verstehen, welche Ideen einem Modell zugrunde liegen und zur einfacheren Beschreibung der Modelle führe ich verschiedene Kategorien von Modellen ein, die jeweils einem bestimmten Ansatz entsprechen.
 Die Modellklassen unterscheiden sich in ihrer Herangehensweise ans Problem. Modelle, die den selben Klassen zugehören, unterscheiden sich an den Informationen, die ihnen über die Messdaten zur Verfügung stehen.
 
 \subsection{Triviale und höhere Modelle}
-Triviale Modelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet. Die höheren Modelle in dieser Arbeit basieren dagegen auf neuronalen Netzen und müssen aufwendig trainiert werden.\\
-Die trivialen Modelle sind zum einen beim Erkunden sinnvoller Ansätze hilfreich, zum anderen dienen sie dem Vergleich der aufwendigeren Modelle und stellen eine untere Schranke für deren Leistungen dar. So kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können. Die Erwartung ist, dass die höheren Modelle wesentlich bessere Ergebnisse zeigen, als die trivialen. Wenn dies nicht der Fall ist, war entweder die Modellierung schlecht oder die zur Verfügung stehenden Messdaten sind unzureichend für eine zufriedenstellende Beschreibung.
-Eine Ausnahme bilden dabei unfaire triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Beispielsweise sind dies Modelle, die Testdaten bereits kennen. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
+Triviale Modelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet.
+Die höheren Modelle in dieser Arbeit basieren dagegen auf neuronalen Netzen und müssen aufwendig trainiert werden.
+
+Die trivialen Modelle sind zum einen beim Erkunden verschiedener Ansätze hilfreich, zum anderen dienen sie dem Vergleich zu den aufwendigeren Modelle und stellen eine untere Schranke für deren Leistungen dar.
+So kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können. Die Erwartung ist, dass die höheren Modelle wesentlich bessere Ergebnisse zeigen, als die trivialen. Wenn dies nicht der Fall ist, war entweder die Modellierung schlecht oder die verwendeten Informationen über die Messdaten waren unzureichend für eine zufriedenstellende Beschreibung.
+Eine Ausnahme bilden dabei \textit{unfaire} triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Unfairen Modellen standen sämtliche Messdaten zum Lernen bereit, also neben den Trainingsdaten auch die Testadaten. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
 
 \subsection{Zeitreihen- und Aggregierungs-Modelle}
 Für Aggregierungsmodelle werden die Trainingsdaten stark vereinfacht. Sie verfolgen den Ansatz, dass es nicht möglich ist innerhalb eines Attribut-Sets zu differenzieren. Sodass verschiedene Messungen eines Sets alle die selbe Vorhersage zugewiesen bekommen. Dazu werden alle Trainingsdatenpunkte zusammengefasst, die zum selben Set gehören.
 
 Bei Zeitreihen-Modellen hingegen findet keine Aggregierung statt. Zu verschiedenen Messungen eines Attribut-Sets gibt es entsprechend \glqq widersprüchliche\grqq{} Informationen, da sich ihre Laufzeit unterscheidet. Das Modell muss dann entweder intern die Daten zusammenfassen, um doch die selbe Vorhersage für jede Messung eines Sets zu machen oder es versucht anhand weiterer Informationen über den Systemzustand eine Differenzierung durchzuführen. Dieses zusätzliche Wissen über den aktuellen Zustand des Systems kann allerdings nur über die Kenntnis der vorherigen E/A-Aufrufe abgeleitet werden, denn die in \ref{ea_modell} beschriebenen Attribute bleiben die einzigen Informationen, die zu einer Messung zur Verfügung gestellt werden.
-Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt, wenn dieses Verhalten erkannt wird, könnte die Vorhersage erheblich verbessert werden.
+Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt. Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Modell erheblich verbessert werden.
 
 \subsection{Fehlerklassen-Modelle}
-Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit unterschiedlichen Pfaden ausdrücken lassen und die verbesserten Vorhersagen zu untersuchen, die unter Kenntnis dieser Pfade gemacht werden können, werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
+Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit anhand des genommenen Pfades unterscheiden lassen, sollen die verbesserten Vorhersagen untersucht werden, die unter Kenntnis dieser Pfade gemacht werden können. Dazu werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
 Fehlerklassen werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
-Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. (\textbf{WARUM?})
-Wenn das Modell, das zur Generierung der Fehlerklassen genutzt wurde, und das Modell, das mit Wissen über diese Fehlerklassen, neue Vorhersagen macht ähnlich funktionieren, sollten die Ergebnisse dadurch wesentlich besser werden. Das liegt daran, dass das Modell bereits \glqq weiß\grqq{}, welchen Fehler es bei einer Vorhersage ohne Berücksichtigung der Fehlerklasse machen würde. 
+Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Sets richtig bestimmt. Die verschiedenen Pfade sollten sich,unabhängig vom gemessenen Attribut-Set, durch signifikante Sprünge in der benötigten Laufzeit unterscheiden, sodass ein Fehler in der Größenordnung eines solchen Sprungs bedeutet, dass die vorliegende Messung einem anderen Pfad zuzuordnen ist. (\textbf{Simmt das so, sollten wir dann nicht lieber unterschiedlich funktionierende Modelle für Generierung der FK und zur Vorhersage mit diesen nutzen?})
 
 \section{Untersuchte Modelle}
 \label{impl:modelle}
 Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die zu Messdaten exploriert (siehe \ref{exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
-Wenn es darum geht gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden. Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keine Aussage über die andere zulässt. Bei einer Korrelation von 1 dagegen, kann eine Funktion angegeben werden aus der sich der Wert der einen Variablen direkt der Wert der anderen berechnen lässt. Somit ist eine hohe Korrelation eine Hinweis auf ein Attribut, dass zur Vorhersage des anderen Attributs verwendet werden sollte. Allerdings wird bei der Korrelation bloß die lineare Abhängigkeit betrachtet, ein komplexerer Zusammenhang zweier Variablen wird dadurch schlecht repräsentiert.
+Wenn es darum geht gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden. Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keinen linearen Zusammenhang zur anderen hat. Bei einer Korrelation von 1 dagegen, kann eine lineare Funktion angegeben werden aus der sich der Wert der einen Variablen direkt der Wert der anderen berechnen lässt. Somit ist eine hohe Korrelation zwischen einem Attribut eines E/A-Aufrufs und dessen Laufzeit ein Hinweis darauf, dass dieses Attribut zur Vorhersage der Laufzeit verwendet werden könnte. 
+Allerdings wird bei der Korrelation bloß die lineare Abhängigkeit betrachtet, ein komplexerer Zusammenhang zweier Variablen wird dadurch schlecht oder gar nicht repräsentiert.
 
 Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die trivialen Modelle durch, dann die höheren.
+Das einfachste Modell ist \textit{Durchschnitt}, das Modell kennt den globalen arithmetischen Mittelwert aller gemessen Messungen und ist in sofern unfair. Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle Modelle, die dies tun, bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, das jedoch schlechtere Leistungen erzielt könnte unterstellt werden zufällige Vorhersagen zu machen und man kann auf eine Fehlfunktion schließen.
 
-Das einfachste Modell ist \textit{Durchschnitt}, das Modell kennt den globalen arithmetischen Mittelwert aller gemessen Messungen und ist in sofern unfair. Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle anderen Modelle bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, mit schlechterer Leistung könnte unterstellt werden zufällige Vorhersagen zu machen und man kann auf eine Fehlfunktion schließen.
+Eine ähnliche Methode verwendet das Modell \textit{Median agg}. Dies ist auch ein unfaires Modell, das Kenntnis über alle Messungen in den Datensätzen hat. Es berechnet für jedes Attribut-Set den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen dieses Sets.
+Dieses Modell stimmt mit dem Ansatz überein, eine Datenbank aufzubauen, in der alle E/A-Aufrufe und deren Laufzeiten gespeichert werden würden.
+Diese triviale Variante ist der Idealfall des Ansatzes, bei dem es zu allen auftretenden Attribut-Sets bereits einen gespeicherten Mittelwert gibt.
 
-Eine ähnliche Methode verwendet das Modell \textit{Median agg}. Dies ist auch ein unfaires Modell, dass Kenntnis über alle Messungen in den Datensätzen hat. Es berechnet für jedes Attribut-Set den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen dieses Sets. Dieses Modell stimmt mit dem Ansatz überein, eine Datenbank aufzubauen, in der alle E/A-Aufrufe und deren Laufzeiten gespeichert werden würden. Diese triviale Variante ist der Idealfall dazu, bei dem es zu allen auftretenden Attribut-Sets bereits einen gespeicherten Mittelwert gibt.
-
-Während die ersten beiden Modelle Aggregations-Modelle sind, sind die Modelle, denen lineare Regression zugrunde liegt Zeitreihen-Modelle.
-Lineare Regression ist ein einfaches numerisches Verfahren, dass eine lineare Funktion berechnet, die den Fehler zu den bekannten Messpunkten minimiert. Die Funktion ist eine Gerade der Form $f(x) = a + b*x$, mit der Verschiebung a und Steigung b. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
+Während die ersten beiden Modelle Aggregations-Modelle sind, sind die folgenden Modelle, denen lineare Regression zugrunde liegt, Zeitreihen-Modelle.
+Lineare Regression ist ein einfaches numerisches Verfahren, dass eine lineare Funktion berechnet, die den Fehler zu den bekannten Messpunkten minimiert.
+Die Funktion ist eine Gerade der Form $f(x) = a + b*x$, mit der Verschiebung a und Steigung b. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
 Ich probiere drei verschiedene lineare Modelle aus.
 \textit{LinReg G} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
 \textit{LinReg GA} enthält auch die Werte zu Delta-Abstand und \textit{LinReg GAO} berücksichtigt zudem den Operationstyp der Messungen.
 Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Sets unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
 
 Zuletzt gibt es noch zwei weitere Aggregations-Modelle, die Fehlerklassen ausnutzen.
-Sie funktionieren genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für jedes Attribut-Set berechnet, die zur selben Fehlerklasse gehören.
+Sie funktionieren genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für alle Messungen eines Attribut-Sets berechnet, die zur selben Fehlerklasse gehören.
 \textit{Median agg LinReg-FK} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{Median agg Tupel1-FK} die Klassen der besten Instanz von \textit{Tupel1}.
 
-Das Aggregations-Modell \textit{Tupel1 agg} entspricht der fairen Variante zu \textit{Median agg}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten. Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Mess-Attribute interpolieren. Das neuronale Netz des Modells bekommt als Eingabedaten alle Attribut-Sets mit aggregierten Laufzeiten aus seinen Trainingsdaten. Das Netz lernt dann das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
-Das Modell muss sich nicht bloß die Laufzeiten zu den Attribut-Sets \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Sets sinnvoll vorhersagen zu können.
+Die weiteren Modelle sind höhere Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabedaten unterscheiden.
+Das Aggregations-Modell \textit{Tupel1 agg} entspricht der fairen Variante zu \textit{Median agg}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten.
+Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Mess-Attribute interpolieren.
+Das neuronale Netz des Modells bekommt als Eingabedaten alle Daten der Attribut-Sets, sowie die Laufzeiten, von den als Median aggregierten Trainingsdaten.
+Das Netz versucht dann das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
+Das Modell muss sich nicht bloß die mittleren Laufzeiten zu den Attribut-Sets \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Sets sinnvoll vorhersagen zu können.
 
-Ähnlich dazu agiert das Modell Zeitreihen-Modell \textit{Tupel1}. Die Eingabedaten werden allerdings nicht aggregiert. Es versucht also direkt das beschriebene Tripel auf die zugehörigen Laufzeiten abzubilden. Es hat sonst keine weiteren Informationen, sodass es ebenso wenig, wie das Aggregationsmodell, zwischen Messungen mit gleichen Attributen unterscheiden kann.
+Ähnlich dazu agiert das Modell Zeitreihen-Modell \textit{Tupel1}. Die Eingabedaten werden allerdings nicht aggregiert.
+Es versucht also direkt das beschriebene Tripel der Attribut-Sets auf die zugehörigen Laufzeiten abzubilden. Es hat sonst keine weiteren Informationen, sodass es ebenso wenig, wie das Aggregationsmodell, zwischen Messungen mit gleichen Attributen unterscheiden kann.
 
-\textit{Tupel2} bekommt nicht nur die Attribute der Messung, dessen Leistung es vorhersagen soll, sondern auch die Attribute und die Laufzeit der vorherigen Messung. Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, würde sich dies an der vergangenen E/A-Leistung niederschlagen. Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
+\textit{Tupel2} bekommt nicht nur die Attribute der Messung, dessen Leistung es vorhersagen soll, sondern auch die Attribute und die Laufzeit der vorherigen Messung.
+Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, würde sich dies an der vergangenen E/A-Leistung niederschlagen.
+Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
 
-Eine tieferliegende Periodizität könnte unter Umständen durch \textit{Tupel1 EMA Durchsatz} ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average}(EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort. Dadurch kann mit dessen Funktionswert ein Einblick in den generellen Trend gewährt werden und temporäre Spitzen geglättet werden. Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im wesentlichen von den direkten Vorgängern beeinflusst wird, in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen. In hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat die aus dem Arbeitsspeicher des Rechnerknoten geholt werden müssen, da der Arbeitsspeicher jedoch gerade durch einen anderen Prozessor ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Caches gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass ein kommender Aufruf in den weiterhin ausgelasteten Arbeitsspeicher eventuell genauer gemacht werden könnte.
-Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz wird berechnet sich als $Durchsatz = Zugriffsgrö\text{ß}e / Laufzeit$.\\
+Eine tieferliegende Periodizität könnte unter Umständen durch \textit{Tupel1 EMA Durchsatz} ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average}(EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort.
+Dadurch kann mit dessen Funktionswert ein Einblick in den generellen Trend der Zeitreihe gewährt werden, da temporäre Spitzen geglättet werden. Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im wesentlichen von den direkten Vorgängern beeinflusst wird, in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen.
+In dem hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat die aus dem Arbeitsspeicher des Rechnerknoten geholt werden müssen, da der Arbeitsspeicher jedoch gerade durch einen anderen Prozessor ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Caches gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass ein kommender Aufruf in den weiterhin ausgelasteten Arbeitsspeicher eventuell genauer gemacht werden könnte.
+Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz berechnet sich als $Durchsatz = Zugriffsgrö\text{ß}e / Laufzeit$.
+
 In \cite{kantardzic2011data} (S. 40) ist EMA rekursiv definiert:
 \begin{align*}
 	EMA(i,m) &= p*t(i)+(1-p)*EMA(i-1,m-1)\\
@@ -446,22 +482,78 @@ EMA(1,1) &= t(1)\\
 EMA(2,2) &=  p*t(2)+(1-p)*t(1)\\
 EMA(3,3) &=  p*t(3)+(1-p)*(p*t(2)+(1-p)*t(1))
 \end{align*}
-Das Modell \textit{Tupel1 EMA Durchsatz} bekommt alle Attribute als Eingabe, die auch \textit{Tupel1} hat, also die drei Werte der Attribut-Sets und zudem den EMA mit $p=0.5$ der vergangenen Durchsätze.
+Das Modell \textit{Tupel1 EMA Durchsatz} bekommt alle Attribute als Eingabe, die auch \textit{Tupel1} hat, also die drei Werte der Attribut-Sets, zusätzlich erhält es den EMA mit $p=0.5$ der vergangenen Durchsätze.
 
-Zusätzlich gibt es parallel zu den trivialen Modellen auch zwei höhere Modelle, die Fehlerklassen mit arbeiten. Die beiden Modelle bekommen das Attribut-Set der Messungen und zudem deren Fehlerklasse als Informationen. \textit{Tupel1 LinReg-FK} mit den Fehlerklassen aus dem trivialen Modell \textit{LinReg G} und \textit{Tupel1 Tupel1-FK} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem RMQA (siehe \ref{Validierung}) berechnet wurden.
+Abschließend gibt es, parallel zu den trivialen Modellen, auch zwei höhere Modelle, die mit Fehlerklassen arbeiten.
+Die beiden Modelle bekommen das Attribut-Set der Messungen und zudem deren Fehlerklasse als Informationen.
+\textit{Tupel1 LinReg-FK} mit den Fehlerklassen aus dem trivialen Modell \textit{LinReg G} und \textit{Tupel1 Tupel1-FK} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem RMQA (siehe \ref{Validierung}) berechnet wurden.
 
 \section{Anwendung und Parameter}
-Nachdem die Modelle, die untersucht werden sollen, bestimmt worden sind, stellt sich die Frage, wie sie am besten angewendet werden können. Dazu müssen zunächst für die neuronalen Netze der höheren Modelle gute Parameter gefunden werden.
+Nachdem die Modelle, die untersucht werden sollen, bestimmt worden sind, stellt sich die Frage, wie sie am besten angewendet werden können. Dies ist für die trivialen Modelle nicht weiter schwierig und hängt nur von der verwendeten mathematischen Methode ab.
+Für für die neuronalen Netze der höheren Modelle müssen dagegen gute Parameter gefunden werden.
 Während manche Parameter durch Heuristiken oder nach einigen Testdurchläufen schnell ermittelt werden können, sind andere stark abhängig von den tatsächlichen Trainingsdaten, der Anzahl Datenpunkte und den verwendeten Attributen. 
 
-Als Funktion zur Fehlerrückführung wird in allen Netzen eine resilente Backpropagation genutzt, nämlich \textit{Rprop+} (\textit{resilent backpropagation with weightbacktracking}) \ref{gunther2010neuralnet} (S. 32). Um Unterschied zur normalen Backpropagation wird jedes Gewicht mit einer individuellen Lernrate verändert, zudem bestimmt nicht die Größe des Gradienten in der Fehlerfunktion wie stark die Gewichte angepasst werden, stattdessen wird bloß das Vorzeichen des Gradienten betrachtet. Durch das merken der Gewichte (engl. weightbacktracking) der vergangenen Iteration kann der letzte Aktualisierungsschritt rückgängig gemacht werden, falls das Fehlerminimum überschritten wurde, in diesem Fall wird dann stattdessen ein kleinerer Schritt durchgeführt. \ref{gunther2010neuralnet} (S. 32)
+Als Funktion zur Fehlerrückführung wird in allen Netzen eine resilente Backpropagation genutzt, nämlich \textit{Rprop+} (\textit{resilent backpropagation with weightbacktracking}) \ref{gunther2010neuralnet} (S. 32).
+Im Unterschied zur normalen Backpropagation wird jedes Gewicht mit einer individuellen Lernrate verändert. Die Anpassung der Gewichte der Verbindungen geschieht bei diesem Algorithmus nicht über die Größe des Gradienten in der Fehlerfunktion, sondern bloß über das Vorzeichen des Gradienten zusammen mit der Lernrate.
+Durch das merken der Gewichte (engl. weightbacktracking) der vergangenen Iteration kann der letzte Aktualisierungsschritt rückgängig gemacht werden. Dies wird genutzt, falls das Fehlerminimum überschritten wurde, dann wird stattdessen ein kleinerer Schritt durchgeführt. \ref{gunther2010neuralnet} (S. 32)
 
 Als Fehlerfunktion bietet sich die mittlere quadratische Abweichung der Ausgabe des Netzes zur idealen Ausgabe an.
 Für die Aktivierungsfunktion wird die logistische Funktion verwendet, die sich durch einen weicheren Übergang als die Stufenfunktion zwischen minimalen und maximalen Wert auszeichnet, sodass ein Neuron nicht ganz oder gar nicht feuert, sondern auch etwas dazwischen möglich ist. Bei der logistischen Funktion handelt es sich um eine Sigmoidfunktion, sie hat daher eine wohldefinierte Ableitung, was für die Fehlerrückführung benötigt wird. 
 
-Die Anzahl verdeckter Schichten und die Anzahl der Neuronen pro Schicht aus denen das neuronale Netz aufgebaut ist, sowie der Schwellenwert für die partiellen Ableitungen des Fehlergradienten, der als Haltekriterium für den Lernalgorithmus verwendet wird \ref{gunther2010neuralnet} (S. 33), müssen durch systematisches Durchsuchen des Parameterraums für jedes Modell herausgefunden werden.
+Die übrigen Parameter der Netze, die Anzahl verdeckter Schichten und die Anzahl der Neuronen pro Schicht aus denen es aufgebaut ist, sowie der Schwellenwert für die partiellen Ableitungen des Fehlergradienten, der als Haltekriterium für den Lernalgorithmus verwendet wird \ref{gunther2010neuralnet} (S. 33), müssen durch systematisches Durchsuchen des Parameterraums für jedes Modell herausgefunden werden.
 Dabei werden zunächst Netze in einer großen Spannweite der Parameterwerte berechnet, um die Parameter dann immer weiter einzugrenzen, wenn sich ein Trend für besonders gute Ergebnisse in einem Wertebereich ergibt.
 
+\paragraph{Zusammenfassung:}
+\textit{
+Es wurde nun dargestellt, wie das Problem der Leistungsvorhersage von Ein- und Ausgabe, in dieser Arbeit angegangen werden soll.
+Durch die Analyse der Ergebnisse verschiedener Modelle sollen Aussagen über das E/A-System getroffen werden können.
+Es wurde auch die Hypothese erläutert, die im folgenden untersucht wird, nach der sich E/A-Leistung durch den verwendeten Pfad im Speichersystem beschreiben lässt.  
+}
+
+
+\chapter{Implementierung}
+\textit{%
+In diesem Kapitel soll kurz auf ein paar wesentliche Punkte eingegangen werden, die bei der Umsetzung der Analyse von Bedeutung sind.
+}
+\bigskip
+
+\section{Verwendete Programmiersprache und Bibliotheken}
+Die Aufbereitung der Messdaten, die Berechnung der Modelle, sowie die Auswertung der Ergebnisse wurden mit R gemacht.
+Die neuronalen Netze wurden mit dem \textit{neuralnet} Paket \ref{gunther2010neuralnet} berechnet. Der Lernvorgang der Netze ist recht aufwendig und kann mehrere Stunden in Anspruch nehmen.
+Desweiteren sind die idealen Parameterwerte nicht bekannt, sodass viele Netze berechnet werden müssen, um den Parameterraum zu durchsuchen.
+Der Zeitaufwand kann durch die parallele Berechnung mehrerer Netze deutlich reduziert werden, sodass die Mehrkernprozessoren der Rechner, auf denen gearbeitet wird, ausgenutzt werden.
+Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher am einfachsten durch die Parallelisierung von Schleifen erreicht werden. Dafür verwende ich die Pakete \textit{doParallel} und \textit{foreach} \ref{weston2014getting}.
+Die \textit{EMA}-Werte für \textit{Tupel1 EMA Durchsatz} werden mit dem Paket \textit{TTR} berechnet.
+
+\section{Implementationsdetails}
+Um die neuronalen Netze am effektivsten zu Nutzen, sollten die Eingabewerte normiert werden, ansonsten werden Attributen mit höheren Werte-Domänen eine größere Bedeutung vom Gradientienverfahren beigemessen.
+Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. Bei der Exploration der Daten (\ref{exploration}) wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt.
+Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird. Gleiches gilt für die Zugriffsgrößen, deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
+Die Ergebnisse der neuronalen Netze müssen mit passenden Umkehrfunktionen ihrer Vorverarbeitung entsprechend wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.
+
+Da der Algorithmus der die neuronalen Netze berechnet nur ein Haltekriterium hat, das von der Konvergenz der Gewichte abhängt, kann es beliebig lange bis zur Termination dauern.
+Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst groß gewählt, wenn sich zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
+
+\chapter{Evaluierung}
+\textit{%
+	Evalevaleval
+}
+\bigskip
+
+\section{Testsystem, Mistral}
+\label{impl:testsystem}
+Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
+
+Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
+
+\section{Aufbau der Benchmark-Tests}
+\label{benchmark}
+Das Testsystem (\ref{impl:testsystem}) muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. 
+Es sollen nach dem vorgestellten Modell (\ref{ea_modell}) für verschiedene E/A-Aufrufe alle Werte des zugehörigen Attribut-Sets und die benötigte Laufzeit gemessen werden.
+Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
+Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
+Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
+Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer festen Anzahl an Wiederholungen hintereinader mit der gleichen Zugriffsgröße durchgeführt (\textbf{Wie Oft?}). Die Testdatei ist 10GiB groß. Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd. 
 
 \section{Validierung der Modelle}
 \label{Validierung}
@@ -482,57 +574,6 @@ Neben der Vorhersage der Leistung wird in den höheren Modellen selbst auch vers
 Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF}) und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
 Sowie den Anteil der korrekt vorhergesagten Ausreißer und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden, in der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive, \textit{TP} und \textit{FP}).
 Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
-
-%*** Ensemble Lernen\\
-%Zudem Vergleich mit durchschnittlicher Leistung von Netzen mit gleihen Parametern\\
-%%- abhängigkeit von auswahl der trainingsdaten und lokaler konvergenz\\
-%Konzept und Anwendung, was soll damit erreicht werden? -> lin abh der netze\\
-
-\section{Aufbau der Benchmark-Tests}
-\label{benchmark}
-Das Testsystem (\ref{impl:testsystem}) muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird eine systematischer Ansatz für die Experimente gewählt. Die Aufzeichnung der Experimente geschieht durch SIOX \cite{UMLTPTPONI15}. Es wurden vier verschiedene Experimente gemessen, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
-Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Daher der erste Teil der Bezeichnung. Das genutzte Speicherlayout ist ein simples off0-Layout, das bedeutet, dass die gelesenen Daten an Position 0 des Arbeitsspeichers geschrieben werden, bzw. Informationen zum Schreiben immer von dort geholt werden. (\textbf{Stimmt das?})
-Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf einee beliebige Position der Datei zugegriffen. Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.\\
-Die Zugriffsgrößen variieren von 1KB bis 16MiB. E/A-Aufrufe werden mit einer festen Anzahl an Wiederholungen hintereinader mit der gleichen Zugriffsgröße durchgeführt (\textbf{Wie Oft?}). Die Testdatei ist 10GiB groß. Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd. 
-
-\paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}\\
-
-
-\chapter{Implementierung}
-\textit{%
-	Details: wie ist die Analyse tatsächlich umgesetzt?
-}
-\bigskip
-
-\section{Verwendete Programmiersprache und Bibliotheken}
-R,neuralnet etc.
-
-Die Aufbereitung der Messdaten, die Berechnung der Modelle, sowie die Auswertung der Ergebnisse wurden mit R gemacht.
-Die neuronalen Netze wurden mit dem \textit{neuralnet} Paket \ref{gunther2010neuralnet} berechnet. Der Lernvorgang der Netze ist sehr aufwendig und kann mehrere Stunden in Anspruch nehmen, gleichzeitig sind die idealen Parameterwerte nicht bekannt, sodass viele Netze berechnet werden müssen, um gute Werte zu finden. Der Zeitaufwand kann durch die parallele Berechnung mehrerer Netze deutlich reduziert werden, sodass die Mehrkernprozessoren der Rechner, auf denen gearbeitet wird, ausgenutzt werden. Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher am einfachsten durch die Parallelisierung von Schleifen erreicht werden. Dafür verwende ich die Pakete \textit{doParallel} und \textit{foreach} \ref{weston2014getting}.
-Die \textit{EMA}-Werte für \textit{Tupel1 EMA Durchsatz} werden mit dem Paket \textit{TTR} berechnet.
-
-\section{Implementationsdetails}
-Um die neuronalen Netze am effektivsten zu Nutzen sollten die Eingabewerte normiert werden, ansonsten werden Attributen mit höheren Werte-Domänen eine größere Bedeutung vom Gradientienverfahren beigemessen. Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. Bei der Exploration der Daten (\ref{exploration}) wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt. Tatsächlich lässt sich in einem Graphen mit sortierten Laufzeiten kaum ein Unterschied in den Laufzeiten der ersten ~100000 Messungen ausmachen (\ref{Laufzeiten_Sortiert_nolog}). Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird. Gleiches gilt für die Zugriffsgrößen, deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
-Die Ergebnisse der neuronalen Netze müssen mit passenden Umkehrfunktionen ihrer Vorverarbeitung entsprechend wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.
-
-Da die neuronalen Netze nur ein Haltekriterium haben, das von dessen Konvergenz abhängt, kann es beliebig lange bis zum Abbruch dauern. Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst groß gewählt, wenn sich zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
-
-\section{Testsystem, Mistral}
-\label{impl:testsystem}
-Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
-
-Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
-
-
-\paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
-
-\chapter{Evaluierung}
-\textit{%
-	test
-}
-\bigskip
 
 \section{Exploration der Daten}
 \label{exploration}
