@@ -119,7 +119,12 @@ Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche T
 
 \section{Problemstellung}
 
-Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor-Chip liegenden Caches. Autonome Tools zur Optimierung der E/A können versuchen die Dauer von Dateizugriffen vorherzusagen \textbf{(warum?)}. Diese Arbeit versucht dies mit dem Hilfsmittel neuronaler Netze zu erreichen. 
+Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor-Chip liegenden Caches.
+Werkzeuge können den Nutzer eines Hochleistungsrechners dabei unterstützen ein Programm mit möglichst produktiver E/A zu schreiben. 
+Zur Entwicklung eines solchen Werkzeugs muss das E/A-System des Hochleistungsrechners zunächst in einem hinreichenden Maße verstanden worden sein.
+Die Vorhersage der benötigten Zeit für eine E/A-Aktion kann dabei helfen das zugrunde liegende System besser zu verstehen. Wenn mit einem Modell E/A-Leistung zuverlässig mit guter Genauigkeit vorhergesagt werden kann, so können durch Studium dieses einfacheren Systems Aussagen über das Komplexe gemacht werden.
+Ein gutes Modell hätte zudem den Vorteil, dass verschiedene E/A-Aufrufe schnell und ohne großen Aufwand simuliert werden können. Das Werkzeug könnte somit die Leistung verschiedener E/A-Strategien berechnen und das beste gefundene Ergebnis dem Programmierer vorschlagen oder sogar autonom implementieren.  
+In dieser Thesis soll ein Modell zur zuverlässigen E/A-Leistungsvorhersage mit dem Hilfsmittel neuronaler Netze entwickelt werden. 
 
 \section{Ziele der Thesis}
 Main goal:\\
