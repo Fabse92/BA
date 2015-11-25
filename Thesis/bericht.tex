@@ -105,10 +105,10 @@
 
 \chapter{Einleitung}
 \label{Einleitung}
-\textit{%
-Im folgenden wird zunächst kurz dargelegt mit welcher Problemstellung sich diese Thesis befasst, welches Ziel verfolgt wird, und wie sie im Weiteren aufgebaut sein wird.
-}
-\bigskip
+%\textit{%
+%Im folgenden wird zunächst kurz dargelegt mit welcher Problemstellung sich diese %Thesis befasst, welches Ziel verfolgt wird, und wie sie im Weiteren aufgebaut %sein wird.
+%}
+%\bigskip
 
 \section{Motivation}
 
@@ -118,27 +118,30 @@ Einerseits liegt dies am großen  technische Aufwand, der zur Vernetzung der Rec
 Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche Tools zur Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes. Wünschenswert ist es dabei, wenn diese Tools die Optimierungen möglichst selbstständig durchführen können, sodass der Wissenschaftler sich auf die Funktionalität seines Programms konzentrieren kann, statt sich mit Leistungsoptimierung aufzuhalten.
 
 \section{Problemstellung}
-
 Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor-Chip liegenden Caches.
 Werkzeuge können den Nutzer eines Hochleistungsrechners dabei unterstützen ein Programm mit möglichst produktiver E/A zu schreiben. 
-Zur Entwicklung eines solchen Werkzeugs muss das E/A-System des Hochleistungsrechners zunächst in einem hinreichenden Maße verstanden worden sein.
+Zur Entwicklung eines solchen Werkzeugs muss das E/A-System des Hochleistungsrechners zunächst ausreichend verstanden worden sein.
 Die Vorhersage der benötigten Zeit für eine E/A-Aktion kann dabei helfen das zugrunde liegende System besser zu verstehen. Wenn mit einem Modell E/A-Leistung zuverlässig mit guter Genauigkeit vorhergesagt werden kann, so können durch Studium dieses einfacheren Systems Aussagen über das Komplexe gemacht werden.
 Ein gutes Modell hätte zudem den Vorteil, dass verschiedene E/A-Aufrufe schnell und ohne großen Aufwand simuliert werden können. Das Werkzeug könnte somit die Leistung verschiedener E/A-Strategien berechnen und das beste gefundene Ergebnis dem Programmierer vorschlagen oder sogar autonom implementieren.  
-In dieser Thesis soll ein Modell zur zuverlässigen E/A-Leistungsvorhersage mit dem Hilfsmittel neuronaler Netze entwickelt werden. 
+In dieser Arbeit soll ein Modell zur E/A-Leistungsvorhersage mit dem Hilfsmittel neuronaler Netze entwickelt werden. 
 
 \section{Ziele der Thesis}
-Main goal:\\
-A neural network that is reliable in predicting performance of HPC-IO with sufficient quality\\
+Das Hauptziel der Thesis ist ein künstliches neuronales Netz zu entwickeln, das zuverlässig und mit hinreichender Genauigkeit die Laufzeit von E/A-Zugriffen auf einem Hochleistungsrechner vorhersagt. 
 
-Subgoals:\\
-Knowing which data about the io can be provided\\
-Identify interesting (data mining) features, that can be derived from the available data\\
-Having an understanding of what kind of neural network is suitable for the task\\
-A measure for adequate quality of an IO-performance predictor \\
-Benchmark of different predictors using different approaches\\
+Der Weg zu dieser Lösung kann in Teilziele unterteilt werden.
+Zunächst muss untersucht werden, welche Informationen über die E/A-Aufrufe zur Verfügung gestellt werden können.
+Danach können die Informationen identifiziert werden, die mit der Laufzeit des E/A-Zugriffs in Relation stehen. Dabei können diese Informationen direkt aus den gemessenen Daten gewonnen werden oder aus der Kombination verschiedener Daten abgeleitet worden sein.
+Zu den gefundenen Daten müssen dann passende neuronale Netze gefunden werden, die mit diesen gute Vorhersagen treffen können.
+Um diese guten Vorhersagen zu erkennen und um die Ergebnisse unterschiedlicher Modelle vergleichen zu können, müssen Maße für deren Qualität definiert werden.
+Damit die Ergebnisse der neuronalen Netze im Hinblick für das Hauptziel bewertet werden können, muss ein Verständnis dafür entwickelt werden, welche Qualität als hinreichend betrachtet werden kann.
+Abschließend können dann die Vorhersagen verschiedener Modelle untereinander verglichen werden.
 
 \section{Strukturierung}
-Nachdem in diesem Kapitel die Metaebene der Thesis behandelt wird, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Das dritte Kapitel beschäftigt sich mit bereits vorhandenen Ansätzen und Arbeiten zur Problemstellung. Im vierten Kapitel werden die Konzepte, sowie die Implementierung, der verschiedenen Modelle beschrieben, die als potenzielle Lösungen des Problems entwickelt und getestet wurden. Die Evaluierung der verschiedenen Lösungsansätze wird daraufhin im fünften Kapitel vorgenommen. Im sechsten Kapitel wird untersucht, welche Lösungsansätze für welche Anwendungsfälle am besten geeignet sind, um dann mit diesen Erkenntnissen im siebten Kapitel ein Fazit der Arbeit zu ziehen.
+Nachdem in diesem Kapitel die Themen der Arbeit umrissen wurden, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Im dritten Kapitel werden verwandte Arbeiten vorgestellt.
+Im vierten Kapitel wird erläutert, welche Annahmen über das E/A-System getroffen werden und wie dieses mit verschiedenen Ansätzen modelliert werden soll.
+Das fünfte Kapitel gibt einen kleinen Einblick wie die Analyse umgesetzt wurde.
+Die Evaluierung der verschiedenen Lösungsansätze wird daraufhin im sechsten Kapitel vorgenommen. Dabei wird zunächst erklärt, wie das Testsystem ausgemessen wurde und wie die Modelle bewertet werden.
+Über die gewonnen Erkenntnisse wird im siebten Kapitel ein Fazit gezogen.
 
 \chapter{Hintergrund}
 \label{Hintergrund}
