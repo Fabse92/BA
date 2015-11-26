@@ -120,9 +120,11 @@ Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche T
 \section{Problemstellung}
 Im Bereich der Leistungsanalyse stellt sich unter anderem die Problematik der effizienten Ausnutzung der verschiedenen Puffer-Speicher (Caches), wie Arbeitsspeicher, und die direkt auf dem Prozessor-Chip liegenden Caches.
 Werkzeuge können den Nutzer eines Hochleistungsrechners dabei unterstützen ein Programm mit möglichst produktiver E/A zu schreiben. 
-Zur Entwicklung eines solchen Werkzeugs muss das E/A-System des Hochleistungsrechners zunächst ausreichend verstanden worden sein.
-Die Vorhersage der benötigten Zeit für eine E/A-Aktion kann dabei helfen das zugrunde liegende System besser zu verstehen. Wenn mit einem Modell E/A-Leistung zuverlässig mit guter Genauigkeit vorhergesagt werden kann, so können durch Studium dieses einfacheren Systems Aussagen über das Komplexe gemacht werden.
-Ein gutes Modell hätte zudem den Vorteil, dass verschiedene E/A-Aufrufe schnell und ohne großen Aufwand simuliert werden können. Das Werkzeug könnte somit die Leistung verschiedener E/A-Strategien berechnen und das beste gefundene Ergebnis dem Programmierer vorschlagen oder sogar autonom implementieren.  
+Zur Entwicklung eines solchen Werkzeugs muss das E/A-System des Hochleistungsrechners verstanden werden.
+Dabei kann die Vorhersage der benötigten Zeit für E/A-Aktionen helfen. Wenn mit einem Modell E/A-Leistung zuverlässig mit guter Genauigkeit vorhergesagt werden kann, so können durch Studium dieses einfacheren Systems Aussagen über das Komplexe gemacht werden.
+Dabei können bereits durch den Entwicklungsprozess und dessen ständige Evaluation Kentnisse über das System gesammelt werden. Durch ein unerfolgreiches Modell kann eine Aussage darüber getroffen werden, wie sich das E/A-System gerade nicht verhält.
+  
+Wenn man ein gutes Modell finden würde, könnten damit verschiedene E/A-Aufrufe schnell und ohne großen Aufwand simuliert werden. Das Werkzeug könnte somit die Leistung verschiedener E/A-Strategien berechnen und das beste gefundene Ergebnis dem Programmierer vorschlagen oder sogar autonom implementieren.  
 In dieser Arbeit soll ein Modell zur E/A-Leistungsvorhersage mit dem Hilfsmittel neuronaler Netze entwickelt werden. 
 
 \section{Ziele der Thesis}
@@ -245,7 +247,8 @@ Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen z
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
 	\end{center}
-	\caption{Zweischichtiges Netz (wiki)}
+	\caption{Zweischichtiges Netz Quelle: Offnfopt, URL}
+	%https://de.wikipedia.org/w/index.php?title=Datei:Multi-Layer_Neural_Network-Vector.svg&lang=de
 	\label{fig:Schichten}
 \end{figure}
 Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("unlimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
@@ -253,7 +256,7 @@ Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskan
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/ArtificialNeuronModel_deutsch.png}
 	\end{center}
-	\caption{Schema eines künstlichen Neurons (wiki)}
+	\caption{Schema eines künstlichen Neurons. Quelle: Chrislb, URL} %https://de.wikipedia.org/wiki/Datei:ArtificialNeuronModel_deutsch.png
 	\label{fig:Neuron}
 \end{figure}
 Die Aktivierungsfunktion berechnet eventuell mit oder ohne einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht weitergegeben wird.
@@ -269,12 +272,18 @@ Wobei lineare Separierbarkeit definiert ist als:
 
 Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, wenn $n + 1$ reelle Zahlen $w_1,...,w_{n+1}$ existieren, sodass für jeden Punkt $(x_1,x_2,...,x_n) \in A$ die Ungleichung $\sum_{i=1}^{n} w_ix_i \ge w_{n+1}$ gilt und für jeden Punkt $(x_1,x_2,...,x_n) \in B$ $\sum_{i=1}^{n} w_ix_i < w_{n+1}$ \cite{Rojas:1996:NNS:235222} (S. 63)
 
-\begin{figure}[h]
-	\begin{center}
-		\includegraphics[totalheight=0.2\textheight]{Bilder/Lineare_Separierbarkeit.png}
-	\end{center}
-	\caption{Lineare Separierbarkeit von Funktionen (wiki)}
-	\label{fig:Separierbarkeit}
+\begin{figure}
+	\subfloat[Zwei voneinander nicht linear separierbare Relationen in $ \mathbb{R}^2$.]{
+		\includegraphics[width=.3\textwidth]{Bilder/2000px-Separability_NO.png}
+	}
+	\hfill
+	\subfloat[Zwei voneinander linear separierbare Relationen in $\mathbb{R}^2$.]{
+		\includegraphics[width=.3\textwidth]{Bilder/2000px-Separability_YES.png}
+	}		
+	\caption{Lineare Separierbarkeit, Quelle: Mekeor, URL}
+	%https://de.wikipedia.org/wiki/Datei:Separability_YES.svg
+	%https://de.wikipedia.org/wiki/Datei:Separability_NO.svg
+	\label{fig:Zugriffsgroesse_Sortiert}
 \end{figure} 
 
 Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen \cite{Rojas:1996:NNS:235222} (Seite 37).
