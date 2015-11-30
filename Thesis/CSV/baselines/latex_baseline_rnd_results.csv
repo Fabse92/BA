@@ -1,8 +1,8 @@
 Modell,MAF,RMAF,RMQA,Q3,Max,Typ
-Median agg LinReg-Fehlerklasse ,0.00013,   7.4,   56,   6.5,   1972,Agg
-Median agg Tupel1-Fehlerklasse ,0.00027,  12.3,  111,   6.8,   5654,Agg
-Median agg                     ,0.00084,  39.9, 2291,   8.9,1359978,Agg
-LinReg G                       ,0.00470,5019.1,13188, 999.0,  46070,Ind
-LinReg GA                      ,0.00470,5018.7,13215, 984.7,  51343,Ind
-LinReg GAO                     ,0.00435,7048.9,19261, 754.4,  72017,Ind
-Durchschnitt                   ,0.00569,7742.3,20352,1588.3,  71083,Agg
+Median agg Tupel1-Fehlerklasse ,0.00026,    8.4,   43,   9.4,   4527,Agg
+Median agg LinReg-Fehlerklasse ,0.00029,   11.8,   74,   9.6,   4527,Agg
+Median agg                     ,0.00167,   79.3, 9008,  15.0,7719764,Agg
+LinReg G                       ,0.00476, 5578.4,14185,1158.1,  46941,Ind
+LinReg GA                      ,0.00476, 5578.1,14197,1157.6,  49614,Ind
+LinReg GAO                     ,0.00429, 8476.5,22531, 534.8,  76554,Ind
+Durchschnitt                   ,0.00692,10243.5,26035,2204.5,  86139,Agg

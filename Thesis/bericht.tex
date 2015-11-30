@@ -247,8 +247,8 @@ Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen z
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
 	\end{center}
-	\caption{Zweischichtiges Netz Quelle: Offnfopt, URL}
-	%https://de.wikipedia.org/w/index.php?title=Datei:Multi-Layer_Neural_Network-Vector.svg&lang=de
+	\caption{Zweischichtiges Netz Quelle: Offnfopt, \url{https://de.wikipedia.org/w/index.php?title=Datei:Multi-Layer_Neural_Network-Vector.svg&lang=de}}
+	%
 	\label{fig:Schichten}
 \end{figure}
 Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt ("unlimited fan-in property" \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
@@ -256,7 +256,7 @@ Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskan
 	\begin{center}
 		\includegraphics[totalheight=0.2\textheight]{Bilder/ArtificialNeuronModel_deutsch.png}
 	\end{center}
-	\caption{Schema eines künstlichen Neurons. Quelle: Chrislb, URL} %https://de.wikipedia.org/wiki/Datei:ArtificialNeuronModel_deutsch.png
+	\caption{Schema eines künstlichen Neurons. Quelle: Chrislb, \url{https://de.wikipedia.org/wiki/Datei:ArtificialNeuronModel_deutsch.png}} %
 	\label{fig:Neuron}
 \end{figure}
 Die Aktivierungsfunktion berechnet eventuell mit oder ohne einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht weitergegeben wird.
@@ -280,10 +280,9 @@ Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, 
 	\subfloat[Zwei voneinander linear separierbare Relationen in $\mathbb{R}^2$.]{
 		\includegraphics[width=.3\textwidth]{Bilder/2000px-Separability_YES.png}
 	}		
-	\caption{Lineare Separierbarkeit, Quelle: Mekeor, URL}
-	%https://de.wikipedia.org/wiki/Datei:Separability_YES.svg
-	%https://de.wikipedia.org/wiki/Datei:Separability_NO.svg
-	\label{fig:Zugriffsgroesse_Sortiert}
+	\caption{Lineare Separierbarkeit, Quelle: Mekeor, \url{https://de.wikipedia.org/wiki/Datei:Separability_YES.svg} und \url{https://de.wikipedia.org/wiki/Datei:Separability_NO.svg}}
+	%
+	\label{fig:separierbarkeit}
 \end{figure} 
 
 Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen \cite{Rojas:1996:NNS:235222} (Seite 37).
@@ -440,6 +439,7 @@ Bei Zeitreihen-Modellen hingegen findet keine Aggregierung statt. Zu verschieden
 Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt. Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Modell erheblich verbessert werden.
 
 \subsection{Fehlerklassen-Modelle}
+\label{fk-modelle}
 Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit anhand des genommenen Pfades unterscheiden lassen, sollen die verbesserten Vorhersagen untersucht werden, die unter Kenntnis dieser Pfade gemacht werden können. Dazu werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
 Fehlerklassen werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
 Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Sets richtig bestimmt. Die verschiedenen Pfade sollten sich,unabhängig vom gemessenen Attribut-Set, durch signifikante Sprünge in der benötigten Laufzeit unterscheiden, sodass ein Fehler in der Größenordnung eines solchen Sprungs bedeutet, dass die vorliegende Messung einem anderen Pfad zuzuordnen ist. (\textbf{Simmt das so, sollten wir dann nicht lieber unterschiedlich funktionierende Modelle für Generierung der FK und zur Vorhersage mit diesen nutzen?})
@@ -543,9 +543,11 @@ Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher 
 Die \textit{EMA}-Werte für \textit{Tupel1 EMA Durchsatz} werden mit dem Paket \textit{TTR} berechnet.
 
 \section{Implementationsdetails}
-Um die neuronalen Netze am effektivsten zu Nutzen, sollten die Eingabewerte normiert werden, ansonsten werden Attributen mit höheren Werte-Domänen eine größere Bedeutung vom Gradientienverfahren beigemessen.
-Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. Bei der Exploration der Daten (\ref{exploration}) wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt.
-Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird. Gleiches gilt für die Zugriffsgrößen, deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
+Um die neuronalen Netze am effektivsten zu Nutzen, sollten die Eingabewerte normiert werden. Ansonsten würde einem Attribut mit hoher Werte-Domäne sonst eine größere Bedeutung vom Gradientienverfahren beigemessen, als einem Attribut mit niederwertiger Domäne. 
+Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. 
+Bei der Exploration der Daten wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt.
+Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird, da hier das größte Optimierungspotential liegt. Gleiches gilt für die Zugriffsgrößen.
+Deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
 Die Ergebnisse der neuronalen Netze müssen mit passenden Umkehrfunktionen ihrer Vorverarbeitung entsprechend wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.
 
 Da der Algorithmus der die neuronalen Netze berechnet nur ein Haltekriterium hat, das von der Konvergenz der Gewichte abhängt, kann es beliebig lange bis zur Termination dauern.
@@ -576,63 +578,74 @@ Die Testdatei ist 10GiB groß, sie passt daher nicht komplett in den Arbeitsspei
 Zu jeder Größe werden in drei Messreihen 10000 Messungen durchgeführt. Beim sequentiellen Fall werden allerdings nur so viele Aufrufe hintereinander gemessen, bis über das Ende der Datei hinausiteriert wurde. Diese Beschränkung trifft für die Messreihen mit Zugriffsgrößen ab 2MiB ein. 16MiB werden im sequentiellen entsprechend nur 640 mal pro Messreihe verwendet.
 Zwischen zwei Messreihen besteht kein Zusammenhang, sodass nur zeitliche, wie periodische, Abhängigkeiten innerhalb einer Messreihe bestehen können.  
 Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd.
+Da alle Messungen zu cached-off0 gehören, werden die Daten nun meist seq-R, seq-W, rnd-R und rnd-W bzw sequentieller und randomisierter Datensatz genannt. 
 
 \section{Validierung der Modelle}
 \label{Validierung}
 
-Die Modelle werden jeweils auf den zwei Datensätzen, also sowohl lesende als auch schreibende E/A-Zugriffe, der beiden getesteten Anwendungsfälle (\ref{benchmark}) gelernt. Jeder Datensatz umfasst 200000 Messungen, sodass 400000 zu beiden Fällen zur Verfügung stehen. Die neuronalen Netze bekommen 40000 zufällig bestimmte Datenpunkte davon als Trainingsdatensatz. Dies sollte eine relevante Stichprobe der Messdaten sein, andererseits ist der Trainingsaufwand für die Netze so in einem angemessen Aufwand von meist einigen Minuten bis wenigen Stunden. Die restlichen 360000 Datenpunkte werden zur Berechnung der Fehlermetriken (\ref{Validierung}) verwendet.
+Die Modelle werden jeweils auf den zwei Datensätzen der beiden getesteten Anwendungsfälle gelernt, also sowohl auf lesenden als auch auf schreibenden E/A-Zugriffen. Die neuronalen Netze bekommen 1000 zufällig bestimmte Datenpunkte Messungen pro Zugriffsgröße und Operationstyp als Trainingsdatensatz. Insgesamt stehen somit 34000 Datenpunkte zur Verfügung.
+Dies sollte eine relevante Stichprobe der Messdaten sein, gleichzeitig bleibt der Trainingsaufwand für die Netze so in einem angemessen Rahmen von meist einigen Minuten bis wenigen Stunden.
+Die restlichen Datenpunkte werden zur Berechnung der Fehlermetriken verwendet.
 
-Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden. Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt. Je nachdem mit welchen Gewichten das Netz startet ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
+Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden. Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
+Je nachdem mit welchen Gewichten das Netz startet ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
 
 Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
 \textit{MAF} ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
-Der \textit{RMAF} ist der relative \textit{MAF}, also der \textit{MAF} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit. Diese beiden Metriken geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
-Um ein Verständnis für die Streuung der Vorhersagefehler zu bekommen ist der relative mittlere quadratische absolute Fehler gemittelt über alle Vorhersagen (\textit{RMQA}) nützlich. Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise sehr gut und teilweise sehr schlecht agiert.
-Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich. \textit{Q3} gibt das obere Quartil des absoluten relativen Fehlers über alle Vorhersagen an und \textit{Max}
-den größten relativen Fehler vom Modell gemacht wurde.
+Der \textit{RMAF} ist der relative \textit{MAF}, also der \textit{MAF} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.
+Diese beiden Metriken geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
+Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der relative mittlere quadratische absolute Fehler gemittelt über alle Vorhersagen (\textit{RMQA}) nützlich.
+Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise gut und für andere Messungen schlecht agiert.
+Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich. \textit{Q3} gibt das obere Quartil des absoluten relativen Fehlers über alle Vorhersagen an und \textit{Max} den größten relativen Fehler der vom Modell gemacht wurde.
 Der Wert von \textit{Bereich} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen. Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre dieser Wert also bei 80\%. An \textit{Bereich} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
 
-Neben der Vorhersage der Leistung wird in den höheren Modellen selbst auch versucht die Quantile 0.1 und 0.9 vorherzusagen. Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt. Zur Evaluierung der Ausreißer-Vorhersage werden weitere Fehlermetriken genutzt.
+Neben der Vorhersage der Leistung wird in den höheren Modellen selbst auch versucht die Quantile 0.1 und 0.9 vorherzusagen.
+Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen.
+Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
+Zur Evaluierung der Ausreißer-Vorhersage werden weitere Fehlermetriken eingeführt.
 Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF}) und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
-Sowie den Anteil der korrekt vorhergesagten Ausreißer und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden, in der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive, \textit{TP} und \textit{FP}).
+Sowie den Anteil der korrekt vorhergesagten Ausreißer (TP) und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden (FP).
+In der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive) daher die Bezeichnungen \textit{TP} und \textit{FP}).
 Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
 
 \section{Exploration der Daten}
 \label{exploration}
-Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln. In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Größe und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer. Alle Datensätze bestehen aus 200.000 Messungen.\\
+Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln.
+In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Zugriffsgröße und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer.
 
 \begin{table}
+	\centering
 	\scriptsize
-	\subfloat[cached-off0-seq-R]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+	\subfloat[Sequentiell lesend]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 		\end{tabular}
 	}\\
-	\subfloat[cached-off0-seq-W]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+	\subfloat[Sequentiell Sequentiell]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 		\end{tabular}
 	}\\
-	\subfloat[cached-off0-rnd-R]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+	\subfloat[Randomisiert lesend]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 		\end{tabular}
 	}\\
-	\subfloat[cached-off0-rnd-W]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
+	\subfloat[Randomisiert schreibend]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
+			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 		\end{tabular}
 	}
 	\caption{Metainformationen über die Datensätze}
@@ -641,206 +654,191 @@ Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich
 
 Das Attribut OpTyp kann nur sinnvoll über der Vereinigung von cached-off0-seq-R und cached-off0-seq-W bzw. cached-off0-rnd-R und cached-off0-rnd-W betrachtet werden. \ref{tab:metaoptyp}
 
+Wie das E/A-Modell postuliert hat ist die Korrelation zwischen Zugriffsgröße und Laufzeit sehr stark. Dies liegt an der linearen Abhängigkeit vom $frac{Zugriffsgrö\text{ß}e}{Durchsatz}$ sowohl auf der Festplatte, als auch im Netzwerk und auf den Arbeitsspeicher.
+Die wesentlich größere Korrelation bei sequentiellen Datensatz spricht für einen erfolgreichen Einsatz von Caching-Strategien, wie der Read-Ahead-Einstellung.
+Die geringe Korrelation zwischen Dauer und Delta-Abstand kann zwei Ursachen haben, entweder ist die Relation der Größen sehr gering oder er lässt sich nicht durch einen linearen Zusammenhang ausdrücken. 
+Der zweite Fall gilt gerade für OpTyp. Wird beispielsweise das arithmetische Mittel der Dauer auf cached-off0-seq-R und cached-off0-seq-W für einzelne Zugriffsgrößen miteinander verglichen wird dies deutlich.
+So ist die mittlere Dauer für 16MiB im sequentiellen Fall für lesende Zugriffe 14.088 Millisekunden und für schreibende 16.957 Millisekunden, das Lesen geht also etwa 17\% schneller.
+Für die Zugriffsgröße von einem 4KiB ergibt sich mit 0.01535 Millisekunden bei Schreiben zu 0.01392 Millisekunden für das Schreiben eine etwa 10\% längere Laufzeit beim Lesen.
+
 \begin{table}
 	\scriptsize
-	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/exploration/data_summary_seq_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
-		\end{tabular}
-	} \\
-	\subfloat[cached-off0-rnd]{
-		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. & Korrelation \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/exploration/data_summary_rnd_optyp.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
-			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max &\Korrelation}%
-		\end{tabular}
+	\makebox[\textwidth][c]{
+		\subfloat{
+			\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+				Attribut & cached-off0-seq-R  & cached-off0-seq-W & cached-off0-rnd-R & cached-off0-rnd-W & cached-off0-seq & cached-off0-rnd\\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/exploration/data_summary_korrelationen.csv}{Attribut=\Attribut,seqr=\seqr,seqw=\seqw, rndr = \rndr, rndw = \rndw,seq = \seq, rnd = \rnd}%
+				{\Attribut & \seqr & \seqw & \rndr & \rndw & \seq &\rnd}%
+			\end{tabular}
+		}
+		\caption{Korrealtionen der Attribute zu Dauer auf den verschiedenen Datensätzen}
+		\label{tab:korrealtionen}
 	}
-	\caption{Metainformationen über OpTyp, 1 entspricht einerm Leseaufruf und 2 einem Schreibaufruf}
-	\label{tab:metaoptyp}
 \end{table}
 
+Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden ist, folgt eine Betrachtung der tatsächlichen Messungen in Zeitreihe.
+Eine Zeitreihe, also eine Folge von Messungen, gibt es zu jeder Messreihe.
+Bei der Betrachtung der Metainformationen wurde festgestellt, dass die Zugriffsgröße sehr stark mit der Laufzeit eines Messpunktes korreliert.
+In den Graphen \ref{Laufzeiten_Zeitreihe} sind die Messungen der verschiedenen Datensätze daher sortiert nach Zugriffsgröße dargestellt. Die drei Messreihen zu jeder Größe werden sind hintereinander abgebildet.
+Die Korrelation der beiden Attribut Zugriffsgröße und Laufzeit ist deutlich erkennbar, die Laufzeiten nehmen im Mittel zu. Doch es ist auch zu erkennen, insbesondere bei cached-off0-rnd-R, dass die Laufzeiten aufgrund der Streuung von weiteren Faktoren abhängen müssen.
 
-Nachdem nun ein grobes Verständnis für die vorliegenden Daten erlangt worden ist, folgt eine Betrachtung der tatsächlichen Messungen in Zeitreihe (\ref{Laufzeiten_Zeitreihe}). Um den wesentlichen Teil der Punkte besser erkennen zu können, wurden in den Graphen die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten.
+Wenn nicht anders angegeben wird in den Graphen nur jeder 25te Datenpunkt gezeichnet, um es etwas übersichtlicher zu machen.
+Zudem werden alle Punkte halbtransparent dargestellt, sodass überdeckte Schichten und Häufungspunkte erkannt werden können.
+In Zeitreihen Abbildungen werden die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten, um den wesentlichen Teil der Punkte besser erkennen zu können.
+Oft ist eine logarithmische Darstellung der Y-Achse hilfreich, damit zwischen den Messungen einer Zugriffsgröße unterschieden werden kann. 
 
 \begin{figure}
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Duration_read_seq.png}
+	\subfloat[Sequentiell lesend]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_log_read_seq.png}
 	}
 	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Duration_write_seq.png}
+	\subfloat[Sequentiell schreibend]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_log_write_seq.png}
 	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Duration_read_rnd.png}
+	\subfloat[Randomisiert lesend]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_log_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Duration_write_rnd.png}
-	}		
-	\caption{Messungen der Laufzeiten als Zeitreihe dargestellt, Index ist die Nummer der Messung}
+	\subfloat[Randomisiert schreibend]{
+		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_log_write_rnd.png}
+	}	
+	\caption{Messungen der Laufzeiten nach Zugriffsgröße sortiert dargestellt. Von links nach rechts 1B, 4B, 16B, 64B, 256B, 1KiB, 4KiB, 8KiB, 16KiB, 64KiB, 256KiB, 512KiB, 1MiB, 2MiB, 4MiB, 8MiB und 16MiB}
 	\label{Laufzeiten_Zeitreihe}
 \end{figure} 
 
-Wenn die Messpunkte nach der Laufzeit sortiert sind, kann die Verteilung Daten besser betrachtet werden. Die logarithmische Skalierung der Y-Achse entzerrt die Punkte (\ref{Laufzeiten_Sortiert}).
+Wenn die Messpunkte nach der Laufzeit sortiert sind (\ref{Laufzeiten_Sortiert}), kann Verteilung der Laufzeiten besser betrachtet werden.
+Insbesondere sind in dieser Darstellung ein stufenartiger Verlauf ersichtlich.
+Es scheint also bestimmte Laufzeiten zu geben, die gehäuft vorkommen, die sich als Auftritt der Stufen kennzeichnen. Andere Laufzeiten kommen dagegen seltener vor, sie bilden eine Senkrechte.
+Einzelne stufen stammen einerseits von Zugriffsgrößen, die alle eine ähnliche Zugriffszeit haben, andere lassen sich als die vorhergesagten E/A-Pfade im System interpretieren.
+So sind die Zugriffszeiten verschiedener Größen bei cached-off0-seq-W recht dicht, sodass sich die Stufen dieser Herkunft zuordnen lassen.
+Der andere Fall lässt sich gut bei cached-off0-rnd-R erkennen. Die Zugriffszeiten zu einer Größe teilen sich bei \ref{Laufzeiten_Zeitreihe} in etwa drei Gruppen auf, eine langsame, eine mittlere und eine schnelle.
+Die Gruppen verschiedener Zugriffsgrößen können teilweise zu einem E/A-Pfad zusammengefasst werden. Die Häufungen finden sich dann auf einer horizontalen Linie. 
+Die Laufzeit ist für die horizontal nebeneinanderliegenden Gruppen nicht in erster Linie von der Zugriffsgröße abhängig, sondern in unserer Interpretation von dem Pfad, den die entsprechenden Aufrufe im System genommen haben. 
 
 \begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_write_rnd.png}
 	}		
-	\caption{Messungen der Laufzeiten sortiert dargestellt (logarithmische Y-Achse)}
+	\caption{Messungen der Laufzeiten sortiert dargestellt.}
 	\label{Laufzeiten_Sortiert}
 \end{figure} 
 
-Zum Vergleich werden die Laufzeiten in \ref{Laufzeiten_Sortiert_nolog} ohne logarithmische Y-Achse dargestellt. Aufgrund der Häufung von Messungen mit sehr kurzer Laufzeit sind etwa die ersten 100.000 Werte in dieser Darstellung nicht zu unterscheiden. Aus diesem Grund werden die Laufzeiten (und Zugriffsgrößen zur Erhaltung der Korrelation) für die höheren Modelle zum Lernen logarithmiert. Da die neuronalen Netze versuchen den Modellfehler zu minimieren würde es ansonsten eine Tendenz dazu geben, die Messungen mit längerer Laufzeit korrekt zu lernen. Während für die kürzeren Laufzeiten für den internen Modellfehler unwichtiger wären. Ein ungenaues Lernen der Messungen mit kürzeren Laufzeiten würde sich  nicht in einer absoluten Metrik, sondern nur in einer Relativen niederschlagen.
+Als Ausreißer werden für alle Attribut-Sets die Messungen mit den $10\%$ kürzesten und längsten Laufzeiten behandelt. Die Verteilung der Ausreißer ist in \ref{fig:ausreisser} erkennen.
+Bei den randomisierten Daten gibt es pro Attribut-Set nur ein bis drei Messungen. Daher führt diese Definition für Ausreißer auf dem Datensatz zu keinen sinnvollen Ergebnissen. 
+Die Ausreißervorhersage wird dementsprechend im Folgenden nur auf dem sequentiellen Datensatz durchgeführt.
+Dort befinden sich die Ausreißer gerade an den oberen und unteren Enden einer Stufe.
 
 \begin{figure}
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_seq_nolog.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_rnd_nolog.png}
-	}			
-	\caption{Messungen der Laufzeiten sortiert dargestellt ohne Logarithmus}
-	\label{Laufzeiten_Sortiert_nolog}
-\end{figure} 
-
-Als Ausreißer werden für alle \textbf{Attribut-Sets} die Messungen mit den $10\%$ kürzesten und längsten Laufzeiten behandelt. Die Verteilung der Ausreißer ist in \ref{fig:ausreisser} erkennen.\\
-Am Verhalten der Ausreißer lässt sich gut unterscheiden, ob es sich um den sequentiellen oder den randomisierten Datensatz handelt. Bei cached-off0-seq befinden sich die Ausreißer gerade an den oberen und unteren Enden einer Ansammlung von Punkten. Da alle Punkte innerhalb der Ansammlung zu einem Attribut-Set gehören muss sich gerade dieses Bild ergeben. Dagegen sind die roten Punkte bei cached-off0-rnd unregelmäßiger verteilt. Da die Ausreißer als zweites in den Graphen gezeichnet wurden, überdecken sie die grauen und erscheinen daher präsenter. (\textbf{Sind die Ausreißer hier eher ein Zeichen dafür, dass das System in den Häufungspunkten von Ausreißern besonders schnell oder langsam  agiert hat, oder ist dies durch die Art des Benchmarks bedingt}?)
-
-\begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_outlier_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_outlier_write_seq.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_outlier_read_rnd.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_outlier_write_rnd.png}
-	}		
+	}	
 	\caption{Ausreißer sind in rot dargstellt, sie überdecken die grauen Punkte}
 	\label{fig:ausreisser}
 \end{figure} 
 
-Bei der Betrachtung der Metainformationen wurde festgestellt, dass die Zugriffsgröße sehr stark mit der Laufzeit eines Messpunktes korreliert. Um eine Vorstellung davon zu entwickeln, wie diese beiden Größen miteinander zusammenhängen, habe ich die Messdaten nach der Zugriffsgröße sortiert und ihre Laufzeit aufgetragen. \ref{fig:Zugriffsgroesse_Sortiert} \\
-Die Korrelation der beiden Größen ist deutlich erkennbar, die Laufzeiten nehmen im Mittel zu. Doch es ist auch zu erkennen, insbesondere bei cached-off0-rnd-R, dass die Laufzeiten aufgrund der Streuung von weiteren Faktoren abhängen müssen. Die Verteilung der Messpunkte einer Zugriffsgröße in zwei bis drei deutlich zu unterscheidende Gruppen deutete darauf hin, dass Messungen innerhalb einer vom E/A-System Gruppe ähnlich behandelt wurden.
+Um die unterschiedlichen Laufzeiten innerhalb einer Zugriffsgröße zu untersuchen, habe ich in Abbildung \ref{fig:groesse1} bis \ref{fig:groesse2097152} für die Größen 1B, 16KiB und 2MiB alle Messungen betrachtet.
+In den Graphen ist gut zu erkennen, dass die Varianz der Laufzeiten im sequentiellen Fall wesentlich geringer ausfällt, als bei den randomisierten Messungen.
+Teilweise lassen sich die verschiedenen Messreihen (eine Messreihe umfasst 10000 Messungen, außer im 2MiB Fall, dort sind es 5000) am Muster der Zugriffszeiten voneinander unterscheiden.
+So ist eine Verschiebung des Musters bei \ref{fig:groesse16384} c) nach 10000 und 20000 Messungen deutlich zu erkennen.
+Abhängig vom Systemzustand konnten die Anfragen also im Mittel unterschiedlich schnell bearbeitet werden.
+In einigen Bildern lassen sich auch kurzzeitige Spitzen zwischen den Messreihen feststellen.
+Beim sequentiell lesenden Fall für ein Byte dauern die ersten Messungen jeweils wesentlich länger, bis sich ein niedriger Wert eingependelt hat. Hier scheinen nach einigen Zugriffen die Read-Ahead Caching-Strategie zu greifen, die angefragten Daten befinden sich dann bereits im Cache. Dies macht auch Sinn, da der sequentielle Zugriff sehr gut vorhersagbar ist.
+Für die randomisierten Datensätze ist ein solches Verhalten nicht möglich und kann auch in keiner Abbildung erkannt werden.
+Ein interessantes Verhalten kann in \ref{fig:groesse16384} a) beobachtet werden.
+Zu Beginn jeder Messerreihe werden die ersten E/A-Zugriffe zuverlässig sehr schnell ausgeführt, dann steigt die mittlere Zugriffszeit rapide an und oszilliert stark.
+Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt, bis der Platz nicht mehr ausreicht und aufwendigere Speicherverwaltungen Platz für die neuen Daten im Speicher schaffen müssen.
 
 \begin{figure}
-	\subfloat[Von links nach rechts in KB: 1, 4, 16, 256, 1024, 16384, 65536, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216]{
-		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_read_seq.png}
-	}
-	\hfill
-	\subfloat[Von links nach rechts in KB: 1, 4, 16, 64, 256, 1024, 4096, 8192, 16384, 65536, 262144, 524288, 2097152, 4194304, 16777216]{
-		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_write_seq.png}
-	}\\
-	\subfloat[Von links nach rechts in KB: 1, 4, 16, 64, 256, 4096, 8192, 16384, 65536, 262144, 524288, 1048576, 2097152, 8388608]{
-		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_read_rnd.png}
-	}
-	\hfill
-	\subfloat[Von links nach rechts in KB: 1, 4, 1024, 4096, 8192, 16384, 65536, 262144, 524288, 1048576, 2097152, 8388608]{
-		\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_write_rnd.png}
-	}		
-	\caption{Messungen der Laufzeiten nach Zugriffsgröße sortiert dargestellt (logarithmische Y-Achse)}
-	\label{fig:Zugriffsgroesse_Sortiert}
-\end{figure} 
-
-Um die unterschiedlichen Laufzeiten innerhalb einer Zugriffsgröße zu untersuchen, habe ich für die Größen 1KB, 16384KB und 2097152KB (diese Zugriffsgrößen kommen in allen vier Datensätzen vor) alle Messungen betrachtet.
-
-\begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size1_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size1_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size1_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size1_write_rnd.png}
 	}		
-	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 1KB}
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 1B}
 	\label{fig:groesse1}
-\end{figure} 
-
+\end{figure}
 \begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size16384_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size16384_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size16384_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size16384_write_rnd.png}
 	}		
-	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 16384KB}
+	\vspace*{-0.3cm}
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 16KiB}
 	\label{fig:groesse16384}
-\end{figure} 
-
+\end{figure}
 \begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size2097152_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size2097152_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size2097152_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size2097152_write_rnd.png}
 	}		
-	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 2097152KB}
+	\vspace*{-0.3cm}
+	\caption{Detailbetrachtung aller Messungen mit Zugriffsgröße 2MiB}
 	\label{fig:groesse2097152}
-\end{figure} 
-
+\end{figure}
 
 Um die Messdaten noch detaillierter darzustellen, müssen kleine Ausschnitte herausgegriffen werden. Zunächst betrachte ich die ersten $250$ Messungen. \ref{fig:first250}
-Auf den ersten Blick scheint bei cached-off0-seq-W eine gewisse Periodizität ersichtlich (etwa alle 45 Messungen gibt es einen größeren Sprung, alternierend sind die Laufzeiten jeweils etwas langsamer und schneller). Nach genau $123$ Punkten scheint sich das Muster zu wiederholen, dort befindet sich der zweitgrößte Messwert. Wenn man nun als erstes simples Modell eine Fortführung der augenscheinlichen Periodizität der ersten $123$ Messpunkten betrachtet, so erkannt man doch, dass der Verlauf recht unregelmäßig ist. \ref{fig:periodicity} \\
-Bei den anderen Graphen kann keine so simple Periodizität vermutet werden.
+Auf dem ersten Blick scheint bei seq-W eine gewisse Periodizität ersichtlich. Etwa alle 45 Messungen gibt es einen größeren Sprung, alternierend sind die Laufzeiten jeweils etwas langsamer und schneller.
+Nach genau $123$ Punkten scheint sich das Muster zu wiederholen, dort befindet sich der zweitgrößte Messwert. Wenn man nun als erstes simples Modell eine Fortführung der augenscheinlichen Periodizität der ersten $123$ Messpunkten betrachtet, so erkannt man doch, dass der Verlauf recht unregelmäßig ist. \ref{fig:periodicity}
+Bei den anderen Graphen kann keine so simple Periodizität beobachtet werden.
 
 \begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_First250_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_First250_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_First250_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_First250_write_rnd.png}
 	}		
 	\caption{Detailbetrachtung der ersten 250 Messungen}
@@ -849,29 +847,30 @@ Bei den anderen Graphen kann keine so simple Periodizität vermutet werden.
 
 \begin{figure}
 	\subfloat{
-		\includegraphics[width=.8\textwidth]{Bilder/Plots/exploration/plot_periodicitywrite_seq.png}
+		\includegraphics[width=0.9\textwidth]{Bilder/Plots/exploration/plot_periodicitywrite_seq.png}
 	}	
-	\caption{Wiederholung der ersten Werte, als erstes einfaches Modell}
+	\caption{Wiederholung der ersten Werte der sequentiell schreibenden Messungen, als erstes einfaches Modell}
 	\label{fig:periodicity}
 \end{figure} 
 
-Eine weitere Detailbetrachtung mache ich bei den Messungen 30.001 bis 30.250. \ref{fig:from100001}\\
-Hier scheint eine Periodizität bei cached-off0-seq-R vorhanden zu sein. Und wenn eine Überlappung wie zuvor durchgeführt wird (diesmal nach den ersten 129 Messungen), so erkennt man, dass dieses simple Modell die Ausreißer für diesen kleinen Ausschnitt exakt vorhersagen kann. \ref{fig:periodicity100001}\\
-Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere Annahme \textbf{ABSCHNITT} einer gewissen Periodizität in der Leistung des E/A-Systems ist scheinbar gerechtfertigt. Ein Modell das versucht diese auszunutzen muss eine komplexere Methode als schlichtes Übertragen vorheriger Leistungswerte haben, ansonsten kann es wohl nur in äußerst eingeschränktem Maße korrekte Leistung vorhersagen.
+Eine weitere Detailbetrachtung mache ich bei den Messungen 30.001 bis 30.250 in \ref{fig:from100001}.
+Hier scheint eine Periodizität bei seq-R vorhanden zu sein. Und wenn eine Überlappung wie zuvor durchgeführt wird (diesmal nach den ersten 129 Messungen), so erkennt man, dass dieses simple Modell die Ausreißer für diesen kleinen Ausschnitt exakt vorhersagen kann.
+Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren.
+Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems ist scheinbar gerechtfertigt. Ein Modell das versucht diese auszunutzen muss eine komplexere Methode als schlichtes Übertragen vorheriger Leistungswerte haben, ansonsten kann es wohl nur in äußerst eingeschränktem Maße korrekte Leistung vorhersagen.
 
 \begin{figure}
-	\subfloat{
+	\subfloat[Sequentiell lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_read_seq.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Sequentiell schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_write_seq.png}
 	}\\
-	\subfloat{
+	\subfloat[Randomisiert lesend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_read_rnd.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Randomisiert schreibend]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_write_rnd.png}
 	}		
 	\caption{Detailbetrachtung der Messungen 100001 bis 100250}
@@ -880,16 +879,41 @@ Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren. Doch unsere 
 
 \begin{figure}
 	\subfloat{
-		\includegraphics[width=.8\textwidth]{Bilder/Plots/exploration/plot_periodicity100001read_seq.png}
+		\includegraphics[width=.9\textwidth]{Bilder/Plots/exploration/plot_periodicity100001read_seq.png}
 	}	
-	\caption{Wiederholung der ersten Werte, als erstes einfaches Modell}
+	\caption{Wiederholung der ersten Werte der sequentiell lesenden Messungen, als erstes einfaches Modell}
 	\label{fig:periodicity100001}
 \end{figure} 
+\clearpage
 
 \section{Analyse der Fehlerklassen}
+Alle Modelle werden auf den zusammengeführten Datensätzen aus lesenden und schreibenden Zugriffen angewendet. Daher gibt es im folgenden nur noch jeweils eine Abbildung zu den sequentiellen und eine zu den Messungen mit zufälligem Dateizugriff.
+Zunächst werden alle Daten der Messreihen zu einer Zugriffsgröße mit lesenden Aufrufen gezeichnet, danach kommen die schreibenden Zugriffe. 
+Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Residuums von \textit{LinReg G} entstanden sind.
+In \ref{fig:error_class_clustering_seq} a), sowie \ref{fig:error_class_clustering_rnd} a) ist in Zeitreihe der Fehler aufgezeichnet, den \textit{LinReg G} auf den sequentiell, respektive randomisiert ausgeführten Messungen, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten gemacht hat.
 
-Die in \textbf{VERWEIS} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Fehlers von LinReg G entstanden sind.
-In \ref{fig:error_class_clustering_seq} a), sowie \ref{fig:error_class_clustering_rnd} a) ist in Zeitreihe der Fehler aufgezeichnet, den LinReg G auf cached-off0-seq, bzw cached-off0-rnd, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten gemacht hat. In \ref{fig:error_class_clustering_seq} c) und \ref{fig:error_class_clustering_rnd} c) ist das gleiche gezeichnet, allerdings sind die größten und kleinsten Werte weggelassen. Dabei können auf dem Graph zum sequentiellen Datensatz Phasen mit guten und schlechten Vorhersagen erkannt werden. Hier wird ein Verhalten visualisiert, das darauf rückschließen lässt, dass das Modell die Laufzeiten mancher Attribut-Sets besser modelliert hat, als das von anderen. Denn hier wird das selbe Attribut-Set vielfach hintereinander getestet. Der Dateizugriffsort ändert sich bei jedem Zugriff auf dem randomisierten Datensatz und entsprechend ist dieses Verhalten hier nicht so stark ausgeprägt. Auf diesem Datensatz ist dagegen eine unterschiedlich gute Modellierung für Lese- und Schreibzugriffe erkennbar, denn die erste Hälfte der Fehler hat einen flacheren und gleichmäßigeren Verlauf, als die zweite Hälfte, in der die schreibenden Messungen sichtbar sind. \textbf{LÜCKE RECHTs}
+\begin{figure}
+	\centering
+	\subfloat[Sortiert nach Zugriffsgröße in $\text{}$ dunkelgrau lesende und in hellgrau schreibende Zugriffe, begrenzte Y-Achse]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_seq_all.png}
+	}
+	\subfloat[Farblich markierte Fehlerklassen, begrenzte Y-Achse]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_seq_all.png}
+	}\\
+	\subfloat[Sortiert nach Modellabweichung, alle Punkte gezeichnet]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_seq.png}
+	}
+	\subfloat[Dichte der drei Klassen um den Nullpunkt]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/density_of_fk_seq.png}
+	}
+	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf den Messungen mit sequentiellen Dateizugriff aus der Vorhersage von \glqq LinReg G\grqq}
+	\label{fig:error_class_clustering_seq}
+\end{figure} 
+
+Interessanterweise ist die Modellabweichung auf den sequentiellen Daten im Wesentlichen unabhängig vom Operationstyp, während auf den randomisierten Daten größere Fehler bei lesenden Aufrufen gemacht werden.
+Die absolute Abweichung wächst bei sequentiellen Zugriff mit der Größe der E/A-Aufrufe, für die zufälligen Zugriffe gilt dies nur bedingt. Auf den kleinsten Zugriffsgrößen werden kleine Fehler gemacht, danach bleibt der Betrag in etwa auf einem Niveau.    
+
+Denn hier wird das selbe Attribut-Set vielfach hintereinander getestet. Der Dateizugriffsort ändert sich bei jedem Zugriff auf dem randomisierten Datensatz und entsprechend ist dieses Verhalten hier nicht so stark ausgeprägt. Auf diesem Datensatz ist dagegen eine unterschiedlich gute Modellierung für Lese- und Schreibzugriffe erkennbar, denn die erste Hälfte der Fehler hat einen flacheren und gleichmäßigeren Verlauf, als die zweite Hälfte, in der die schreibenden Messungen sichtbar sind. \textbf{LÜCKE RECHTs}
 In den Graphen jeweils rechts neben den beschriebenen ist durch farbliche Markierung die Zugehörigkeit der Messpunkte zu den unterschiedlichen Klassen erkennbar. Die Unterscheidung in verschiedene Klassen findet in horizontalen Linien statt. Eine Klasse deckt einen bestimmten Bereich der Fehlerwerte ab, die abgedeckten Bereiche lassen sich aus \ref{tab:error_classes_switched} entnehmen. 
 Bei der Betrachtung der Graphen mit nach Fehler sortierten Punkten ( \ref{fig:error_class_clustering_seq} e) und f), sowie \ref{fig:error_class_clustering_rnd} e) und f) ) können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden (die exakten Zahlen sind auch \ref{tab:error_classes_switched} zu entnehmen). In beiden Fällen enthält eine Klasse den Großteil der Punkte (jeweils etwa $3/4$), die Klassen, dessen Bereich leicht abweichen, enthalten noch einen kleinen Anteil der Messdaten. Die Ausreißer in beide Richtungen machen quantitativ fast nichts aus, werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten \textbf{WERT} \% der Daten auf cached-off0-rnd in 6 Klassen aufgeteilt.\\
 Das Modell scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln. Es gibt allerdings einige Datenpunkte, die das Modell sehr schlecht vorhersagen konnte. Die Annahme ist nun, dass die voneinander stark abweichenden Datenpunkte grundsätzlich unterschiedlich vom System verarbeitet wurden. Sodass die Fehlerklassen die unterschiedlichen E/A-Wege im System repräsentieren. 
@@ -897,49 +921,19 @@ Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzu
 
 \begin{figure}
 	\centering
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, in Zeitreihe]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_seq_all.png}
-	}
-	\subfloat[Farblich markierte Fehlerklassen]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_seq_all.png}
-	}\\
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, in Zeitreihe, ohne die äußersten 1\%]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_seq.png}
-	}
-	\subfloat[Farblich markierte Fehlerklassen, ohne die äußersten 1\%]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_seq.png}
-	}\\
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-seq, sortiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_seq.png}
-	} 	
-	\subfloat[Farblich markierte Fehlerklassen]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_seq.png}
-	}\\	
-	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
-	\label{fig:error_class_clustering_seq}
-\end{figure} 
-
-\begin{figure}
-	\centering
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-rnd, in Zeitreihe]{
+	\subfloat[Sortiert nach Zugriffsgröße, in $\text{}$ dunkelgrau lesende und in hellgrau schreibende Zugriffe, begrenzte Y-Achse]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_rnd_all.png}
 	}
-	\subfloat[Farblich markierte Fehlerklassen]{
+	\subfloat[Farblich markierte Fehlerklassen, begrenzte Y-Achse]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_rnd_all.png}
 	}\\
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-rnd, in Zeitreihe, ohne die äußersten 1\%]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_rnd.png}
-	} 	
-	\subfloat[Farblich markierte Fehlerklassen, ohne die äußersten 1\%]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_rnd.png}
-	}\\
-	\subfloat[Fehler des Modells \glqq LinReg G\grqq{} auf cached-off0-rnd, sortiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_rnd.png}
-	} 	
-	\subfloat[Farblich markierte Fehlerklassen]{
+	\subfloat[Sortiert nach Modellabweichung, alle Punkte gezeichnet]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_rnd.png}
-	}\\
-	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf cached-off0-rnd mit der Vorhersage von \glqq LinReg G\grqq}
+	}
+	\subfloat[Dichte der drei Klassen um den Nullpunkt]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/density_of_fk_rnd.png}
+	}
+	\caption{Verwendung des K-Means Algorithmus zur Bestimmung der Fehlerklassen auf den Messungen mit zufälligem Dateizugriff aus der Vorhersage von \glqq LinReg G\grqq}
 	\label{fig:error_class_clustering_rnd}
 \end{figure} 
 
@@ -949,17 +943,17 @@ Für cached-off0-seq ist deutlich zu sehen (\ref{fig:error_classes_switched} c) 
 
 \begin{figure}
 	\centering
-	\subfloat[Klassen aus cached-off0-rnd auf cached-off0-seq]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/rnd_linreg_classes_on_seq_all.png}
-	}
-	\subfloat[Klassen aus cached-off0-seq auf cached-off0-rnd]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/seq_linreg_classes_on_rnd_all.png}
-	}\\
-	\subfloat[Klassen aus cached-off0-rnd auf cached-off0-seq, ohne die äußersten 1\%]{
+	\subfloat[Klassen aus den randomisierten Zugriffen angewendet auf die sequentiellen Messungen, sortiert nach Größe]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/rnd_linreg_classes_on_seq.png}
 	}
-	\subfloat[Klassen aus cached-off0-seq auf cached-off0-rnd, ohne die äußersten 1\%]{
+	\subfloat[Sortiert nach Modellabweichung, alle Punkte gezeichnet]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/rnd_linreg_classes_on_seq_sorted.png}
+	}\\
+	\subfloat[Klassen aus den sequentiellen Zugriffen $\text{}$ angewendet auf die randomisierten Messungen, sortiert nach Größe]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/seq_linreg_classes_on_rnd.png}
+	}
+	\subfloat[Sortiert nach Modellabweichung, alle Punkte gezeichnet]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/error_class/exploration/seq_linreg_classes_on_rnd_sorted.png}
 	}
 	\caption{Farblich markierte Fehlerklassen, unter Verwendung der Fehlerklassen, die aus aus dem jeweils anderen Datensatz stammen}
 	\label{fig:error_classes_switched}
@@ -992,6 +986,7 @@ Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden
 	\caption{Fehlerklassen sortiert von kleinem zu großem Zentrum des Clusters (Durchschnittlicher Fehler). Einmal die Anzahl Punkte, die den Klassen auf dem Datensatz zugeordnet wurden, von dem sie auch stammen. Zudem die Anzahl Punkte, die den Klassen auf dem anderen Datensatz zugeordnet werden würden.}
 	\label{tab:error_classes_switched}
 \end{table}
+\clearpage
 
 \section{Leistungsvorhersage}
 Zu jedem Modell schreiben, welche Attribute und Parameter sich als geeignet herausgestellt haben. Ergebnisse anhand von Graphen veranschaulichen.\\
@@ -1538,7 +1533,15 @@ Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit ame
 
 \section*{Erklärung}
 
-Ich versichere, dass ich die Arbeit selbstständig verfasst und keine anderen, als die angegebenen Hilfsmittel -- insbesondere keine im Quellenverzeichnis nicht benannten Internetquellen -- benutzt habe, die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht habe und die eingereichte schriftliche Fassung der auf dem elektronischen Speichermedium entspricht.
+Hiermit  versichere  ich  an  Eides  statt,  dass  ich  die   vorliegende  Arbeit  im 
+Studiengang  Computing  in  Science  selbstständig  verfasst  und  keine  anderen  als 
+die  angegebenen  Hilfsmittel – insbesondere  keine  im  Quellenverzeichnis  nicht 
+benannten  Internet-Quellen – benutzt  habe.  Alle  Stellen,  die  wörtlich  oder 
+sinngemäß aus Veröffentlichungen entnommen wurden, sind als solche kenntlich 
+gemacht.  Ich  versichere  weiterhin,  dass  ich  die  Arbeit  vorher  nicht  in  einem 
+anderen  Prüfungsverfahren  eingereicht  habe  und  die  eingereichte  schriftliche 
+Fassung der auf dem elektronischen 
+Speichermedium entspricht.
 
 \smallskip
 
