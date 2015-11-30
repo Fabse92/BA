@@ -442,7 +442,9 @@ Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten z
 \label{fk-modelle}
 Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit anhand des genommenen Pfades unterscheiden lassen, sollen die verbesserten Vorhersagen untersucht werden, die unter Kenntnis dieser Pfade gemacht werden können. Dazu werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
 Fehlerklassen werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
-Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Sets richtig bestimmt. Die verschiedenen Pfade sollten sich,unabhängig vom gemessenen Attribut-Set, durch signifikante Sprünge in der benötigten Laufzeit unterscheiden, sodass ein Fehler in der Größenordnung eines solchen Sprungs bedeutet, dass die vorliegende Messung einem anderen Pfad zuzuordnen ist. (\textbf{Simmt das so, sollten wir dann nicht lieber unterschiedlich funktionierende Modelle für Generierung der FK und zur Vorhersage mit diesen nutzen?})
+Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Sets richtig bestimmt.
+Ein Pfad kann beispielsweise aus dem Rechnerknoten über das Netzwerk in eine spezifische Festplatte gehen oder nur bis in den internen Arbeitsspeicher des Knotens.
+Die verschiedenen Pfade sollten sich,unabhängig vom gemessenen Attribut-Set, durch signifikante Sprünge in der benötigten Laufzeit unterscheiden, sodass ein Fehler in der Größenordnung eines solchen Sprungs bedeutet, dass die vorliegende Messung einem anderen Pfad zuzuordnen ist. (\textbf{Simmt das so, sollten wir dann nicht lieber unterschiedlich funktionierende Modelle für Generierung der FK und zur Vorhersage mit diesen nutzen?})
 
 \section{Untersuchte Modelle}
 \label{impl:modelle}
@@ -578,7 +580,7 @@ Die Testdatei ist 10GiB groß, sie passt daher nicht komplett in den Arbeitsspei
 Zu jeder Größe werden in drei Messreihen 10000 Messungen durchgeführt. Beim sequentiellen Fall werden allerdings nur so viele Aufrufe hintereinander gemessen, bis über das Ende der Datei hinausiteriert wurde. Diese Beschränkung trifft für die Messreihen mit Zugriffsgrößen ab 2MiB ein. 16MiB werden im sequentiellen entsprechend nur 640 mal pro Messreihe verwendet.
 Zwischen zwei Messreihen besteht kein Zusammenhang, sodass nur zeitliche, wie periodische, Abhängigkeiten innerhalb einer Messreihe bestehen können.  
 Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd.
-Da alle Messungen zu cached-off0 gehören, werden die Daten nun meist seq-R, seq-W, rnd-R und rnd-W bzw sequentieller und randomisierter Datensatz genannt. 
+Da alle Messungen zu cached-off0 gehören, werden die Daten als SEQ-R, SEQ-W, RND-R und RND-W bzw. SEQ und RND für die zusammengefassten Datensätze bezeichnet. 
 
 \section{Validierung der Modelle}
 \label{Validierung}
@@ -890,7 +892,13 @@ Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems is
 Alle Modelle werden auf den zusammengeführten Datensätzen aus lesenden und schreibenden Zugriffen angewendet. Daher gibt es im folgenden nur noch jeweils eine Abbildung zu den sequentiellen und eine zu den Messungen mit zufälligem Dateizugriff.
 Zunächst werden alle Daten der Messreihen zu einer Zugriffsgröße mit lesenden Aufrufen gezeichnet, danach kommen die schreibenden Zugriffe. 
 Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Residuums von \textit{LinReg G} entstanden sind.
-In \ref{fig:error_class_clustering_seq} a), sowie \ref{fig:error_class_clustering_rnd} a) ist in Zeitreihe der Fehler aufgezeichnet, den \textit{LinReg G} auf den sequentiell, respektive randomisiert ausgeführten Messungen, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten gemacht hat.
+In \ref{fig:error_class_clustering_seq}a, sowie \ref{fig:error_class_clustering_rnd}a ist in Zeitreihe der Fehler aufgezeichnet, den \textit{LinReg G} auf den sequentiell, respektive randomisiert ausgeführten Messungen, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten gemacht hat.
+
+Interessanterweise ist die Modellabweichung auf den sequentiellen Daten im Wesentlichen unabhängig vom Operationstyp, während auf den randomisierten Daten größere Fehler bei lesenden Aufrufen gemacht werden.
+Die absolute Abweichung wächst bei sequentiellen Zugriff mit der Größe der E/A-Aufrufe, für die zufälligen Zugriffe gilt dies nur bedingt. Auf den kleinsten Zugriffsgrößen werden kleine Fehler gemacht, danach bleibt der Betrag in etwa auf einem Niveau.
+Ein Grund für höhere Abweichungen bei aufwendigeren Messungen ist, dass ein bestimmter relativer Fehler zu entsprechend höheren absoluten Fehlern führt.
+Wegen dem plötzlichen und sehr starken Anstieg der Residuen für die höchsten Zugriffsgrößen kann dies nicht die einzige Erklärung sein.
+Ein weiterer Grund könnte sein, dass die E/A-Leistung in den Bereichen mit höheren Zugriffsgrößen eine höhere Varianz aufweist und somit unberechenbarer wird.
 
 \begin{figure}
 	\centering
@@ -910,14 +918,25 @@ In \ref{fig:error_class_clustering_seq} a), sowie \ref{fig:error_class_clusterin
 	\label{fig:error_class_clustering_seq}
 \end{figure} 
 
-Interessanterweise ist die Modellabweichung auf den sequentiellen Daten im Wesentlichen unabhängig vom Operationstyp, während auf den randomisierten Daten größere Fehler bei lesenden Aufrufen gemacht werden.
-Die absolute Abweichung wächst bei sequentiellen Zugriff mit der Größe der E/A-Aufrufe, für die zufälligen Zugriffe gilt dies nur bedingt. Auf den kleinsten Zugriffsgrößen werden kleine Fehler gemacht, danach bleibt der Betrag in etwa auf einem Niveau.    
+In den Graphen jeweils rechts neben den beschriebenen ist durch farbliche Markierung die Zugehörigkeit der Messpunkte zu ihren Fehler-Klassen erkennbar.
+Die Unterscheidung in verschiedene Klassen findet in horizontalen Linien statt. Eine Klasse deckt einen bestimmten Bereich der Fehlerwerte ab.
+Die Fehlerklassen zu den sequentiellen Messungen differenzieren nur bei den höheren Zugriffsgrößen, bei den zufälligen Zugriffen ist dies nicht der Fall
+Bei der Betrachtung der Graphen in denen nach Fehler sortiert wurde ( \ref{fig:error_class_clustering_seq}c, sowie \ref{fig:error_class_clustering_rnd}c ) können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden.
+In beiden Fällen enthält eine Klasse den Großteil der Punkte. Die Klassen, dessen abgedeckte Bereiche nur leicht abweichen, enthalten noch einen kleineren Anteil der Messdaten.
+Die Ausreißer in beide Richtungen machen quantitativ fast nichts aus, werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten 5\% der Modellabweichungen vom sequentiellen Datensatz in 5 Klassen aufgeteilt.
 
-Denn hier wird das selbe Attribut-Set vielfach hintereinander getestet. Der Dateizugriffsort ändert sich bei jedem Zugriff auf dem randomisierten Datensatz und entsprechend ist dieses Verhalten hier nicht so stark ausgeprägt. Auf diesem Datensatz ist dagegen eine unterschiedlich gute Modellierung für Lese- und Schreibzugriffe erkennbar, denn die erste Hälfte der Fehler hat einen flacheren und gleichmäßigeren Verlauf, als die zweite Hälfte, in der die schreibenden Messungen sichtbar sind. \textbf{LÜCKE RECHTs}
-In den Graphen jeweils rechts neben den beschriebenen ist durch farbliche Markierung die Zugehörigkeit der Messpunkte zu den unterschiedlichen Klassen erkennbar. Die Unterscheidung in verschiedene Klassen findet in horizontalen Linien statt. Eine Klasse deckt einen bestimmten Bereich der Fehlerwerte ab, die abgedeckten Bereiche lassen sich aus \ref{tab:error_classes_switched} entnehmen. 
-Bei der Betrachtung der Graphen mit nach Fehler sortierten Punkten ( \ref{fig:error_class_clustering_seq} e) und f), sowie \ref{fig:error_class_clustering_rnd} e) und f) ) können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden (die exakten Zahlen sind auch \ref{tab:error_classes_switched} zu entnehmen). In beiden Fällen enthält eine Klasse den Großteil der Punkte (jeweils etwa $3/4$), die Klassen, dessen Bereich leicht abweichen, enthalten noch einen kleinen Anteil der Messdaten. Die Ausreißer in beide Richtungen machen quantitativ fast nichts aus, werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten \textbf{WERT} \% der Daten auf cached-off0-rnd in 6 Klassen aufgeteilt.\\
-Das Modell scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln. Es gibt allerdings einige Datenpunkte, die das Modell sehr schlecht vorhersagen konnte. Die Annahme ist nun, dass die voneinander stark abweichenden Datenpunkte grundsätzlich unterschiedlich vom System verarbeitet wurden. Sodass die Fehlerklassen die unterschiedlichen E/A-Wege im System repräsentieren. 
-Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzuordnungen vornimmt, sollte die Ausreißer, die LinReg G schlecht bestimmt hat, wesentlich besser vorhersagen können. Für die Vorhersage der vielen Datenpunkte, die sich in der jeweils größten Klasse befinden, hat ein Modell mit Fehlerklasseninformationen jedoch keine weiteren Vorteile. 
+Die beiden Abbildungen \ref{fig:error_class_clustering_seq} d) und \ref{fig:error_class_clustering_rnd}d zeigen die Dichteverteilung der Fehlerklasse, die den kleinsten Fehler abdeckt, sowie der nächst kleineren und größeren Fehlerklasse.
+Idealerweise sollte die Dichte einer Fehlerklasse nur eine Spitze enthalten. Die Klasse repräsentiert dann einen Fehlerbetrag, der dann einem E/A-Pfad entspricht.
+Auf den sequentiellen Daten weisen die Dichten der Fehlerklasse links vom Nullpunkt, sowie die um den Nullpunkt, zwei klar voneinander unterscheidbare Spitzen auf.
+Während die Verteilung der Dichte rechts vom Nullpunkt auf den randomisierten Daten gar keine Spitze hat. Diese Klasse stellt daher keinen E/A-Pfad da.
+Diese Beobachtungen könnten darauf hinweisen, dass auf den Messungen mit sequentiellen Zugriff eigentlich eine größere Anzahl Cluster-Gruppen benötigt worden wäre, um alle E/A-Pfade zu repräsentieren, während bei den Messungen mit zufälligen Dateizugriffen weniger genutzt werden müssten. 
+
+Das Modell \textit{LinReg G} scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln.
+Es gibt allerdings einige Datenpunkte, die das Modell sehr schlecht vorhersagen konnte. Die Annahme ist nun, dass die Messergebnisse mit stark abweichenden Residuen im Allgemeinen unterschiedlich vom System verarbeitet wurden. 
+Sodass die Fehlerklassen die unterschiedlichen E/A-Wege im System repräsentieren. 
+Wobei immer beachtet werden muss, dass die Vorhersage von Messungen mit höheren Zugriffsgrößen auch zu größeren Abweichungen führt.
+Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzuordnungen vornimmt, sollte die Ausreißer, die \textit{LinReg G} schlecht bestimmt hat, wesentlich besser vorhersagen können.
+Für die Vorhersage der vielen Datenpunkte, die sich in der jeweils größten Klasse befinden, hat ein Modell mit Fehlerklasseninformationen jedoch keine weiteren Vorteile. 
 
 \begin{figure}
 	\centering
@@ -938,8 +957,14 @@ Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzu
 \end{figure} 
 
 Anhand einer weiteren Betrachtung der Fehlerklassen sollen die Unterschiede zwischen den Klassen auf den beiden Datensätzen analysiert werden.
-In Abbildung \ref{fig:error_classes_switched} sind die Punkte den Klassen aus dem jeweils anderen Datensatz zugeordnet worden. Die Neuzuordnung wurde ebenso durchgeführt, wie es der K-Means Algorithmus bei der Erstzuordnung gemacht hat. Für alle Klassen wurde der mittlere Fehlerwert nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse mit dem Mittelwert zugeordnet, der am nächsten an seinem eigenen Fehlerwert liegt.\\ 
-Für cached-off0-seq ist deutlich zu sehen (\ref{fig:error_classes_switched} c) ), dass 99\% der Punkte der selben Fehlerklasse zugeordnet worden. Dagegen wird bei cached-off-rnd in dem Bereich mit kleinerem Fehler nun stärker als zuvor (\ref{fig:error_class_clustering_rnd} d) ) differenziert, während alle größeren Fehler die selbe Klasse haben.
+In Abbildung \ref{fig:error_classes_switched} sind die Punkte den Klassen aus dem jeweils anderen Datensatz zugeordnet worden. Die Neuzuordnung wurde ebenso durchgeführt, wie es der K-Means Algorithmus bei der Erstzuordnung gemacht hat.
+Für alle Klassen wurde der mittlere Fehlerwert nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse mit dem Mittelwert zugeordnet, der am nächsten an seinem eigenen Fehlerwert liegt.
+
+Für SEQ ist deutlich zu sehen, dass ein Großteil (tatsächlich sind es 99.9\%) der Punkte der selben Fehlerklasse zugeordnet worden sind. Dadurch lässt sich in der Abbildung \ref{fig:error_classes_switched}a nicht mehr zwischen den Punkten differenzieren.
+Das gesamte Plateau in \ref{fig:error_classes_switched}b, und die Fortsätze in beide Richtungen, gehört zu dieser einen Klasse.
+
+Dagegen wird bei RND (\ref{fig:error_class_clustering_rnd}c und d )  in dem Bereich mit kleinerem Fehler nun stärker als zuvor differenziert, während alle größeren Fehler die selbe Klasse haben.
+Diese Beobachtungen ergeben sich, da die Aufrufe mit sequentiellen Dateizugriff im Allgemeinen erheblich kürzere Laufzeiten als die mit zufälligen Dateizugriff haben.
 
 \begin{figure}
 	\centering
@@ -959,14 +984,26 @@ Für cached-off0-seq ist deutlich zu sehen (\ref{fig:error_classes_switched} c) 
 	\label{fig:error_classes_switched}
 \end{figure} 
 
-In \ref{tab:error_classes_switched} wurden die Fehlerklassen nun nach mittleren Durchsatz sortiert. (\textbf{WARUM?}) \textbf{BESCHREIBUNG DER TABLLE}
-In der Tabelle ist ablesbar, was ich zuvor bereits anhand des Graphen gedeutet habe, für cached-off0-seq befinden sich mit vertauschten Fehlerklassen 399709 von 400000 Punkten in der selben Klasse. Dies ist die Klasse, die den geringsten Durchsatz hat und in der LinReg G zuvor auf dem randomisierten Datensatz den größten Fehler gemacht hat.
-Die Fehlerklassen von cached-off0-seq sind dagegen sogar recht gut zur Differenzierung der Datenpunkte auf cached-off0-rnd nutzbar, wie in Tabelle \ref{tab:error_classes_switched} b) an den Werten für \glqq Anzahl auf rnd \grqq{} zu entnehmen ist. Dies ist dem Umstand geschuldet, dass die Fehlerklassen von cached-off0-seq in dem Bereich mit kleinem Fehler stark differenziert und die meisten Punkte sich auch auf cached-off0-rnd dort befinden.
-Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden Datensätzen nicht eignen. Auf cached-off0-seq, da sich praktisch alle Punkte in der selben Klasse befinden und auf cached-off0-rnd, weil in den entscheidenden schlechteren Vorhersagen von LinReg G keine Unterscheidung stattfindet.
+In den Tabellen \ref{tab:error_classes_switched} wurden die Fehlerklassen nach dem arithmetischen Mittel der Residuen (Durchschnitt) der enthaltenen Datenpunkte sortiert.
+Zu jeder Fehlerklasse wird der abgedeckte Bereich angegeben, der sich von dem in ihm enthaltenen Datenpunkt mit dem kleinsten Fehler (Min) bis zu dem mit größten Fehler (Max) erstreckt. 
+Desweiteren ist der mittlere Durchsatz in Byte pro Sekunde angegeben, der sich für die Cluster-Gruppen ergibt.
+Zuletzt wird die Anzahl Datenpunkte angegeben, die sich in dem abgedeckten Bereich der Klasse befinden, zum einen für den Datensatz auf dem sie erstellt wurden und auch für den jeweils anderen Datensatz.
+
+Für SEQ befinden sich mit vertauschten Fehlerklassen 836841 von von 837600 Punkten in der selben Klasse.
+Dies ist die Klasse, die den geringsten Durchsatz hat und in der \textit{LinReg G} zuvor auf dem randomisierten Datensatz den größten Fehler gemacht hat.
+Die Fehlerklassen von SEQ sind dagegen sogar recht gut zur Differenzierung der Datenpunkte auf RND nutzbar, wie in Tabelle \ref{tab:error_classes_switched} b) an den Werten für \textit{Zugeordnet auf rnd} zu entnehmen ist und auch in \ref{fig:error_class_clustering_rnd}c sichtbar ist.
+Dies ist dem Umstand geschuldet, dass die Fehlerklassen auf den sequentiellen Daten in dem Bereich mit kleinem Fehler stark differenziert und die meisten Punkte sich auch auf RND dort befinden.
+Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden Datensätzen nicht eignen.
+Auf SEQ, da sich praktisch alle Punkte in der selben Klasse befinden und auf RND, weil in den entscheidenden schlechteren Vorhersagen von \textit{LinReg G} keine Unterscheidung stattfindet.
+Den mittleren Durchsätzen kann entnommen werden, dass die sich Größe des Fehlers umgekehrt proportional zum gemachten Durchsatz des E/A-Zugriffs verhält.
+Für die sequentiellen Daten ist dieser Trend weniger ausgeprägt, als für die randomisierten. 
+Der Zusammenhang zwischen mittlerem Residuum und mittlerem Durchsatz weist weiterhin auf die Beziehung von Fehlerklassen zu E/A-Pfaden hin.
+Denn in guter Näherung sollte ein Pfad, der von den durchquerten Speichereinheiten und Netzwerken abhängt, einen spezifischen Durchsatz haben.
+Dieser Durchsatz wird durch die langsamsten Einheiten auf dem Pfad geprägt.
 
 \begin{table}
 	\scriptsize
-	\subfloat[Fehlerklassen von cached-off0-seq]{
+	\subfloat[Fehlerklassen auf SEQ]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
 			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd \\\hline\hline
 			\csvreader[late after line=\\\hline]%
@@ -974,7 +1011,7 @@ Für eine bessere Vorhersage der Messdaten würden sich diese Klassen auf beiden
 			{\idx & \tp & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 		\end{tabular}
 	}\\
-	\subfloat[Fehlerklassen von cached-off0-rnd]{
+	\subfloat[Fehlerklassen auf RND]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
 			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq \\\hline\hline
 			\csvreader[late after line=\\\hline]%
