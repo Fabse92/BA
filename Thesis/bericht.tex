@@ -1003,7 +1003,7 @@ Dieser Durchsatz wird durch die langsamsten Einheiten auf dem Pfad geprägt.
 
 \begin{table}
 	\scriptsize
-	\subfloat[Fehlerklassen auf SEQ]{
+	\subfloat[Fehlerklassen aus \textit{LinReg G} auf SEQ]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
 			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd \\\hline\hline
 			\csvreader[late after line=\\\hline]%
@@ -1011,7 +1011,7 @@ Dieser Durchsatz wird durch die langsamsten Einheiten auf dem Pfad geprägt.
 			{\idx & \tp & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 		\end{tabular}
 	}\\
-	\subfloat[Fehlerklassen auf RND]{
+	\subfloat[Fehlerklassen aus \textit{LinReg G} auf RND]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
 			Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq \\\hline\hline
 			\csvreader[late after line=\\\hline]%
@@ -1019,26 +1019,70 @@ Dieser Durchsatz wird durch die langsamsten Einheiten auf dem Pfad geprägt.
 			{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount}%
 		\end{tabular}
 	}
-	
-	\caption{Fehlerklassen sortiert von kleinem zu großem Zentrum des Clusters (Durchschnittlicher Fehler). Einmal die Anzahl Punkte, die den Klassen auf dem Datensatz zugeordnet wurden, von dem sie auch stammen. Zudem die Anzahl Punkte, die den Klassen auf dem anderen Datensatz zugeordnet werden würden.}
+	\caption{LinReg-Fehlerklassen sortiert von kleinem zu großem Zentrum des Clusters (Durchschnittlicher Fehler). Einmal die Anzahl Punkte, die den Klassen auf dem Datensatz zugeordnet wurden, von dem sie auch stammen. Zudem die Anzahl Punkte, die den Klassen auf dem anderen Datensatz zugeordnet werden würden.}
 	\label{tab:error_classes_switched}
+\end{table}
+
+Neben den Fehlerklassen, die aus der Modellabweichung von \textit{LinReg G} gewonnen wurden, gibt es noch die Fehlerklassen aus den Modellabweichungen von \textit{Tupel1}.
+In Tabelle \ref{tab:error_classes_switched2} sind die gleichen Angaben, wie in \ref{tab:error_classes_switched} zu den Fehlerklassen angegeben. Zusätzlich steht in der Spalte \textit{Identisch}, welcher Anteil der Datenpunkte in den Clustern von \textit{LinReg G} und \textit{Tupel1} der selben Fehlerklasse zugewiesen wurden.
+Insgesamt sind die Zuweisungen sehr ähnlich. Auf SEQ gibt es eine sehr große Übereinstimmung bei Klasse mit den meisten Datenpunkten, sodass insgesamt 90\% der gleiche Zuordnung stattfindet.
+Auf RND stimmen die Zuweisungen zu vielen Klassen stärker überein, in der ausschlaggebenden Klasse allerdings nur um 80.5\%, sodass insgesamt 78\% identische Zuordnungen gemacht wurden.
+Auch die abgedeckten Bereiche der Klassen sind denen von \textit{LinReg G} sehr ähnlich.
+
+\begin{table}
+	\makebox[\textwidth][c]{
+		\scriptsize
+		\subfloat[Fehlerklassen aus Tupel1 auf SEQ; insgesamt 90\% Übereinstimmung gegenüber \textit{LinReg G} bei der Klassenzuteilung]{
+			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd & Identisch (\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/error_class/seq_linreg_classes_on_rnd_good.csv}{tp=\tp,idx = \idx, rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, equa = \equa}%
+				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount &\equa}%
+			\end{tabular}
+		}
+	}\\
+	\makebox[\textwidth][c]{
+		\scriptsize
+		\subfloat[Fehlerklassen aus Tupel1 auf RND; insgesamt 78\% Übereinstimmung gegenüber \textit{LinReg G} bei der Klassenzuteilung]{
+			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq & Identisch (\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/error_class/rnd_linreg_classes_on_seq_good.csv}{tp=\tp,idx = \idx, rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, equa = \equa}%
+				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount &\equa}%
+			\end{tabular}
+		}
+	}
+	\caption{Analyse der Tupel1-Fehlerklassen parallel zur vorherigen Tabelle}
+	\label{tab:error_classes_switched2}
 \end{table}
 \clearpage
 
 \section{Leistungsvorhersage}
-Zu jedem Modell schreiben, welche Attribute und Parameter sich als geeignet herausgestellt haben. Ergebnisse anhand von Graphen veranschaulichen.\\
-Ergebnisse für verschiedene Fälle vergleichen, seq,rnd\\
-Ergebnisse von bagging
+Nachdem die Messdaten untersucht worden sind werden nun die verschiedenen Modelle auf die Daten angewendet. Die Modellabweichungen gegenüber den tatsächlich gemessen Werten können dazu genutzt werden weitere Aussagen über die Beschaffenheit der Messdaten zu machen und das E/A-System kann letztendlich besser verstanden werden.
 
 \subsection{Analyse der trivialen Modelle}
 
-Die Ergebnisse der in \textbf{ABSCHNITT} beschriebenen trivialen Modelle sind in \ref{tab:triv} zu sehen. Eine positive Beobachtung in den Ergebnissen auf cached-off0-seq ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen. Das gilt im Wesentlichen auch für cached-off0-rnd, jedoch hat das Modell "Median agg" einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen RMQA-Wert, obwohl der relative arithmetische Fehler noch recht gering ist. \\
-Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Fehlerwerte höher sind. Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren, hier sind die Werte $30-140$ mal höher. Eine Ausnahme ist "Median agg LinReg-Fehlerklasse", das Modell kann eine weiterhin sehr gute mittlere Vorhersage treffen, nur die Ausreißer nach oben scheinen zugenommen zu haben, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.\\
-Allgemein sind die Ergebnisse bereits überraschend gut. Ein durchschnittlicher Fehler von $5\%$ auf cached-off0-seq bzw. $7-12\%$ auf cached-off0-rnd durch die Modelle, die Fehlerklassen ausnutzen, deutet daraufhin, dass die Vorgänge im E/A-System im Wesentlichen korrekt repräsentiert werden. Ob über eine größere Messreihe ein geringerer durchschnittlicher Fehler als $5\%$ überhaupt erreicht werden kann, ist fraglich, da das Messrauschen durch unvorhersehbare Ereignisse sowohl auf System-, als auch Bauteilebene, in diesen Bereichen eine zu große Bedeutung zukommt.\\
-Die Modelle mit linearer Regression führen auf cached-off0-seq auch bereits zu zufriedenstellenden Ergebnissen, während sie auf cached-off0-rnd kaum sinnvolle Vorhersagen machen zu scheinen. Die Modelle lassen sich für die Datensätze jeweils in drei Gruppen (gut, mittel, schlecht) unterteilen. Auf beiden Datensätzen führen die beiden Modelle mit Fehlerklasse zu einer guten Vorhersage. "Median agg" hat jeweils eine mittel gute Leistung, während "Durchschnitt" jeweils schlecht ist. Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende mittlel gute Vorhersage macht, während die Vorhersage auf dem randomisierten Messungen kaum besser als des Durschnitts-Modell ist. \\ 
+Die Ergebnisse der in \ref{impl:modelle} beschriebenen trivialen Modelle sind in \ref{tab:triv} zu sehen. Die Spalte \textit{Typ} gibt an, ob das Modell auf den aggregierten Daten (agg) oder auf den individuellen Messungen (Ind) in Zeitreihe gelernt wurden.
+Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen.
+Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen RMQA-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
+Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Modellabweichungen wesentlich höher sind.
+Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren.
+Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersage treffen, einige Messungen können auf RND sehr schlecht vorhergesagt werden, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.
+
+Allgemein sind die Ergebnisse bereits überraschend gut.
+Die Modelle \textit{Median} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.6-0.8 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen und 16-44 Millisekunden gegenüber den zufälligen Dateizugriffen.
+Ein durchschnittlicher relativer Fehler von $6-7\%$ auf den sequentiellen Messungen bzw. $8-12\%$ auf den randomisierten Messungen durch die Modelle, die Fehlerklassen ausnutzen, deutet daraufhin, dass die Vorgänge im E/A-System im Wesentlichen korrekt repräsentiert werden.
+Ob über eine größere Messreihe ein wesentlich geringerer durchschnittlicher Fehler als einige Prozentpunkte überhaupt erreicht werden kann, ist fraglich, da das Messrauschen durch unvorhersehbare Ereignisse sowohl auf System-, als auch Bauteilebene, in diesen Bereichen eine zu große Bedeutung zukommt.
+Die Modelle mit linearer Regression führen auf SEQ auch bereits zu zufriedenstellenden Ergebnissen, während sie auf RND kaum sinnvolle Vorhersagen machen zu scheinen.
+Die Modelle lassen sich für die Datensätze jeweils in drei Gruppen (gut, mittel, schlecht) unterteilen.
+Auf beiden Datensätzen führen die beiden Modelle mit Fehlerklasse zu einer guten Vorhersage. \textit{Median} hat jeweils eine mittel gute Leistung, während \textit{Durchschnitt} durchweg schlecht ist. Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende mittelgute Vorhersage machen, während die Vorhersage auf dem randomisierten Messungen teilweise kaum besser als das Durschnitts-Modell ist. 
 Das Modell, das immer die Durchschnittsdauer vorhersagt ist als absolute untere Grenze für angewendete Modelle zu verstehen, da hier praktisch keine Expertise über die Daten eingeht. 
-Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind somit gerechtfertigt. \\
-Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.\\
+Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind soweit gerechtfertigt.
+Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.
+Da \textit{LinReg G} auf SEQ wesentlich bessere Werte mit Eingabedaten als individuelle Messungen hat, und die Leistung für \textit{Agg} und \textit{Ind} auf RND in etwa gleichauf sind, wird nur \textit{LinReg G} mit Zeitreihen-Daten berücksichtigt.
+
+Aufgrund der geringen Unterschiede in den Modellabweichungen von \textit{Median LinReg-FK} und \textit{Median Tupel1-FK}, sowie der in Tabelle \ref{tab:error_classes_switched2} festgestellten sehr ähnlichen Struktur beider Fehlerklassenzuweisungen werden im Folgenden nur noch die Modelle betrachtet, die sich auf \textit{LinReg G}-Fehlerklassen beziehen.
+(\textbf{Tupel1 FK in Tupel1 lernen ist problematisch ..})
 
 \begin{table}
 	\scriptsize
@@ -1061,100 +1105,53 @@ Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Re
 	\caption{Ergebnisse der trivialen Modelle}
 	\label{tab:triv}
 \end{table}
-Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten zu betrachten. Wie bei der Exploration der Daten sind dabei einerseits die Vorhersagen in der Reihenfolge in der sie getroffen worden, und andererseits die sortierte Betrachtung von Nutzen.  
-Auf den Graphen zu cached-off0-seq \ref{fig:zeit_baselines_seq} lässt sich recht gut die Qualität der Modelle anhand der Stärke der Differenzierung erkennen. Während bei der Durchschnittsdauer gar nicht differenziert wird, können die Modelle "Lineare Regression nach Größe" und "Median aggregierte Daten" erfolgreich die größeren Gruppen von Messwerten unterscheiden. 
-Die beiden Modelle mit Fehlerklassen können zudem innerhalb einer Punktgruppe weitere Differenzierungen machen und erreichen entsprechend die besten Fehlerwerte.\\
+Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten zu betrachten.
+Wie zuvor sind die Messdaten nach Zugriffsgröße und Operationstyp sortiert. 
+Auf den Graphen zu den sequentiellen Daten \ref{fig:zeit_baselines_seq} lässt sich recht gut die Qualität der Modelle anhand der Stärke der Differenzierung zwischen den Zugriffsgrößen erkennen.
+Während bei der \textit{Durchschnitt} gar nicht differenziert wird, kann \textit{Median} natürlich alle Größen unterscheiden. 
+\textit{LinReg G} kann einige Größen unterscheiden, versagt jedoch bei den kleinsten Zugriffen. Sehr schön ist in  \ref{fig:zeit_baselines_seq}b die Problematik des linearen Modells zu beobachten, die aufwendigeren Zugriffe können recht gut als linear von der Zugriffsgröße abhängig modelliert werden, für die kleineren Größen gilt dies jedoch nicht mehr.
+Die beiden Modelle mit Fehlerklassen können innerhalb einer Zugriffsgröße weitere Differenzierungen machen und erreichen entsprechend die besten Fehlerwerte.
 Nach der Sortierung nach Laufzeit \ref{fig:sortiert_baselines_seq} kann dieses Verhalten noch ein wenig deutlicher erkannt werden. Bei den beiden Modellen mit mittlere Leistung sind die Unterscheidunge, die das Modell macht, an den horizontalen Stufen erkennbar. Nach zu Hilfenahme der Fehlerklassen können feinstufigere Vorhersagen gemacht werden.
 
 \begin{figure}
-	\subfloat{
+	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Modell \textit{LinReg G}; Achtung: verschobene Y-Achse]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_linreg_Size.png}
 	}\\
-	\subfloat{
+	\subfloat[Modell \textit{Median}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_aggregated.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Modell \textit{Median LinReg-FK}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_with_linreg_error_class_aggregated.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_with_good_model_error_class_aggregated.png}
-	}	
-	\caption{Triviale Modelle auf cached-off0-seq als Zeitreihe, in Blau die vom Modell vorhergesagten Werte}
+	}
+	\caption{Triviale Modelle auf SEQ; in Blau die vom Modell vorhergesagten Werte; lesende Zugriffe in dunkelgrau schreibende in hellgrau}
 	\label{fig:zeit_baselines_seq}
 \end{figure} 
-
-\begin{figure}
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_DurationToPredSorted_mean_performance.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_DurationToPredSorted_linreg_Size.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_DurationToPredSorted_median_Duration_aggregated.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_DurationToPredSorted_median_Duration_with_good_model_error_class_aggregated.png}
-	}	
-	\caption{Triviale Modelle auf cached-off0-seq nach Laufzeit sortiert (logarithmische Y-Achse)}
-	\label{fig:sortiert_baselines_seq}
-\end{figure}
  
 Grob ergibt sich auch ein ähnliches Bild auf dem cached-off0-rnd Datensatz. Umso größer die Verteilung der Vorhersagen, desto besser das Modell  (\ref{fig:zeit_baselines_rnd}). Die Probleme der linearen Regression werden hier sehr gut sichtbar, da einer Größe genau ein Funktionswert zugewiesen wird, ist die Abstraktionsmöglichkeit für den randomisierten Datensatz nicht mehr ausreichend. In \ref{fig:sortiert_baselines_rnd} sieht man sehr deutlich die Konzentration der vorhergesagten Werte auf einen recht kleinen Wertebereich. Dieser Umstand führt dazu, dass die Vorhersage im Vergleich zu der auf cached-off0-seq wesentlich ungenauer ist und wie oben bereits angemerkt eher mit dem Modell "Durchschnittsdauer" auf einer Stufe steht. \\
 Um die Leistungsunterschiede zwischen "Median agg" und den Fehlerklassen-Modellen zu erkennen versagt die Zeitreihe im wesentlichen. Im sortierten Graphen ist dagegen klar zu sehen, dass "Median agg" eine stärkere Streuung bei der Vorhersage der langsameren Datenpunkte aufweist. 
 
 \begin{figure}
-	\subfloat{
+	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Modell \textit{LinReg G}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_linreg_Size.png}
 	}\\
-	\subfloat{
+	\subfloat[Modell \textit{Median}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_aggregated.png}
 	}
 	\hfill
-	\subfloat{
+	\subfloat[Modell \textit{Median LinReg-FK}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_linreg_error_class_aggregated.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_good_model_error_class_aggregated.png}
-	}	
-	\caption{Triviale Modelle auf cached-off0-rnd als Zeitreihe, in Blau die vom Modell vorhergesagten Werte}
+	}
+	\caption{Triviale Modelle auf RND; in Blau die vom Modell vorhergesagten Werte; lesende Zugriffe in dunkelgrau schreibende in hellgrau}
 	\label{fig:zeit_baselines_rnd}
-\end{figure} 
-
-\begin{figure}
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_mean_performance.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_linreg_Size.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_aggregated.png}
-	}
-	\hfill
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
-	}\\
-	\subfloat{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_good_model_error_class_aggregated.png}
-	}	
-	\caption{Triviale Modelle auf cached-off0-rnd nach Laufzeit sortiert (logarithmische Y-Achse)}
-	\label{fig:sortiert_baselines_rnd}
 \end{figure} 
 
 Auch jetzt kann durch eine Betrachtung spezifischerer Ausschnitte der Modell-Prognosen untersucht werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt. In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set. Es gibt jeweils $N$ Messungen mit Attributen aus diesem Set.\\
