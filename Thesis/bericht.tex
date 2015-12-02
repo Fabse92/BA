@@ -557,40 +557,55 @@ Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu 
 
 \chapter{Evaluierung}
 \textit{%
-	Evalevaleval
+	In der Evaluierung sollen die zuvor beschriebenen Ideen und Kozepte in der Umsetzung auf ein reales System untersucht werden.
+	Zunächst wird der Testaufbau und die Durchführung der Experimente beschrieben.
+	Dann wird darauf eingegangen, wie die Ergebnisauswertung angegangen wird.
+	Es ist dann hilfreich die erhaltenen Messdaten aus verschiedenen Blickwinkeln zu betrachten, aus diesen Informationen können bereits Schlussfolgerungen über das untersuchte E/A-System gezogen werden und die Ergebnisse der Modelle können danach besser eingeordnet werden.
+	Ein besonderes Augenmerk soll im Kapitel \ref{fk_analyse} auf die erhaltenen Fehlerklassen und deren mögliche Repräsentation von E/A-Pfaden geworfen werden.
+	Abschließend werden dann die Leistungs-Vorhersagen der verschiedenen Modelle anhand der eingeführten Fehlermetriken und durch die Betrachtung der Verteilung der Modellabweichungen analysiert.
 }
 \bigskip
 
 \section{Testsystem, Mistral}
 \label{impl:testsystem}
-Speziell die Hardware von Mistral, von hier kommen die Benchmarks\\
-
-Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt. Mistral befindet sich in der derzeit aktuellen Version vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt. Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache. Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre. Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
+Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt.
+Mistral befindet sich in der derzeit aktuellen Publikation vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt.
+Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache.
+Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre.
+Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
 
 \section{Aufbau der Benchmark-Tests}
 \label{benchmark}
-Das Testsystem muss durch Vermessung von Experimenten untersucht werden. Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden. Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt. Es wurden vier verschiedene Experimente gemacht, sie repräsentieren zwei unterschiedliche Anwendungsfälle. Die sich ergebenden Datensätze bezeichne ich als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W.\\
+Das Testsystem muss durch Vermessung von Experimenten untersucht werden.
+Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden.
+Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt. Es wurden vier verschiedene Experimente gemacht, sie repräsentieren zwei unterschiedliche Anwendungsfälle.
 Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Das System hat die Datei also bereits geladen, die Daten sollten gecacht (engl. gecached) sein. 
 Das genutzte Speicherlayout ist ein off0-Layout, das bedeutet, dass die gelesenen Daten von Position 0 des verwendeten Puffers im Arbeitsspeichers ausgelesen bzw. ausgeschrieben werden.
-Die Unterscheidung der beiden Anwendungsfälle (seq und rnd) befindet sich im Dateilayout. Während bei den cached-off0-seq Fällen ein sequentielles Layout der Datei gewählt wurde, sind diese bei cached-off0-rnd randomisiert. Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KB, der nächste die darauf folgenden 10KB. Dagegen wird beim randomisierten Layout auf eine beliebige Position der Datei zugegriffen.
-Das R steht für Read, also lesende Dateizugriffe und das W für Write, also schreibende Zugriffe.
+Die Unterscheidung der beiden Anwendungsfälle befindet sich in der Art des Dateizugriffs.
+Im einem Fall wurde ein sequentieller Zugriff (seq) auf die Datei gewählt, im anderen ein zufälliger (rnd).
+Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 10KiB, der nächste die darauf folgenden 10KiB.
+Dagegen wird beim randomisierten Layout auf eine beliebige Position der Datei zugegriffen.
+Beide Anwendungsfälle werden einmal mit lesenden (R für read) und einmal mit schreibenden (W für write) E/A-Operationen getestet.
+Die sich ergebenden Datensätze werden entsprechend als cached-off0-seq-R, cached-off0-seq-W, sowie cached-off0-rnd-R und cached-off0-rnd-W bezeichnet.
 
 Die Zugriffsgrößen variieren von 1B bis 16MiB (1B, 4B, 16B, 64B, 256B, 1KiB, 4KiB, 8KiB, 16KiB, 64KiB, 256KiB, 512KiB, 1MiB, 2MiB, 4MiB, 8MiB und 16MiB).
-Die Testdatei ist 10GiB groß, sie passt daher nicht komplett in den Arbeitsspeicher, sodass tatsächlich E/A-Anfragen aus dem Rechnerknoten herausgehen.
-Zu jeder Größe werden in drei Messreihen 10000 Messungen durchgeführt. Beim sequentiellen Fall werden allerdings nur so viele Aufrufe hintereinander gemessen, bis über das Ende der Datei hinausiteriert wurde. Diese Beschränkung trifft für die Messreihen mit Zugriffsgrößen ab 2MiB ein. 16MiB werden im sequentiellen entsprechend nur 640 mal pro Messreihe verwendet.
-Zwischen zwei Messreihen besteht kein Zusammenhang, sodass nur zeitliche, wie periodische, Abhängigkeiten innerhalb einer Messreihe bestehen können.  
+Die Testdatei ist 10GiB groß, sie passt daher nicht komplett in den Arbeitsspeicher, sodass tatsächlich E/A-Anfragen aus dem Rechnerknoten herausgehen müssen.
+Zu jeder Größe werden in drei Messreihen 10000 Messungen durchgeführt.
+Beim sequentiellen Fall werden allerdings nur so viele Aufrufe hintereinander gemessen, bis über das Ende der Datei hinausiteriert wurde. Diese Beschränkung trifft für die Messreihen mit Zugriffsgrößen ab 2MiB ein. 16MiB werden im sequentiellen entsprechend nur 640 mal pro Messreihe verwendet; 8MiB 1280 mal, 4MiB 2560 mal und 2MiB 5120 mal.
+Zwischen zwei Messreihen besteht kein Zusammenhang, sodass nur zeitliche Abhängigkeiten, wie eine bestimmte Periodizität, innerhalb einer Messreihe bestehen können.  
 Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd.
 Da alle Messungen zu cached-off0 gehören, werden die Daten als SEQ-R, SEQ-W, RND-R und RND-W bzw. SEQ und RND für die zusammengefassten Datensätze bezeichnet. 
 
 \section{Validierung der Modelle}
 \label{Validierung}
-
-Die Modelle werden jeweils auf den zwei Datensätzen der beiden getesteten Anwendungsfälle gelernt, also sowohl auf lesenden als auch auf schreibenden E/A-Zugriffen. Die neuronalen Netze bekommen 1000 zufällig bestimmte Datenpunkte Messungen pro Zugriffsgröße und Operationstyp als Trainingsdatensatz. Insgesamt stehen somit 34000 Datenpunkte zur Verfügung.
+Die Modelle werden jeweils auf den zwei Datensätzen der beiden getesteten Anwendungsfälle gelernt, also sowohl auf lesenden als auch auf schreibenden E/A-Zugriffen.
+Die neuronalen Netze bekommen 1000 zufällig bestimmte Messungen pro Zugriffsgröße und Operationstyp als Trainingsdatensatz. Insgesamt stehen somit 34000 Datenpunkte zur Verfügung.
 Dies sollte eine relevante Stichprobe der Messdaten sein, gleichzeitig bleibt der Trainingsaufwand für die Netze so in einem angemessen Rahmen von meist einigen Minuten bis wenigen Stunden.
-Die restlichen Datenpunkte werden zur Berechnung der Fehlermetriken verwendet.
+Die restlichen Datenpunkte werden als Testdatensatz zur Berechnung der Fehlermetriken verwendet.
 
-Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden. Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
-Je nachdem mit welchen Gewichten das Netz startet ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
+Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden.
+Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
+Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
 
 Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
 \textit{MAF} ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
@@ -889,6 +904,7 @@ Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems is
 \clearpage
 
 \section{Analyse der Fehlerklassen}
+\label{fk_analyse}
 Alle Modelle werden auf den zusammengeführten Datensätzen aus lesenden und schreibenden Zugriffen angewendet. Daher gibt es im folgenden nur noch jeweils eine Abbildung zu den sequentiellen und eine zu den Messungen mit zufälligem Dateizugriff.
 Zunächst werden alle Daten der Messreihen zu einer Zugriffsgröße mit lesenden Aufrufen gezeichnet, danach kommen die schreibenden Zugriffe. 
 Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Residuums von \textit{LinReg G} entstanden sind.
@@ -1067,21 +1083,21 @@ Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Me
 Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen RMQA-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
 Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Modellabweichungen wesentlich höher sind.
 Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren.
-Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersage treffen, einige Messungen können auf RND sehr schlecht vorhergesagt werden, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.
+Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND sehr schlecht vorhergesagt werden, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.
 
 Allgemein sind die Ergebnisse bereits überraschend gut.
 Die Modelle \textit{Median} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.6-0.8 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen und 16-44 Millisekunden gegenüber den zufälligen Dateizugriffen.
 Ein durchschnittlicher relativer Fehler von $6-7\%$ auf den sequentiellen Messungen bzw. $8-12\%$ auf den randomisierten Messungen durch die Modelle, die Fehlerklassen ausnutzen, deutet daraufhin, dass die Vorgänge im E/A-System im Wesentlichen korrekt repräsentiert werden.
 Ob über eine größere Messreihe ein wesentlich geringerer durchschnittlicher Fehler als einige Prozentpunkte überhaupt erreicht werden kann, ist fraglich, da das Messrauschen durch unvorhersehbare Ereignisse sowohl auf System-, als auch Bauteilebene, in diesen Bereichen eine zu große Bedeutung zukommt.
-Die Modelle mit linearer Regression führen auf SEQ auch bereits zu zufriedenstellenden Ergebnissen, während sie auf RND kaum sinnvolle Vorhersagen machen zu scheinen.
-Die Modelle lassen sich für die Datensätze jeweils in drei Gruppen (gut, mittel, schlecht) unterteilen.
-Auf beiden Datensätzen führen die beiden Modelle mit Fehlerklasse zu einer guten Vorhersage. \textit{Median} hat jeweils eine mittel gute Leistung, während \textit{Durchschnitt} durchweg schlecht ist. Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende mittelgute Vorhersage machen, während die Vorhersage auf dem randomisierten Messungen teilweise kaum besser als das Durschnitts-Modell ist. 
+Die Modelle mit linearer Regression führen auf SEQ auch bereits zu zufriedenstellenden Ergebnissen, während sie auf RND kaum sinnvolle Vorhersagen zu machen scheinen.
+\textit{Median} hat jeweils eine akzeptable Leistung, während \textit{Durchschnitt} durchweg ungenügende Residuen aufweist.
+Interssant ist, dass Modelle mit linearer Regression auf dem sequentiellen Datensatz eine zufriedenstellende Vorhersage machen, während die Vorhersage auf dem randomisierten Messungen teilweise kaum besser als das Durschnitts-Modell ist. 
 Das Modell, das immer die Durchschnittsdauer vorhersagt ist als absolute untere Grenze für angewendete Modelle zu verstehen, da hier praktisch keine Expertise über die Daten eingeht. 
-Tatsächlich erreicht dieses Modell die schlechtesten Ergebnisse in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind soweit gerechtfertigt.
+Tatsächlich erreicht dieses Modell die schlechtesten Werte für die Fehlermetriken in beiden Testfällen. Die Ansätze der rechenintensiven halten diesem Anspruch also stand und sind soweit gerechtfertigt.
 Aufgrund des geringen Nutzen der Attribute Abstand und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.
 Da \textit{LinReg G} auf SEQ wesentlich bessere Werte mit Eingabedaten als individuelle Messungen hat, und die Leistung für \textit{Agg} und \textit{Ind} auf RND in etwa gleichauf sind, wird nur \textit{LinReg G} mit Zeitreihen-Daten berücksichtigt.
 
-Aufgrund der geringen Unterschiede in den Modellabweichungen von \textit{Median LinReg-FK} und \textit{Median Tupel1-FK}, sowie der in Tabelle \ref{tab:error_classes_switched2} festgestellten sehr ähnlichen Struktur beider Fehlerklassenzuweisungen werden im Folgenden nur noch die Modelle betrachtet, die sich auf \textit{LinReg G}-Fehlerklassen beziehen.
+Die geringen Unterschiede in den Modellabweichungen von \textit{Median LinReg-FK} und \textit{Median Tupel1-FK}, sowie der in Tabelle \ref{tab:error_classes_switched2} festgestellten sehr ähnlichen Struktur beider Fehlerklassenzuweisungen rechtfertigen es, im Folgenden nur noch die Modelle zu beachten, die sich auf \textit{LinReg G}-Fehlerklassen beziehen.
 (\textbf{Tupel1 FK in Tupel1 lernen ist problematisch ..})
 
 \begin{table}
@@ -1105,14 +1121,14 @@ Aufgrund der geringen Unterschiede in den Modellabweichungen von \textit{Median 
 	\caption{Ergebnisse der trivialen Modelle}
 	\label{tab:triv}
 \end{table}
-Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten zu betrachten.
+Um genauer zu verstehen, wie die trivialen Modelle die Messdaten annähern, ist es notwendig sich die vorhergesagten Werte gegenüber den tatsächlichen Werten anzuschauen.
 Wie zuvor sind die Messdaten nach Zugriffsgröße und Operationstyp sortiert. 
 Auf den Graphen zu den sequentiellen Daten \ref{fig:zeit_baselines_seq} lässt sich recht gut die Qualität der Modelle anhand der Stärke der Differenzierung zwischen den Zugriffsgrößen erkennen.
-Während bei der \textit{Durchschnitt} gar nicht differenziert wird, kann \textit{Median} natürlich alle Größen unterscheiden. 
-\textit{LinReg G} kann einige Größen unterscheiden, versagt jedoch bei den kleinsten Zugriffen. Sehr schön ist in  \ref{fig:zeit_baselines_seq}b die Problematik des linearen Modells zu beobachten, die aufwendigeren Zugriffe können recht gut als linear von der Zugriffsgröße abhängig modelliert werden, für die kleineren Größen gilt dies jedoch nicht mehr.
-Die beiden Modelle mit Fehlerklassen können innerhalb einer Zugriffsgröße weitere Differenzierungen machen und erreichen entsprechend die besten Fehlerwerte.
-Nach der Sortierung nach Laufzeit \ref{fig:sortiert_baselines_seq} kann dieses Verhalten noch ein wenig deutlicher erkannt werden. Bei den beiden Modellen mit mittlere Leistung sind die Unterscheidunge, die das Modell macht, an den horizontalen Stufen erkennbar. Nach zu Hilfenahme der Fehlerklassen können feinstufigere Vorhersagen gemacht werden.
-
+Während bei \textit{Durchschnitt} gar nicht differenziert wird, kann \textit{Median} natürlich alle Größen unterscheiden. 
+\textit{LinReg G} kann einige Größen unterscheiden, versagt jedoch bei den kleinsten Zugriffen.
+Sehr schön ist in  \ref{fig:zeit_baselines_seq}b die Problematik des linearen Modells zu beobachten, die aufwendigeren Zugriffe können recht gut als linear von der Zugriffsgröße abhängig modelliert werden, für die kleineren Größen gilt dies jedoch nicht mehr.
+Das Modell mit Kenntnis von Fehlerklassen kann innerhalb einer Zugriffsgröße weitere Differenzierungen machen und erreicht entsprechend die besten Fehlerwerte.
+Besonders die höheren Zugriffsgrößen können besser von \textit{Median LinReg-FK} modelliert werden. Das passt zu dem Bild, das wir von der Struktur der Fehlerklassen gewonnen haben. Auf SEQ wird fast ausschließlich für aufwendigere Zugriffe eine Aufteilung durch die Fehlerklassen vorgenommen. 
 \begin{figure}
 	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
@@ -1131,10 +1147,12 @@ Nach der Sortierung nach Laufzeit \ref{fig:sortiert_baselines_seq} kann dieses V
 	\caption{Triviale Modelle auf SEQ; in Blau die vom Modell vorhergesagten Werte; lesende Zugriffe in dunkelgrau schreibende in hellgrau}
 	\label{fig:zeit_baselines_seq}
 \end{figure} 
- 
-Grob ergibt sich auch ein ähnliches Bild auf dem cached-off0-rnd Datensatz. Umso größer die Verteilung der Vorhersagen, desto besser das Modell  (\ref{fig:zeit_baselines_rnd}). Die Probleme der linearen Regression werden hier sehr gut sichtbar, da einer Größe genau ein Funktionswert zugewiesen wird, ist die Abstraktionsmöglichkeit für den randomisierten Datensatz nicht mehr ausreichend. In \ref{fig:sortiert_baselines_rnd} sieht man sehr deutlich die Konzentration der vorhergesagten Werte auf einen recht kleinen Wertebereich. Dieser Umstand führt dazu, dass die Vorhersage im Vergleich zu der auf cached-off0-seq wesentlich ungenauer ist und wie oben bereits angemerkt eher mit dem Modell "Durchschnittsdauer" auf einer Stufe steht. \\
-Um die Leistungsunterschiede zwischen "Median agg" und den Fehlerklassen-Modellen zu erkennen versagt die Zeitreihe im wesentlichen. Im sortierten Graphen ist dagegen klar zu sehen, dass "Median agg" eine stärkere Streuung bei der Vorhersage der langsameren Datenpunkte aufweist. 
+Grob ergibt sich auch ein ähnliches Bild auf dem Datensatz mit zufälligen Dateizugriffen. Umso größer die Verteilung der Vorhersagen, desto besser das Modell  (\ref{fig:zeit_baselines_rnd}).
+Die Probleme der linearen Regression werden auch hier sichtbar, da einer Größe genau ein Funktionswert zugewiesen wird, ist die Abstraktionsmöglichkeit für den randomisierten Datensatz, mit stärkerer Varianz der Laufzeiten, nicht mehr ausreichend.
+Tatsächlich ist eine starke Ähnlichkeit der linearen Regression zum Durchschnitts-Modell erkennbar. Nur für die höheren Zugriffsgrößen, ähnlich wie bei SEQ, kann eine bessere Modellierung durch die Regression vorgenommen werden.
 
+Um die Leistungsunterschiede zwischen \textit{Median} und den Fehlerklassen-Modellen zu erkennen versagt die Zeitreihe.
+\textbf{Im sortierten Graphen ist dagegen klar zu sehe}n, dass \textit{Median} eine stärkere Streuung bei der Vorhersage der langsameren Datenpunkte aufweist. 
 \begin{figure}
 	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
@@ -1153,8 +1171,8 @@ Um die Leistungsunterschiede zwischen "Median agg" und den Fehlerklassen-Modelle
 	\caption{Triviale Modelle auf RND; in Blau die vom Modell vorhergesagten Werte; lesende Zugriffe in dunkelgrau schreibende in hellgrau}
 	\label{fig:zeit_baselines_rnd}
 \end{figure} 
-
-Auch jetzt kann durch eine Betrachtung spezifischerer Ausschnitte der Modell-Prognosen untersucht werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt. In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set. Es gibt jeweils $N$ Messungen mit Attributen aus diesem Set.\\
+Auch jetzt kann untersucht werden, indem kleinere Ausschnitte der Modell-Prognosen betrachtet werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt.
+In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set. Es gibt jeweils $N$ Messungen mit Attributen aus diesem Set.\\
 In \ref{fig:densities_baselines_seq} a) ist die Vorhersage vom Modell \glqq Durchschnittsdauer\grqq{} mit dem geringsten RMAF-Wert, der erreicht wird, zu sehen. Die Vorhersage ist nicht sehr genau, der vom Modell geschätzte Wert ist für weit weniger als $10\%$ der Messungen korrekt. Die Vorhersage mit dem geringsten Fehler von \glqq LinReg G\grqq{} ist wesentlich besser. Interessanterweise ist der vorhergesagte Wert näher am Maximum der Dichte,
 als am genaueren Mittelwert des Sets.
 Die Wahl für den Median gegenüber dem arithmetischen Mittel für das Modell \glqq Median agg\grqq{} kommt in \ref{fig:densities_baselines_seq} c) zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  RMAF noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.\\
