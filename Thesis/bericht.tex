@@ -430,7 +430,7 @@ Die höheren Modelle in dieser Arbeit basieren dagegen auf neuronalen Netzen und
 
 Die trivialen Modelle sind zum einen beim Erkunden verschiedener Ansätze hilfreich, zum anderen dienen sie dem Vergleich zu den aufwendigeren Modelle und stellen eine untere Schranke für deren Leistungen dar.
 So kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können. Die Erwartung ist, dass die höheren Modelle wesentlich bessere Ergebnisse zeigen, als die trivialen. Wenn dies nicht der Fall ist, war entweder die Modellierung schlecht oder die verwendeten Informationen über die Messdaten waren unzureichend für eine zufriedenstellende Beschreibung.
-Eine Ausnahme bilden dabei \textit{unfaire} triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Unfairen Modellen standen sämtliche Messdaten zum Lernen bereit, also neben den Trainingsdaten auch die Testadaten. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
+Eine Ausnahme bilden dabei \textit{unfaire} triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Unfairen Modellen standen sämtliche Messdaten zum Lernen bereit, also neben den Trainingsdaten auch die Testdaten. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
 
 \subsection{Zeitreihen- und Aggregierungs-Modelle}
 Für Aggregierungsmodelle werden die Trainingsdaten stark vereinfacht. Sie verfolgen den Ansatz, dass es nicht möglich ist innerhalb eines Attribut-Sets zu differenzieren. Sodass verschiedene Messungen eines Sets alle die selbe Vorhersage zugewiesen bekommen. Dazu werden alle Trainingsdatenpunkte zusammengefasst, die zum selben Set gehören.
@@ -472,7 +472,7 @@ Sie funktionieren genauso, wie \textit{Median agg}, nur das sie Messungen zusät
 \textit{Median agg LinReg-FK} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{Median agg Tupel1-FK} die Klassen der besten Instanz von \textit{Tupel1}.
 
 Die weiteren Modelle sind höhere Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabedaten unterscheiden.
-Das Aggregations-Modell \textit{Tupel1 agg} entspricht der fairen Variante zu \textit{Median agg}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten.
+Das Aggregations-Modell \textit{Tupel1 aggregiert} entspricht der fairen Variante zu \textit{Median}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten.
 Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Mess-Attribute interpolieren.
 Das neuronale Netz des Modells bekommt als Eingabedaten alle Daten der Attribut-Sets, sowie die Laufzeiten, von den als Median aggregierten Trainingsdaten.
 Das Netz versucht dann das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
@@ -1171,35 +1171,36 @@ Um die Leistungsunterschiede zwischen \textit{Median} und den Fehlerklassen-Mode
 	\caption{Triviale Modelle auf RND; in Blau die vom Modell vorhergesagten Werte; lesende Zugriffe in dunkelgrau schreibende in hellgrau}
 	\label{fig:zeit_baselines_rnd}
 \end{figure} 
-Auch jetzt kann untersucht werden, indem kleinere Ausschnitte der Modell-Prognosen betrachtet werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt.
-In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set. Es gibt jeweils $N$ Messungen mit Attributen aus diesem Set.\\
-In \ref{fig:densities_baselines_seq} a) ist die Vorhersage vom Modell \glqq Durchschnittsdauer\grqq{} mit dem geringsten RMAF-Wert, der erreicht wird, zu sehen. Die Vorhersage ist nicht sehr genau, der vom Modell geschätzte Wert ist für weit weniger als $10\%$ der Messungen korrekt. Die Vorhersage mit dem geringsten Fehler von \glqq LinReg G\grqq{} ist wesentlich besser. Interessanterweise ist der vorhergesagte Wert näher am Maximum der Dichte,
-als am genaueren Mittelwert des Sets.
-Die Wahl für den Median gegenüber dem arithmetischen Mittel für das Modell \glqq Median agg\grqq{} kommt in \ref{fig:densities_baselines_seq} c) zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  RMAF noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.\\
-Interessanterweise erreichen die beiden Modelle mit Fehlerklassen auf dem selben Set ihren geringsten Fehler mit etwa $1,5\%$, dabei entspricht die Vorhersage bei dem Modell mit Tupel1-Fehlerklassen (\ref{fig:densities_baselines_seq} e)) exakt dem arith. Mittel, während sie bei dem mit LinReg-Fehlerklassen direkt daneben liegt (\ref{fig:densities_baselines_seq} d)). \\
-Eine weiterhin bemerkenswerte Erscheinung ist bei \ref{fig:densities_baselines_seq} f) zu sehen. Diese Vorhersage ist die ungenaueste (nach RMAF-Wert), die das Modell \glqq Median agg\grqq{} auf cached-off0-seq getroffen hat, dabei ist der Vorhergesagte Wert in direkter Umgebung des \glqq idealen\grqq{} arith. Mittel. Einem Modell, dass für alle Messungen eines Sets den selben Wert vorhersagt kann dementsprechend auf diesen Daten nicht immer einen kleinen Fehler erreichen. Eine Unterscheidung von Messungen innerhalb eines Sets kann allerdings nur durch eine Betrachtung der zeitlichen Abhängigkeit des E/A-Aufrufs von den vorherigen gelingen, es sei denn es wären weitere Systeminformationen bekannt.
+Erneut kann untersucht werden, wie die unterschiedliche Qualität der Vorhersagen zu Stande kommt, indem kleinere Ausschnitte der Modell-Prognosen betrachtet werden.
+In den Graphen in \ref{fig:densities_baselines_seq} ist die Dichte der Laufzeiten für jeweils ein spezifisches Attribut-Set dargestellt. Der angegebene Fehler ist der relative arithmetische Fehler des Modells auf dem Set.
+Es gibt jeweils $N$ Messungen mit den Attributen aus diesem Set.
+In \ref{fig:densities_baselines_seq}a ist die Vorhersage vom Modell \textit{Durchschnitt} zu dem Attribut-Set zu sehen, das von dem Modell mit am Besten modelliert wurde.
+Die Vorhersage ist nicht sehr genau, der vom Modell geschätzte Wert ist wesentlich näher am 0.1 Quantil, als am tatsächlichen Mittelwert.
+Die Vorhersage mit dem geringsten Fehler von \textit{LinReg G} ist in \ref{fig:densities_baselines_seq}b zu sehen.
+Der vorhergesagte Wert befindet sich ziemlich genau am Maximum der Dichtefunktion. Entsprechend sagt dieses Modell für eine möglichst große Anzahl Messungen den richtigen Wert voraus. 
+%Das im Modell \textit{Median} eben gerade der Median der Attribut-Sets vorhergesagt wird, statt z.B. dem arithmetischen Mittel, kommt in \ref{fig:densities_baselines_seq}c zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  RMAF noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.
+Die Vorhersage von \textit{Median LinReg-FK} liegt auf dem in \ref{fig:densities_baselines_seq}c dargestellten Attribut-Set ziemlich genau auf dem Wert des arithmetischen Mittels, sodass der arithmetische Fehler hier gerade minimal wird.
+Als letztes Beispiel soll der Verlauf der Laufzeit-Dichte eines Attribut-Sets gezeigt werden, zu dem das Modell \textit{Median} eine seiner größten Modellabweichungen hat.
+Interessanterweise sind die Residuen für dieses Attribut-Set sehr groß, dabei ist der Vorhergesagte Wert des Modells in direkter Nähe des tatsächlichen arith. Mittelwerts.
+Ein Modell, dass für alle Messungen eines Sets den selben Wert vorhersagt, kann dementsprechend zu den gemachten Messungen nicht immer kleine Modellabweichungen erreichen.
+Eine weitere Unterscheidung von Messungen innerhalb eines Sets kann mit den verfügbaren Messdaten allerdings nur durch eine Betrachtung der zeitlichen Abhängigkeit des E/A-Aufrufs von den vorherigen gelingen. 
+Alternativ kann ein Ansatz, wie die Fehlerklassen zur besseren Modellierung verwendet werden, dies ist aber natürlich \textit{unfair}, da in den Klassen Informationen über die tatsächliche Laufzeit der E/A-Aufrufe stecken.
  
  \begin{figure}
  	\centering
- 	\subfloat[Modell Durchschnittsdauer]{
+ 	\subfloat[Modell \textit{Durchschnitt}; Mitt.-Fehler: 20.77\%, N = 29997, Zugriffsgröße = Delta-Abstand: 512KiB, OpTyp: W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_mean_performance.png}
  	}
- 	\subfloat[Modell LinReg G]{
+ 	\subfloat[Modell \textit{LinReg G}; Mitt.-Fehler: 6.74\%, N: 29997, Zugriffsgröße = Delta-Abstand: 64KiB, OpTyp: W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_linreg_Size.png}
  	}\\
- 	\subfloat[Modell Median agg]{
- 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_aggregated.png}
- 	} 	
- 	\subfloat[Modell Median agg LinReg-Fehlerklasse]{
+ 	\subfloat[Modell \textit{Median LinReg-FK}; Mitt. - Fehler: 2.6\%, N:3837, Zugriffsgröße = Delta-Abstand: 8MiB, OpTyp: W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_with_linreg_error_class_aggregated.png}
- 	}\\
- 	\subfloat[Modell Median agg Tupel1-Fehlerklasse]{
- 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_with_good_model_error_class_aggregated.png}
- 	} 	
- 	\subfloat[Modell Median agg]{
+ 	}
+ 	\subfloat[Modell \textit{Median}; Mitt. - Fehler: 68.65\%, N: 29997, Zugriffsgröße = Delta-Abstand: 512KiB, OpTyp: W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_worst_median_Duration_aggregated.png}
  	} 
- 	\caption{Triviale Modelle auf cached-off0-seq, 90\% der Werte sind größer als die grüne, 10\% sind größer als die pinke Linie, die mittlere Dauer entspricht der schwarzen Linie, die blaue Linie ist die mittlere Vorhersage des Modells für dieses Set}
+ 	\caption{Laufzeit-Dichte einiger trivialer Modelle auf SEQ; 90\% der Werte sind größer als die grüne, 10\% sind größer als die pinke Linie, die mittlere Dauer entspricht der schwarzen Linie, die blaue Linie ist die mittlere Vorhersage des Modells für dieses Set}
  	\label{fig:densities_baselines_seq}
  \end{figure} 
 
@@ -1240,11 +1241,11 @@ Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage be
 \begin{table}
 	\scriptsize
 	\subfloat[cached-off0-seq]{
-		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
+		\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+			Modell & MAF (s) & RMAF Training (\%) & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Bereich = \Bereich}%
-			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
+			{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich}%
+			{\Model & \MAF & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
 		\end{tabular}
 	} \\
 	\subfloat[cached-off0-rnd]{
