@@ -1,5 +1,7 @@
-Modell,verdeckteSchichten,Neuronen,Iterationen,Trainingsdauer
-Tupel1, 8, 5, 980, 930
-Tupel1 LinReg-Fehlerklasse,11,21,4659,1316
-Tupel1 gleitender Durchsatz, 9, 5, 564, 991
-Tupel2,10,21,4644, 686
+Modell,verdeckteSchichten,Neuronen,Trainingsdauer,Iterationen
+Tupel1 Tupel1-FK,17,28,12067,1366
+Tupel1 LinReg-FK, 9,22, 1201, 283
+Tupel1, 4, 5,  222,1310
+Tupel1 Aggregiert, 1, 1,  258,7743
+Tupel1 EMA Durchsatz, 7, 5,  461,1106
+Tupel2,14,17, 2099, 368
