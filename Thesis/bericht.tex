@@ -410,15 +410,29 @@ Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelo
 }
 
 \chapter{Gestaltung der Analyse}
-\textit{
-In diesem Kapitel wird darauf eingegangen, wie die Ziele dieser Arbeit erreicht werden sollen und welche Ansätze dabei verfolgt werden.
+\textit{	
+In diesem Kapitel wird darauf eingegangen und welche Ansätze dabei verfolgt werden.
 Zunächst wird dargestellt, welche die Modellvorstellung des untersuchten Systems 	den weiteren Untersuchtungen zugrunde liegt.
 Dann gehe ich auf die beiden verwendeten Methoden der Leistungsvorhersage ein, zum einen die direkte Vorhersage von Leistung als E/A-Laufzeiten, zum anderen die Vorhersage von Ausreißern über Laufzeitbereiche. 
 Daraufhin wird das Kernstück dieser Arbeit behandelt. Die unterschiedlichen untersuchten Modelle. Die Modelle werden in Klassen unterteilt. Die Analyse der verschiedenen Klassen geschieht zu unterschiedlichen Zwecken und sollen in einer bestimmten Weise Einsicht über das komplexe E/A-System eines Hochleistungsrechners geben. Als letztes werden die verwendeten Modelle im Detail gezeigt und auf deren Anwendung eingegangen.
 }
 \bigskip
 
-\section{Modell der Ein-/Ausgabe}
+\section{Vorgehen bei der Modellierung}
+Um das E/A-System des zu untersuchenden Hochleistungsrechners zu analysieren werden zunächst eine Reihe E/A-Aufrufe ausgeführt und deren Laufzeiten gemessen. Die Messreihen werden mit einer Systematik durchgeführt, damit mehr Wissen über die erhaltenen Daten vorhanden ist, sodass bessere Schlussfolgerungen aus der Analyse gezogen werden können.
+Eine Messreihe wird daher mit einem immer gleichen Zugriffsmuster auf einer Datei durchgeführt.
+Der Benchmark-Test, in dem die Messreihen generiert wurden, wird im Evaluierungskapitel erläutert.
+Zu jedem E/A-Zugriff sind bestimmte Attribute bekannt, diese können mit der gemessenen Laufzeit als eine Messung gespeichert werden.
+Die bekannten Attribute sind:
+\begin{itemize}
+	\item Die Datei ID, mit diesem kann die aufgerufene Datei identifiziert werden.
+	\item Die Zugriffsgröße des E/A-Aufrufs, die Anzahl Bytes, die gelesen oder geschrieben werden sollen. 
+	\item Der Offset, das ist der Abstand vom Dateibeginn zu dem Bereich, auf den zugegriffen wird. Wenn nicht direkt vom ersten Byte der Datei gelesen oder geschrieben werden soll, muss zusätzlich zur Zugriffsgröße der Offset definiert werden, um den Bereich auf den zugegriffen wird zu spezifizieren.
+	Der Delta-Offset zur Messung i berechnet sich als Offset[i] - (Offset[i-1] + Zugriffsgröße[i-1]). Er gibt also an, wie groß der Abstand von der End-Position des Dateizeigers nach dem letzten E/A-Aufrufs zu der Start-Position des aktuellen Aufrufs ist.
+	\item asd FORMELN EINFPGEN
+\end{itemize}
+
+\section{Modell des Ein-/Ausgabe-Pfads}
 \label{ea_modell}
 Um eine Idee dafür zu bekommen, wie die Modelle in etwa gestaltet sein müssen, um die Zugriffszeiten abbilden zu können, wird hier zunächst ein grobes Modell der E/A aufgestellt.
 
@@ -637,7 +651,7 @@ Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB
 \label{benchmark}
 Das Testsystem muss durch Vermessung von Experimenten untersucht werden.
 Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden.
-Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt. Es wurden vier verschiedene Experimente gemacht, sie repräsentieren zwei unterschiedliche Anwendungsfälle.
+Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt. Es werden vier verschiedene Experimente gemacht, sie repräsentieren zwei unterschiedliche Anwendungsfälle.
 Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Das System hat die Datei also bereits geladen, die Daten sollten gecacht (engl. gecached) sein. 
 Das genutzte Speicherlayout ist ein off0-Layout, das bedeutet, dass die gelesenen Daten von Position 0 des verwendeten Puffers im Arbeitsspeichers ausgelesen bzw. ausgeschrieben werden.
 Die Unterscheidung der beiden Anwendungsfälle befindet sich in der Art des Dateizugriffs.
