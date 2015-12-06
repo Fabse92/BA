@@ -1117,31 +1117,29 @@ Dieser Durchsatz wird durch die langsamsten Einheiten auf dem Pfad geprägt.
 \end{table}
 
 Neben den Fehlerklassen, die aus der Modellabweichung von \textit{LinReg G} gewonnen wurden, gibt es noch die Fehlerklassen aus den Modellabweichungen von \textit{Tupel1}.
-In Tabelle \ref{tab:error_classes_switched2} sind die gleichen Angaben, wie in \ref{tab:error_classes_switched} zu den Fehlerklassen angegeben. Zusätzlich steht in der Spalte \textit{Identisch}, welcher Anteil der Datenpunkte in den Clustern von \textit{LinReg G} und \textit{Tupel1} der selben Fehlerklasse zugewiesen wurden.
-Insgesamt sind die Zuweisungen sehr ähnlich. Auf SEQ gibt es eine sehr große Übereinstimmung bei Klasse mit den meisten Datenpunkten, sodass insgesamt 90\% der gleiche Zuordnung stattfindet.
-Auf RND stimmen die Zuweisungen zu vielen Klassen stärker überein, in der ausschlaggebenden Klasse allerdings nur um 80.5\%, sodass insgesamt 78\% identische Zuordnungen gemacht wurden.
-Auch die abgedeckten Bereiche der Klassen sind denen von \textit{LinReg G} sehr ähnlich.
+In Tabelle \ref{tab:error_classes_switched2} sind die gleichen Angaben, wie in \ref{tab:error_classes_switched} zu den Fehlerklassen angegeben. 
+Insgesamt sind die Zuweisungen sehr ähnlich. Auf SEQ gibt es eine sehr große Übereinstimmung bei Klasse mit den meisten Datenpunkten,
 
 \begin{table}
 	\makebox[\textwidth][c]{
 		\scriptsize
-		\subfloat[Fehlerklassen aus Tupel1 auf SEQ; insgesamt 90\% Übereinstimmung gegenüber \textit{LinReg G} bei der Klassenzuteilung]{
-			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd & Identisch (\%) \\\hline\hline
+		\subfloat[Fehlerklassen aus Tupel1 auf SEQ]{
+			\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf seq & Zugeordnet auf rnd \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/error_class/seq_linreg_classes_on_rnd_good.csv}{tp=\tp,idx = \idx, rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, equa = \equa}%
-				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount &\equa}%
+				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount}%
 			\end{tabular}
 		}
 	}\\
 	\makebox[\textwidth][c]{
 		\scriptsize
-		\subfloat[Fehlerklassen aus Tupel1 auf RND; insgesamt 78\% Übereinstimmung gegenüber \textit{LinReg G} bei der Klassenzuteilung]{
-			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq & Identisch (\%) \\\hline\hline
+		\subfloat[Fehlerklassen aus Tupel1 auf RND]{
+			\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+				Klasse & mittlerer Durchsatz (B/s) & Min (s) & Durchschnitt (s) & Max (s) & Zugeordnet auf rnd & Zugeordnet auf seq \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/error_class/rnd_linreg_classes_on_seq_good.csv}{tp=\tp,idx = \idx, rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, equa = \equa}%
-				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount &\equa}%
+				{\idx & \tp & \minerror & \meanerror & \maxerror & \rndcount & \seqcount}%
 			\end{tabular}
 		}
 	}
