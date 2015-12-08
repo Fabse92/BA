@@ -112,8 +112,8 @@
 
 \section{Motivation}
 
-Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Bedeutung, viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können nur in einer effizienten Weise durch eine abstrakte Modellierung des Problems mit anschließender Computersimulation gelöst werden. Der hohe Rechenaufwand solcher Modellberechnungen erfordert, dass Wissenschaftler für ihre Simulationsprogramme die Dienste eines Hochleistungsrechenzentrums in Anspruch nehmen. 
-Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungsrechenzentren dazu für den gewünschten Rechenleistungszuwachs in massiv parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränkt.
+Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Bedeutung; viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können in einer effizienten Weise nur durch eine abstrakte Modellierung des Problems mit anschließender Computersimulation gelöst werden. Der hohe Rechenaufwand solcher Modellberechnungen erfordert, dass Wissenschaftler für ihre Simulationsprogramme die Dienste eines Hochleistungsrechenzentrums in Anspruch nehmen. 
+Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungsrechenzentren dazu, für den gewünschten Rechenleistungszuwachs in massiv parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren, heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränken.
 Die zur Verfügung stehende Leistung wird dadurch allerdings schwieriger nutzbar. 
 Einerseits liegt dies am großen  technische Aufwand, der zur Vernetzung der Recheneinheiten notwendig ist, andererseits liegt es an der komplexen Programmierung der Software, welche die Parallelität des Rechners berücksichtigt. Insbesondere ist es auch bei der Ein-/Ausgabe (E/A) von Dateien, Eingabeparametern und Ergebnissen des Programms wichtig, dass sie parallel durchgeführt wird. Das liegt einerseits am Wunsch der Wissenschaftler viele Zwischenergebnisse der Simulation abzuspeichern, und andererseits an der im Vergleich zur Rechenleistung geringen Leistungssteigerung bei Netzwerkgeschwindigkeiten und beim Speichersystem, insbesondere bei Festplatten.
 Um die Wissenschaftler beim Programmieren zu unterstützen, gibt es hilfreiche Werkzeuge zur Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes. Wünschenswert ist es dabei, wenn diese Tools die Optimierungen möglichst selbstständig durchführen können, sodass der Wissenschaftler sich auf die Funktionalität seines Programms konzentrieren kann, statt sich mit Leistungsoptimierung aufzuhalten.
@@ -130,7 +130,7 @@ Ein darauf aufbauendes Analysewerkzeug könnte die Leistung verschiedener E/A-St
 In dieser Arbeit soll ein Modell zur E/A-Leistungsvorhersage mit dem Hilfsmittel neuronaler Netze entwickelt werden. 
 
 \section{Ziele der Thesis}
-Das Hauptziel der Thesis ist die Entwicklung eines künstlichen neuronalen Netz zu entwickeln, das zuverlässig und mit hinreichender Genauigkeit die Laufzeit von individuellen E/A-Zugriffen auf einem Hochleistungsrechner vorhersagt. 
+Das Hauptziel der Thesis ist die Entwicklung eines künstlichen neuronalen Netz, das zuverlässig und mit hinreichender Genauigkeit die Laufzeit von individuellen E/A-Zugriffen auf einem Hochleistungsrechner vorhersagt. 
 Der Weg zu dieser Lösung kann in Teilziele unterteilt werden.
 \begin{enumerate}
 	\item Zunächst muss untersucht werden, welche der messbaren Größen zu einem E/A-Aufruf einen Einfluss auf dessen Laufzeit haben. Dies sind Informationen, die anschließend zur Vorhersage der E/A-Zugriffszeiten genutzt werden können.
@@ -145,8 +145,8 @@ Der Weg zu dieser Lösung kann in Teilziele unterteilt werden.
 \end{enumerate}
 
 \section{Strukturierung}
-Nachdem in diesem Kapitel die Themen der Arbeit umrissen wurden, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Im dritten Kapitel werden verwandte Arbeiten vorgestellt.
-Im vierten Kapitel wird erläutert, welche Annahmen über das E/A-System getroffen werden und wie dieses mit verschiedenen Ansätzen modelliert werden soll.
+Nachdem in diesem Kapitel die Themen der Arbeit umrissen wurden, soll das zweite Kapitel alle nötigen Hintergrundinformationen zum Verstehen der Thematik und der hier angewandten Ansätze liefern. Anschließend werden im dritten Kapitel verwandte Arbeiten vorgestellt.
+Im vierten Kapitel wird dann erläutert, welche Annahmen über das E/A-System getroffen werden und wie dieses mit verschiedenen Ansätzen modelliert werden soll.
 Das fünfte Kapitel gibt einen kleinen Einblick wie die Anwendung und Generierung der Modelle umgesetzt wurde.
 Die Evaluierung zu den gemachten Untersuchungen des E/A-Systems, sowie der verschiedenen Modell-Ansätze wird daraufhin im sechsten Kapitel vorgenommen.
 Über die gewonnen Erkenntnisse wird im siebten Kapitel ein Fazit gezogen.
@@ -157,7 +157,7 @@ Die Evaluierung zu den gemachten Untersuchungen des E/A-Systems, sowie der versc
 \textit{
 	In diesem Kapitel soll ein Überblick über die relevanten Themengebiete zu dieser Arbeit gegeben werden.
 	In Unterkapitel \ref{back_E/A} wird die prinzipielle Funktionsweise eines Speichersystems und einige für die Ein- und Ausgabe von Daten wichtige Details erläutert.
-	Im folgenden Teil \ref{back_hpc} soll kurz Erläutert werden, worum es sich bei Hochleistungsrechnen handelt und welche Herausforderungen für die E/A-Leistungsvorhersage aus der Untersuchung eines Hochleistungsrechners folgen.
+	Im folgenden Teil \ref{back_hpc} soll kurz erläutert werden, worum es sich bei Hochleistungsrechnen handelt und welche Herausforderungen für die E/A-Leistungsvorhersage aus der Untersuchung eines Hochleistungsrechners folgen.
 	Einige wichtige Begriffe und Konzepte aus dem Bereich des maschinellen Lernens sollen in Sektion \ref{back_ML} erklärt werden.
 	Danach kann in Kapitel \ref{back_nn} detailierter auf die Funktionsweise und Mächtigkeit von künstlichen neuronalen Netzen eingegangen werden. Die Mächtigkeit eines Algorithmus sagt dabei aus, welche Problemklassen mit ihm gelöst werden können. 
 }
@@ -170,16 +170,15 @@ Eine Ausgabe des Rechners gibt dem Nutzer Informationen zum inneren Zustand des 
 Im Kontext dieser Arbeit handelt es sich bei Ein-/Ausgaben um Dateien mit deren Daten, die in einem parallelen Dateisystem verwaltet werden.
 \medskip
 
-Die in dem Testsystem verwendeten Datenträger sind Festplattenlaufwerke, bei diesen werden Informationen durch magnetische Polarisierung von Speicherzellen auf Magnetscheiben gespeichert und durch Abtastung dieser Magnetisierung mit einem Lesekopf ausgelesen.
-Festplatten sind in Datenblöcke (auch Sektoren) unterteilt, diese bilden die kleinste Einheit, die auf dem Medium abgespeichert werden kann. Durch eine eindeutige Adressierung dieser Sektoren kann der Schreib-/Lesekopf durch Aus- und Einfahren, sowie einer Drehung der Magnetscheibe, direkt auf den gewünschten Datenblock zugreifen.
+Die in dem Testsystem verwendeten Datenträger sind Festplattenlaufwerke. Bei diesen werden Informationen durch magnetische Polarisierung von Speicherzellen auf Magnetscheiben gespeichert und durch Abtastung dieser Magnetisierung mit einem Lesekopf ausgelesen.
+Festplatten sind in Datenblöcke (auch Sektoren) unterteilt, diese bilden die kleinste Einheit, die auf dem Medium abgespeichert werden kann. Durch eine eindeutige Adressierung dieser Sektoren kann durch Aus- und Einfahren des Schreib-/Lesekopfes, sowie einer Drehung der Magnetscheibe, direkt auf den gewünschten Datenblock zugegriffen werden.
 Aufgrund des vergleichsweise geringen Durchsatzes, und insbesondere wegen der großen Latenz bei der Durchführung von Festplattenaufrufen, sind zwischen Festplatte und den tatsächlichen Recheneinheiten im Prozessor mehrere Schichten von schnelleren Speichern zwischengeschaltet. Diese Schichten bilden die Speicherhierachie.
 Von der Festplatte gelesene Daten befinden sich zunächst im Arbeitsspeicher und werden dann in die direkt beim Prozessor liegenden Pufferspeicher (Caches) geladen.
-In den verschiedenen Cache-Ebenen geschieht Vergleichbares, die Ebenen gehen von kleinen, sehr schnellen zu größeren, jedoch langsameren Speichern über, üblich sind hier zwei oder drei Ebenen mit solchen Übergängen. Die Ebenen werden auch als Level bezeichnet und sind von innen nach außen, beziehungsweise schnell nach langsam, durchnummeriert. 
+In den verschiedenen Cache-Ebenen geschieht Vergleichbares, die Ebenen gehen von kleinen, sehr schnellen zu größeren, jedoch langsameren Speichern über; üblich sind hier zwei oder drei Ebenen mit solchen Übergängen. Die Ebenen werden auch als Level bezeichnet und sind von innen nach außen, beziehungsweise schnell nach langsam, durchnummeriert. 
 \medskip
 
 Die Zugriffszeit auf eine Datei ist durch diese Struktur stark davon abhängig in welcher Speicherebene die gesuchten Speicheradressen gefunden werden. Wenn die Daten bereits vollständig im Level 1 Cache liegen, sind sie schon nach wenigen Prozessorzyklen geladen. Es dauert mehrere Größenordnungen länger wenn sie aus dem Arbeitsspeicher geholt werden müssen. Weiterhin ist das Lesen von der Festplatte erneut signifikant aufwendiger. Im Wesentlichen kann unterschieden werden, ob angefragte Daten \textit{gecached} sind, sich also im Arbeitsspeicher befinden oder noch von der Festplatte geladen werden müssen.
-Die Ebenen der Speicherhierachie sind durch einen typische Durchsatz gekennzeichnet, der Durchsatz ist definiert als verarbeitetes Speichervolumen pro Zeiteinheit. 
-In Abbildung \textit{ABBILDUNG} ist eine Visualisierung der Speicherhierachie dargestellt, in der übliche Durchsätze und sich daraus ergebende typische Zugriffszeiten ergeben.
+Die Ebenen der Speicherhierachie sind durch einen typische Durchsatz gekennzeichnet. Der Durchsatz ist definiert als verarbeitetes Speichervolumen pro Zeiteinheit. Die Abbildung \textit{ABBILDUNG} ist eine Visualisierung der Speicherhierachie, in der übliche Durchsätze und sich daraus ergebende typische Zugriffszeiten dargestellt sind.
 \medskip
 
 Verschiedene Caching-Strategien erlauben eine effizientere Nutzung der Zwischenspeicher.
@@ -187,16 +186,16 @@ Verschiedene Caching-Strategien erlauben eine effizientere Nutzung der Zwischens
 \item Ein Beispiel für lesende E/A-Aufrufe ist das Einschalten der Read-Ahead-Einstellung, dadurch werden weitere Sektoren in den Cache geladen, die sich in der unmittelbaren physischen Umgebung der angefragten Datenblöcke auf dem  Speichermedium befinden. Falls ein Programm fortlaufend über einen großen Datenbereich arbeitet, weil dort beispielsweise direkt hintereinander Bilddateien eines Fotoalbums befinden, das gerade im Präsentationsmodus gezeigt wird, so ist der Zugriff auf ein weiteres Bild für das E/A-System nicht mehr 'überraschend'. Statt erst in dem Moment des E/A-Aufrufs des nächsten Bildes die erforderlichen Datenblöcke von der Festplatte zu lesen, befinden sich diese nun bereits in einem der vorgeschalteten Zwischenspeicher. Diese Caching-Strategie macht nur Sinn, wenn ein solches sequentielles Zugriffsverhalten eines Programms stattfindet. 
 Wenn aufeinanderfolgende Zugriffe in unterschiedlichen Bereichen der Festplatte Datenblöcke anfordern, wird bei dieser Strategie zusätzlicher Aufwand für das Lesen der umgebenden Daten betrieben ohne davon einen Nutzen zu haben. 
 \item Eine Caching-Strategie, die eine schnellere Verarbeitung schreibender E/A-Aktionen erlaubt, ist das Wechseln von Write-Through zu Write-Back. Beim Write-Through werden Schreibbefehle, die zunächst nur direkt im Cache umgesetzt werden, direkt in das Speichersystem übernommen. Datenblöcke im Speichersystem und Arbeitsspeicher sind so immer im gleichen und daher widerspruchsfreien Zustand, sodass auch nach plötzlicher Löschung des Caches keine Informationen verloren gehen.
-Diese Sicherheit ist beim Write-Back nicht gegeben, da der geänderte Zustand von Daten zunächst nur im Cache bekannt bleibt, damit der Prozessor nicht einen lange Zeit auf die Vollendung des Schreibvorgangs auf der Festplatte warten muss. Das Ausschreiben der Änderungen in den Arbeitsspeicher geschieht erst in einem günstigen Moment, wenn beispielsweise ansonsten gerade wenige E/A-Zugriffe geschehen.
+Diese Sicherheit ist beim Write-Back nicht gegeben, da der geänderte Zustand von Daten zunächst nur im Cache bekannt bleibt, damit der Prozessor nicht eine lange Zeit auf die Vollendung des Schreibvorgangs auf der Festplatte warten muss. Das Ausschreiben der Änderungen im Arbeitsspeicher geschieht erst in einem günstigen Moment, wenn beispielsweise ansonsten gerade wenige E/A-Zugriffe geschehen.
 \end{itemize}
-Entscheidend für die beste Auswahl der Cache-Strategien sind jeweils die vorherrschenden Bedingungen im System, sowie dessen Benutzungsweise und die gestellten Anforderungen.
+Entscheidend für die beste Wahl der Cache-Strategien sind jeweils die vorherrschenden Bedingungen im System, sowie dessen Benutzungsweise und die gestellten Anforderungen.
 
 \section{Hochleistungsrechnen}
 \label{back_hpc}
 Man spricht von Hochleistungsrechnen, wenn der Rechen- oder Speicheraufwand eines Programms außerhalb dessen liegt, was ein einzelner Desktop-Computer in vertretbarer Zeit bearbeiten kann.
 Die im Hochleistungsrechnen verwendeten Computer werden als Supercomputer bezeichnet, hierbei handelt es sich heutzutage üblicherweise um Rechnerverbünde (engl. Cluster) in denen eine große Anzahl Prozessoren und Speichermedien zusammengeschaltet werden.
 Die übliche Struktur sieht dabei so aus, dass eine Vielzahl Rechnerknoten durch ein gemeinsames Netzwerk zusammengeschaltet werden. Bei einem Rechnerknoten handelt es sich um ein Mehrprozessorsystem mit gemeinsamen Speicher. Jeder Prozessor im Knoten hat einen eigenen Cache mit dem er arbeiten kann, zudem gibt es einen Speicher, auf den alle Prozessoren gemeinsam zugreifen. 
-Das Verbund aus Rechnerknoten, der den Hochleistungsrechner bildet, verfügt wiederum über einen gemeinsamen Speicher. Dabei handelt es sich um das Speichersystem des Hochleistungsrechners, das über das Netzwerk mit den einzelnen Rechnerknoten kommuniziert.
+Der Verbund aus Rechnerknoten, der den Hochleistungsrechner bildet, verfügt wiederum über einen gemeinsamen Speicher. Dabei handelt es sich um das Speichersystem des Hochleistungsrechners, das über das Netzwerk mit den einzelnen Rechnerknoten kommuniziert.
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[width=.43\textwidth]{Bilder/rechnerknoten.png}
@@ -211,7 +210,7 @@ Notwendig wird Hochleistungsrechnen in der Forschung für die Simulation von num
 Wichtige Themen im Hochleistungsrechnen sind die effiziente Ausnutzung der zur Verfügung stehenden Leistung, das Erkennen und Beheben von Fehlern des parallelisierten Programmcodes, die Bereitstellung der Rechen- und Speicherkapazitäten, sowie die Energieeffizienz von Hard- und Software.
 Um einen Supercomputer gut ausnutzen zu können ist bei vielen Anwendungen eine leistungsfähige Ein-/Ausgabe von großer Wichtigkeit. Bedingt ist dies dadurch, dass die Menge der anfallenden Daten wesentlich stärker ansteigt, als die Geschwindigkeit der Verbindungen zwischen den verschiedenen Speichermedien und -orten.
 
-Die in \ref{E/A} beschriebene Ein-/Ausgabe erweitert sich im Rechnerverbund zur parallelen E/A, dies bedeutet einerseits, dass eine Datei von mehreren Prozessen zeitgleich gelesen und bearbeitet werden kann, und andererseits, dass eine Datei über mehrere Festplatten und Netzwerk-Server verteilt sein kann. Diese Parallelität hat einen wesentlichen Einfluss auf die Aufgabe der E/A-Leistungsvorhersage, denn statt nur den Aufwand der Arbeitsschritte auf einer einzelnen Festplatte abzuschätzen, müssen hier die verstrickten Zusammenhänge zwischen Netzwerken von Festplatten und Rechnern, den jeweiligen Auslastungen der Komponenten, sowie Priorisierungen bestimmter Aufgaben und Instanzen durch die Speicherverwaltung.
+Die in Abschnitt \ref{back_E/A} beschriebene Ein-/Ausgabe erweitert sich im Rechnerverbund zur parallelen E/A, dies bedeutet einerseits, dass eine Datei von mehreren Prozessen zeitgleich gelesen und bearbeitet werden kann, und andererseits, dass eine Datei über mehrere Festplatten und Netzwerk-Server verteilt sein kann. Diese Parallelität hat einen wesentlichen Einfluss auf die E/A-Leistungsvorhersage, denn statt nur den Aufwand der Arbeitsschritte auf einer einzelnen Festplatte abzuschätzen, müssen hier die verstrickten Zusammenhänge zwischen Netzwerken von Festplatten und Rechnern, den jeweiligen Auslastungen der Komponenten, sowie Priorisierungen bestimmter Aufgaben und Instanzen durch die Speicherverwaltung berücksichtigt werden.
 
 Die Erfassung aller dieser Informationen wäre sehr aufwendig, sodass dies zur Zeit nicht möglich ist. Eine Vorhersage von E/A-Leistung eines parallelen Dateisystems ist daher sehr schwierig.
 
@@ -227,27 +226,27 @@ Ein Datenpunkt beschreibt ein spezifisches Objekt (z.B. ein bestimmtes Exemplar 
 
 Typische Aufgaben des maschinellen Lernens sind die Klassifizierung und Regressionsanalyse von Daten.
 \begin{itemize}
-\item Es muss zwischen Klassifizierung und Klassifikation unterschieden werden.
+\item Es muss zwischen Klassifikation und Klassifizierung unterschieden werden.
 \begin{itemize}
 \item Als Klassifikation bezeichnet man die Zuordnung eines Objekts mit spezifischen Attributen zu einer bestimmten Gruppe von Objekten mit ähnlichen Attributen.
 \item Der zur Klassifikation genutzte Klassifikator ist das Ergebnis einer Klassifizierung.
 Zur Klassifizierung können Verfahren des maschinellen Lernens genutzt werden. Bei der Klassifizierung muss von den eigentlichen Objekt-Attributen abstrahiert werden, sodass Muster zwischen den Objekten erkannt werden können. Dann können Klassengrenzen definiert werden, die jeder Klasse einen Bereich des Attribut-Raumes zuordnet. Ein Klassifikator muss die Werte der Attribute eines neuen Objekts, das noch keiner Klasse zugewiesen wurde, anschließend nur mit den Klassengrenzen vergleichen und findet so die passende Zuordnung.
 \end{itemize}
-\item Regressionsanalyse (oft auch nur Regression) ist ein Verfahren zur Bestimmung der Zusammenhänge von einem spezifischen Zielvariablen zu den übrigen Objekt-Attributen. Wenn in einem Datensatz die Einträge zur Zielvariablen fehlen, können die berechneten Relationen zur Prognose der unbekannten Werte mit Hilfe der bekannten Attribute genutzt werden. Die Zielvariable wird so über die Abhängigkeit zu anderen Variablen durch ein Verfahren des maschinellen Lernens modelliert. Das erhaltene Modell aus dem Verfahren wird auch als Prädiktor bezeichnet. 	
+\item Regressionsanalyse (oft auch nur Regression) ist ein Verfahren zur Bestimmung der Zusammenhänge von einer spezifischen Zielvariablen zu den übrigen Objekt-Attributen. Wenn in einem Datensatz die Einträge zur Zielvariablen fehlen, können die berechneten Relationen zur Prognose der unbekannten Werte mit Hilfe der bekannten Attribute genutzt werden. Die Zielvariable wird so über die Abhängigkeit zu anderen Variablen durch ein Verfahren des maschinellen Lernens modelliert. Das erhaltene Modell aus dem Verfahren wird auch als Prädiktor bezeichnet. 	
 \end{itemize}
 
-Ein Verfahren bzw. Algorithmus des maschinellen Lernens erstellt also ein Modell, welches einerseits Aussagen über die zur Verfügung stehenden Daten trifft und darüber hinaus Aussagen über unbekannte Variablen treffen kann.
+Ein Verfahren bzw. Algorithmus des maschinellen Lernens erstellt also ein Modell, welches einerseits Aussagen über die zur Verfügung stehenden Daten trifft und darüber hinaus, abgeleitet aus den inneren Abhängigkeiten der Daten, Aussagen über unbekannte Variablen treffen kann.
 Bei der Klassifikation wird eine qualitative Aussage über neue Datenpunkte anhand der Einordnung in Gruppen getroffen.
-Beim Regressionsmodell wird dagegen eine quantitative Aussage über die Zusammenhänge zwischen den Attributen der Daten getroffen. Das Modell approximiert einen Wert für ein bestimmtes Attribut neuer Datenpunkte voraus, wenn außer der Zielvariablen alle Attribut-Werte gesetzt sind.  
+Beim Regressionsmodell wird dagegen eine quantitative Aussage über die Zusammenhänge zwischen den Attributen der Daten getroffen. Das Modell approximiert einen Wert für ein bestimmtes Attribut neuer Datenpunkte, wenn außer der Zielvariablen alle Attribut-Werte gesetzt sind.  
 Klassifizierung und Regression können weitergehend über ihr Lernverhalten unterschieden werden.
 Während bei der Regression überwachtes Lernen stattfindet, wird bei der Klassifizierung unüberwacht gelernt. Der Unterschied der beiden Varianten befindet sich in den Informationen die im Trainingsdatensatz enthalten sind.
 \begin{itemize}
-\item Die Instanzen der Trainingsdaten beim überwachten Lernen enthalten auch die gesuchten Werte der Zielvariablen, dessen Werte der Algorithmus nach dem Lernvorgang auf dem Testdatensatz vorhersagen soll.
-Für die Regressionsanalyse sind diese Informationen essentiell, da für die Modellierung die Zusammenhänge der Werte der Zielvariablen mit den restlichen Variablen untersucht werden muss.
-Die Information über die idealen Ausgabewerte zur Zielvariablen werden während des Lernvorgangs genutzt um die Parameter des Prädiktors so anzupassen, sodass er die vorgegebenen Werte möglichst gut approximiert. Wichtig ist dabei, dass der Prädiktor nicht zu sehr auf die Trainingsdaten zugeschnitten wird, sondern die abstrakteren Relationen erkennt, sodass auch auf den ungesehenen Testdaten gut vorhersagen gemacht werden können.
-\item beim unüberwachten Lernen wird kein bestimmtes Ergebnis erwartet, stattdessen muss der Algorithmus versuchen den Informationen inhärente Abhängigkeiten und Zusammenhänge zu erkennen.
+\item Beim unüberwachten Lernen wird kein bestimmtes Ergebnis erwartet, stattdessen muss der Algorithmus versuchen den Informationen inhärente Abhängigkeiten und Zusammenhänge zu erkennen.
 Wenn die Klassenzuordnungen bereits in den Trainingsdaten bekannt wären, hätte das Klassifizierungs-Verfahren nicht viel zu tun. 
-Der Klassifizierung steht daher während dem Lernprozess auch keine Rückmeldung über die Güte der gemachten Klassifikation zur Verfügung. 
+Der Klassifizierung steht daher während des Lernprozesses auch keine Rückmeldung über die Güte der gemachten Klassifikation zur Verfügung.
+\item Die Instanzen der Trainingsdaten beim überwachten Lernen enthalten auch die gesuchten Werte der Zielvariablen, deren Werte der Algorithmus nach dem Lernvorgang auf dem Testdatensatz vorhersagen soll.
+Für die Regressionsanalyse sind diese Informationen essentiell, da für die Modellierung die Zusammenhänge der Werte der Zielvariablen mit den restlichen Variablen untersucht werden muss.
+Die Information über die idealen Ausgabewerte zur Zielvariablen werden während des Lernvorgangs genutzt um die Parameter des Prädiktors so anzupassen, dass er die vorgegebenen Werte möglichst gut approximiert. Wichtig ist dabei, dass der Prädiktor nicht zu sehr auf die Trainingsdaten zugeschnitten wird, sondern die abstrakteren Relationen erkennt, sodass auch auf den ungesehenen Testdaten gut vorhersagen gemacht werden können.
 \end{itemize}
 
 Die vom Klassifikator erstellten Gruppierungen werden üblicherweise nicht bewertet, da die Qualität einer Sortierung nur im Kontext des gewünschten Nutzens der Klassen beurteilt werden kann.
@@ -255,11 +254,11 @@ Zunächst einmal ist jede eindeutige Klassifizierung legitim.
 
 Der Prädiktor der Regressionsanalyse kann dagegen konkret bewertet werden. Dazu wird der Testdatensatz benötigt. Die zu bestimmenden Werte der Zielvariablen sind in den Testdaten bereits vorgegeben.
 Diese Information wird bei der Durchführung des Tests vorenthalten. Durch den Vergleich zwischen tatsächlicher und vorhergesagter Lösung können Rückschlüsse auf die Qualität der Vorhersagen gezogen werden können. Dazu werden Metriken zur Bestimmung der Güte der Modellierung benötigt.
-Zur Anwendung einer Regressionsanalyse müssen also zunächst Kriterien bzw. Leistungsmetriken eingeführt werden, anhand derer die Qualität der Vorhersagen und Entscheidungen gemessen werden können. Einerseits zum Vergleich der Vorhersagen auf den Testdatensatz zwischen verschiedenen Ansätze, aber auch bereits für den Lernprozess des Algorithmus selbst, damit dieser sozusagen aus seinen Fehlern und Erfolgen lernen kann. Eine einfache Metrik wäre beispielsweise die mittlere Modellabweichung der Vorhersagen gegenüber den \textit{Lösungswerten}.
+Zur Anwendung einer Regressionsanalyse müssen also zunächst Kriterien bzw. Leistungsmetriken eingeführt werden, anhand derer die Qualität der Vorhersagen und Entscheidungen gemessen werden können. Einerseits zum Vergleich der Vorhersagen auf den Testdatensatz zwischen verschiedenen Ansätzen, andererseits aber auch schon für den Lernprozess des Algorithmus selbst, damit dieser sozusagen aus seinen Fehlern und Erfolgen lernen kann. Eine einfache Metrik wäre beispielsweise die mittlere Modellabweichung der Vorhersagen gegenüber den \textit{Lösungswerten}.
 \medskip
 
 Oft ist es notwendig die zur Verfügung stehenden Daten aufzubereiten, bevor ein maschineller Lernalgorithmus effizient und korrekt Informationen aus diesen ableiten kann.
-Nach Alpaydin können fehlerhafte Daten ein Problem sein, die durch zufälligen Messfehler oder eine systematisch inkorrekte Messung entstehen können \cite{Alpaydin:2010:IML:1734076} (S. 13-15). Zudem schreibt er, dass Teile der Daten überflüssig sein können, da sie redundant sind oder keine relevanten Informationen enthalten. Problematisch sind auch Datenpunkte mit gleichen Eingabewerten, aber unterschiedlichen Werten zur Zielvariablen \cite{Alpaydin:2010:IML:1734076} (S. 14).
+Nach Alpaydin können fehlerhafte Daten ein Problem sein, die durch zufällige Messfehler oder eine systematisch inkorrekte Messung entstehen können (vgl. \cite{Alpaydin:2010:IML:1734076} S. 13-15). Zudem schreibt er, dass Teile der Daten überflüssig sein können, da sie redundant sind oder keine relevanten Informationen enthalten. Problematisch sind auch Datenpunkte mit gleichen Eingabewerten, aber unterschiedlichen Werten zur Zielvariablen (vgl. \cite{Alpaydin:2010:IML:1734076} S. 14).
 Mit all diesen Problemen muss, unter Beachtung der Eigenschaften des vorliegenden Datensatzes, bei der Aufbereitung der Daten sinnvoll umgegangen werden. So können beispielsweise Ausreißer bei den Daten aussortiert werden, da diese eventuell durch eine Fehlmessung entstanden sind. Widersprüchliche Datenpunkte können zusammengefasst werden, indem sie zusammen einen neuen Datenpunkt mit eindeutigen Ausgabewerten bilden (dies könnten die Mittelwerte sein).
 
 \subsection{Clusteranalyse}
@@ -274,7 +273,7 @@ Kantardzic beschreibt Clusteranalyse folgendermaßen: \glqq Cluster analysis is 
 	\subfloat{
 		\includegraphics[width=.5\textwidth]{Bilder/test_clustering.png}
 	}	
-	\caption{Datenpunkte mit je einem Wert für x und y-Dimension. Rechts farbliche Markierung für die Zugehörigkeit zu den drei vom k-Means-Algorithmus bestimmten Clusters. Ein Kreuz markiert den Mittelpunkt des Clusters (Mittelwert aller zugehörigen Punkte)}
+	\caption{Datenpunkte mit je einem Wert für x und y-Dimension. Rechts farbliche Markierung für die Zugehörigkeit zu den drei vom k-Means-Algorithmus bestimmten Clustern. Ein Kreuz markiert den Mittelpunkt jedes Clusters (Mittelwert aller zugehörigen Punkte)}
 	\label{fig:clustering_beispiel}
 \end{figure} 
 
@@ -284,7 +283,7 @@ Ein einfacher Clustering-Algorithmus ist der k-Means-Algorithmus. Bei diesem mus
 \label{back_nn}
 Bei künstlichen neuronalen Netzen, im Folgenden nur neuronale Netze genannt, handelt es sich um eine Methode aus dem Bereich des maschinellen Lernens zum Approximieren einer unbekannten Funktion, die der Relation zwischen zwei Datenmengen zugrunde liegt. Die Methode ist inspiriert von biologischen neuronalen Netzen, wie sie im Gehirn vorkommen. 
 Sie verwenden einen statistischen Ansatz, ihre Lösung für das Problem wird zunächst zufällig im Lösungsraum angelegt und dann mit Hilfe eines Gradientenverfahrens optimiert.
-Rojas \cite{Rojas:1996:NNS:235222} vergleicht neuronale Netze mit einer Black Box, also einem System mit beobachtbarer Ein- und Ausgabe, aber unbekannter innerer Verarbeitung der Informationen. 
+Rojas vergleicht neuronale Netze mit einer Black Box, also einem System mit beobachtbarer Ein- und Ausgabe, aber unbekannter innerer Verarbeitung der Informationen \cite{Rojas:1996:NNS:235222}. 
 Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabevektoren $E \in \mathbb{R}^n$ mit jeweils zugehörigem Ausgabevektor $A \in \mathbb{R}^m$ vor und dieses versucht eine passende Funktion $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$ zu finden. Dementsprechend handelt es sich hierbei um überwachtes Lernen, da eine gewünschte ideale Ausgabe vorgegeben wird.
 
 \begin{figure}[h]
@@ -296,7 +295,7 @@ Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabev
 	\label{fig:Schichten}
 \end{figure}
 
-Ein feedforward-Netz besteht aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe Abbildung \ref{fig:Schichten}), wobei die Verbindungen aus jeder Schicht jeweils nur in die Nächsthöhere gehen. 
+Die häufigste verwendete Art neuronaler Netze sind feedforward-Netze. Sie bestehen aus einer Eingabeschicht, einer beliebigen Anzahl verborgener Schichten und einer Ausgabeschicht (siehe Abbildung \ref{fig:Schichten}), wobei die Verbindungen aus jeder Schicht jeweils nur in die Nächsthöhere gehen. 
 Die Eingabeschicht besteht, meiner vorherigen Definition entsprechend, aus $n$ Stellen, an denen die Werte eines Eingabevektors stehen. Jeder Eingabewert wird dann an jedes Neuron in der ersten verborgenen Schicht weitergegeben und dort verrechnet, die Ergebnisse der Neuronen der verborgenen Schicht werden dann an die nächste Schicht gegeben und so weiter.
 Die Ergebnisse der Ausgabeschicht bilden den Ausgabevektor mit Länge $m$.
 Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen zu zurückliegenden Schichten vorkommen, dadurch ist die Berechnung zu einem Eingabevektor nicht mehr deterministisch bestimmt. Es müssen Berechnungs- und Determinierungsregeln festgelegt werden. 
@@ -309,11 +308,11 @@ Rekurrente Netze haben die gleiche Struktur, doch es können auch Verbindungen z
 	\label{fig:Neuron}
 \end{figure}
 
-Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen, die Anzahl der Eingaben ist hierbei unbegrenzt (\glqq unlimited fan-in property\grqq{} \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
+Jedes Neuron rechnet die eingehenden Eingabewerte mit einer zur Übertragungskante zugehörigen Gewichtung mit einer Übertragungsfunktion zusammen; die Anzahl der Eingaben ist hierbei unbegrenzt (vgl. \glqq unlimited fan-in property\grqq{} \cite{Rojas:1996:NNS:235222}). Die Übertragungsfunktion kann hierbei schlicht die Summe aller gewichteten Eingaben sein. Der errechnete Wert wird als Netzeingabe an die Aktivierungsfunktion gegeben. 
 Die Aktivierungsfunktion berechnet eventuell mit oder ohne einem Schwellwert die Aktivierung des Neurons, welche dann an alle verbundenen Neuronen der nächsten Schicht weitergegeben wird.
 Die Aktivierungsfunktion kann beispielsweise eine simple Stufenfunktion sein, die allen Netzeingaben kleiner des Schwellwerts eine Null und allen Eingaben größer gleich des Schwellwerts eine Eins zuweist.
 
-Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion und einer Stufenfunktion mit Schwellwert als Aktivierungsfunktion wird von Rojas \textit{Perzeptron} bezeichnet \cite{Rojas:1996:NNS:235222} (S. 60).
+Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion und einer Stufenfunktion mit Schwellwert als Aktivierungsfunktion wird von Rojas \textit{Perzeptron} bezeichnet (vgl. \cite{Rojas:1996:NNS:235222} S. 60).
 \medskip
 
 Ein feedforward-Netzwerk aus Perzeptrons, in dem jedes Neuron mit allen Neuronen der folgenden Schicht verbunden ist, wird als \textit{multilayer perceptron} (kurz MLP) bezeichnet.
@@ -322,8 +321,7 @@ Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagat
 
 \subsection{Berechenbarkeitstheorie neuronaler Netze}
 Vor der Anwendung von künstlichen neuronalen Netzen für ein Problem stellt sich die Frage, ob diese für das Problem geeignet sind. Dazu gibt es einige interessante mathematische Beweise.
-Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren \cite{Rojas:1996:NNS:235222} (S. 62-63). 
-Wobei lineare Separierbarkeit nach Rojas definiert ist als:
+Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren (vgl. \cite{Rojas:1996:NNS:235222} S. 62-63), wobei lineare Separierbarkeit nach Rojas definiert ist als:
 
 Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, wenn $n + 1$ reelle Zahlen $w_1,...,w_{n+1}$ existieren, sodass für jeden Punkt $(x_1,x_2,...,x_n) \in A$ die Ungleichung $\sum_{i=1}^{n} w_ix_i \ge w_{n+1}$ gilt und für jeden Punkt $(x_1,x_2,...,x_n) \in B$ $\sum_{i=1}^{n} w_ix_i < w_{n+1}$
 
@@ -340,8 +338,8 @@ Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, 
 	\label{fig:separierbarkeit}
 \end{figure} 
 
-Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen \cite{Rojas:1996:NNS:235222} (S. 37).
-Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie beliebige kontinuierliche Funktionen auf einer kompakten Teilmenge des euklidischen Raums $\mathbb{R}^n$ approximieren kann. Der entsprechende Satz hierzu ist das \textit{universal approximation theorem}.
+Diese Beschränkung gilt allerdings nicht für ein Netzwerk von Neuronen. Bereits ein zweilagiges Netzwerk aus noch simpleren McCulloch-Pitts-Zellen kann jede beliebige logische Funktion berechnen (vgl. \cite{Rojas:1996:NNS:235222} S. 37).
+Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie beliebige kontinuierliche Funktionen auf einer kompakten Teilmenge des euklidischen Raums $\mathbb{R}^n$ approximieren können. Der entsprechende Satz hierzu ist das \textit{universal approximation theorem}.
 
 \bigskip
 \paragraph{Zusammenfassung:}
@@ -354,35 +352,35 @@ Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie beliebige kontinuie
 \chapter{Verwandte Arbeiten}
 \textit{%
 	In diesem Kapitel werden wissenschaftliche Veröffentlichungen vorgestellt, die dieser Arbeit gegenüber relevante Themen behandeln. Es werden drei Teilgebiete des Problems der Leistungsvorhersage von E/A-Aufrufen im Hochleistungsrechnen behandelt.\\
-	Als Erstes gehe ich in Abschnitt \ref{rel_ea-vorhersage} auf einige Arbeiten ein, die allgemeine E/A-Leistungsvorhersage behandeln. Dabei führe ich zunächst zwei Begriffe für Kategorien von Lösungsansätzen ein. Danach gehe ich in Unterkapitel \ref{rel_vorhersage-mit-nn} auf Arbeiten ein, sich mit der Verwendung von neuronalen Netzen zur Leistungsvorhersage beschäftigen.
-	Und in Abschnitt \ref{rel_vorhersage_im-hpc} werden Veröffentlichungen diskutiert die Leistungsmodellierung speziell im Hochleistungsrechnen behandeln.
+	Als Erstes gehe ich in Abschnitt \ref{rel_ea-vorhersage} auf einige Arbeiten ein, die allgemeine E/A-Leistungsvorhersage behandeln. Dabei führe ich zunächst zwei Begriffe für Kategorien von Lösungsansätzen ein. Danach gehe ich in Unterkapitel \ref{rel_vorhersage-mit-nn} auf Arbeiten ein, die sich mit der Verwendung von neuronalen Netzen zur Leistungsvorhersage beschäftigen.
+	Und in Abschnitt \ref{rel_vorhersage_im-hpc} werden Veröffentlichungen diskutiert, die Leistungsmodellierung speziell im Hochleistungsrechnen behandeln.
 }
 \bigskip
 
 \section{Leistungsvorhersage von Ein-/Ausgabe}
 \label{rel_ea-vorhersage}
-Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden \cite{Crume:2013:FML:2538542.2538561} (S. 45).
+Das Problem, die Zugriffszeiten auf Festplatten vorherzusagen, kann im wesentlichen durch zwei verschiedene Ansätze gelöst werden (vgl. \cite{Crume:2013:FML:2538542.2538561} S. 45).
 \begin{itemize}
-\item  Zum einen kann man versuchen das Festplattensystem in einem Modell nachzubilden, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindigkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten bekannt sind oder entsprechende Parameter durch gezielte Untersuchung approximiert werden. Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und die Laufzeit des Modells gemessen werden. Diese Messung kann daraufhin als Vorhersage für das reale System verwendet werden. Eine White-Box ist ein System dessen innere Funktionsweise bekannt ist. Modelle dieses Ansatzes können entsprechend als White-Box-Modelle bezeichnet werden.
+\item  Zum Einen kann man versuchen das Festplattensystem in einem Modell nachzubilden, indem Hardwaredetails, wie die Rotationsgeschwindigkeit der Platte, die Reaktionszeit und Geschwindigkeit des Lesekopfs, sowie das Zusammenspiel der Komponenten bekannt sind oder entsprechende Parameter durch gezielte Untersuchung approximiert werden. Mit diesem möglichst exakten Modell können dann Zugriffe simuliert und die Laufzeit des Modells gemessen werden. Diese Messung kann daraufhin als Vorhersage für das reale System verwendet werden. Eine White-Box ist ein System dessen innere Funktionsweise bekannt ist. Modelle dieses Ansatzes können entsprechend als White-Box-Modelle bezeichnet werden.
 \item Beim zweiten Ansatz wird vom eigentlichen Festplattensystem abstrahiert und stattdessen ein mathematisches Modell gesucht, das das Verhalten des Systems möglichst genau beschreibt.
-Zur Entwicklung des mathematischen Modells wird eine Regressionsanalyse durchgeführt, dabei werden gemessene Leistungswerte von Festplattenzugriffen untersucht, um daraus passende Parameter für das Modell abzuleiten. Analog zur vorherigen Namensgebung kann dieser Ansatz als Black-Box-Modellierung bezeichnet werden, da hier ohne Wissen über die inneren Zustände des Systems modelliert wird.
+Zur Entwicklung des mathematischen Modells wird eine Regressionsanalyse durchgeführt. Dabei werden gemessene Leistungswerte von Festplattenzugriffen untersucht, um daraus passende Parameter für das Modell abzuleiten. Analog zur vorherigen Namensgebung kann dieser Ansatz als Black-Box-Modellierung bezeichnet werden, da hier ohne Wissen über die inneren Zustände des Systems modelliert wird.
 \end{itemize}
-Ich unterscheide daher im Folgenden zwischen dem White-Box-Modellierung, bei dem versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als \textit{analytic device modeling} und \textit{simulation modeling} bezeichnet) und der Black-Box-Modellierung, bei dem ein mathematisches Modell entwickelt wird.
+Ich unterscheide daher im Folgenden zwischen der White-Box-Modellierung, bei der versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als \textit{analytic device modeling} und \textit{simulation modeling} bezeichnet) und der Black-Box-Modellierung, bei dem ein mathematisches Modell entwickelt wird.
 
 \subsection{White-Box-Modellierung gegenüber Black-Box-Modellierung}
-Die Nachteile von Modellen der White-Box-Modellierung liegen insbesondere darin, dass sie aufwendig zu konfigurieren sind. Beispielsweise schreiben Crume et al.:\glqq In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S.45) und naturgemäß schnell veraltern, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind. Ruemmler und Wilkes erzielten mit einem gut kallibrierten White-Box-Modell gute geringe Residuen bei der Vorhersage von Festplatten-Zugriffszeiten \cite{Ruemmler94anintroduction}. Um das Problem des hohen Aufwandts der exakten Parametriesierung für jedes Festplattenmodell anzugehen, haben sie untersucht, wie sich die Berücksichtigung verschiedener Festplattenkomponenten bzw. -eigenschaften auf den Modellfehler auswirkt. Sodass beim Einsatz des Modells Aufwand der Parametriesierung und Präzezion der Modellierung gegeneinander abgewägt werden können.
+Die Nachteile von Modellen der White-Box-Modellierung liegen insbesondere darin, dass sie aufwendig zu konfigurieren sind. Beispielsweise schreiben Crume et al.:\glqq In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S.45). Naturgemäß altern White-Box-Modelle schnell, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind. Ruemmler und Wilkes erzielten mit einem gut kallibrierten White-Box-Modell geringe Residuen bei der Vorhersage von Festplatten-Zugriffszeiten (vgl. \cite{Ruemmler94anintroduction}). Um das Problem des hohen Aufwands der exakten Parametriesierung für jedes Festplattenmodell anzugehen, haben sie untersucht, wie sich die Berücksichtigung verschiedener Festplattenkomponenten bzw. -eigenschaften auf den Modellfehler auswirkt. Sodass beim Einsatz des Modells Aufwand der Parametriesierung und Präzision der Modellierung gegeneinander abgewägt werden können.
 
-Eine weitere Arbeit, in der White-Box-Modellierung genutzt wurde stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}. Darin wird besonders auf ein Verfahren eingegangen, das dafür sogt, dass E/A-Anfragen in einer Reihenfolge abgearbeitet werden, die die notwendigen Bewegungen des Lese-/Schreibkopf möglichst gering hält.
+Eine weitere Arbeit, in der White-Box-Modellierung genutzt wurde, stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}. Darin wird besonders auf ein Verfahren eingegangen, das dafür sogt, dass E/A-Anfragen in einer Reihenfolge abgearbeitet werden, die die notwendigen Bewegungen des Lese-/Schreibkopfes möglichst gering hält.
 \medskip
 
-Die Black-Box-Modellierung ist in der Anwendung einfacher und flexibler, da es sich automatisch an das System anpasst. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System ungenauere Prognosen. Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems aufwendig wird. \glqq Furthermore, the technical trend towards storage consolidation in large data centers hints that building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads\grqq{} \cite{DBLP:conf/npc/ZhangLZJC10} (S.122, Zeile 20-24).
+Die Black-Box-Modellierung ist in der Anwendung einfacher und flexibler, da sie automatisch an das System anpasst werden kann. Dafür erwartet man aufgrund der fehlenden analytischen Einsicht ins System ungenauere Prognosen. Für die Anwendung im HPC-Bereich spielt der analytische Ansatz eine untergeordnete Rolle, da hier unterschiedliche Festplattensysteme zusammenarbeiten und stark mit der Netzwerkarchitektur verstrickt sind, sodass eine entsprechende Analyse des Systems aufwendig wird: \glqq Furthermore, the technical trend towards storage consolidation in large data centers hints that building an accurate model or simulator using white box method cannot be a genereal solution in serving a variety of very different workloads\grqq{} \cite{DBLP:conf/npc/ZhangLZJC10} (S.122, Zeile 20-24).
 
 Bei Arbeiten, in denen eine White-Box-Modellierung genutzt wird, werden verschiedene Data-Mining und stochastische Methoden angewandt. Beispielsweise eine Kombination aus Regressionsbäumen und Stützvektormaschinen \cite{Dai:2012:SDP:2477169.2477214} oder Bagging Klassifikation und Regressionsbäumen \cite{DBLP:conf/npc/ZhangLZJC10}. Verschiedene statistische Methoden werden von Kelly et al. untersucht \cite{Kelly04inducingmodels}.
-Ein in diesem Kontext beachtenswertes Patent \cite{gough2012predicting} zeigt ein Anwendungsbeispiel für E/A-Leistungsvorhersage mit Black-Box-Modellierung. Dabei wird mit Hilfe maschinellen Lernens ein Überwachungssystem für Festplatten entwickelt, das einen Ausfall des Systems anhand der beobachteten internen Zustände vorhersagt. 
+Ein in diesem Kontext beachtenswertes Patent zeigt ein Anwendungsbeispiel für E/A-Leistungsvorhersage mit Black-Box-Modellierung. Dabei wird mit Hilfe maschinellen Lernens ein Überwachungssystem für Festplatten entwickelt, das einen Ausfall des Systems anhand der beobachteten internen Zustände vorhersagt \cite{gough2012predicting}. 
 
 \section{Leistungsvorhersage mit neuronalen Netzen}
 \label{rel_vorhersage-mit-nn}
-Wie bereits im Kapitel \ref{hintergrund_nn} beschrieben wurde, gibt es einige Forschung zu der Frage der Mächtigkeit von neuronalen Netzen. Rojas \cite{Rojas:1996:NNS:235222} und  Cybenko \cite{cybenko:mcss} behandeln die Modellierung von nicht-linearen Systemen. Darüber hinaus wurde von Suykens et al. \cite{suykens2012artificial} das \textit{universal approximation theorem} für neuronale Netze bewiesen. Es ist nicht bekannt, welche Komplexität für die exakte Beschreibung eines Hochleistungs-E/A-System benötigt wird. Der Mächtigkeit von neuronalen Netzen sollte allerdings zumindest zur Bestimmung einer Näherung mit Berücksichtigung der wesentlichen Einflüsse ausreichen.
+Wie bereits im Kapitel \ref{back_nn} beschrieben wurde, gibt es einige Forschung zu der Frage der Mächtigkeit von neuronalen Netzen. Rojas \cite{Rojas:1996:NNS:235222} und  Cybenko \cite{cybenko:mcss} behandeln die Modellierung von nicht-linearen Systemen. Darüber hinaus wurde von Suykens et al. \cite{suykens2012artificial} das \textit{universal approximation theorem} für neuronale Netze bewiesen. Es ist nicht bekannt, welche Komplexität für die exakte Beschreibung eines Hochleistungs-E/A-System benötigt wird. Der Mächtigkeit von neuronalen Netzen sollte allerdings zumindest zur Bestimmung einer Näherung mit Berücksichtigung der wesentlichen Einflüsse ausreichen.
 
 Ein mathematisch anspruchsvolles Verfahren mit Black-Box-Modellierung unter der Verwendung von neuronalen Netzen wurde von Adam Crume et al. \cite{Crume:2013:FML:2538542.2538561} entwickelt. Sie gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten auf Festplatten in der Erkennung von periodischen Mustern liegt: \glqq One of the complications in the problem is the existence of unknown, high frequency components caused by the rotational aspect of the drive\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S. 46).
 Durch eine Fourier-Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
