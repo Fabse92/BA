@@ -451,7 +451,7 @@ Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die ang
 \begin{enumerate}
 \item Falls die Daten sich nicht im Speicher des Rechnerknotens befinden, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden.
 Dort ist der reine Verwaltungsaufwand der Anfrage im wesentlichen für alle Aufrufe konstant sein, denn sie sieht strukturell für aufwendige Aufrufe nicht anders aus, als für weniger aufwendige.
-\item Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere) auf der die relevante Datei liegt. Der Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei von der Struktur des Netzwerkes abhängig.
+\item Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere) auf der die relevante Datei liegt. Der zeitliche Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei von der Struktur des Netzwerkes abhängig.
 \item Die Festplatte liest die Daten aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt werden.
 \item Nun müssen die angefragten Daten aus dem Arbeitsspeicher des Knotens über die Cache-Ebenen in den Prozessor geladen werden. 
 \end{enumerate}
@@ -471,7 +471,7 @@ Für beide Zugriffsarten ergeben sich die drei beschriebenen Zeitfaktoren tMem, 
 \begin{itemize}
 	\item Der Netzwerkabhängige Teil tNetzwerk ist vom genauen Speicherort der aufgerufenen Datei, sowie der Größe der Datei abhängig. Faktor Aufenthaltsort im E/A-System sollte allerdings eine eher ungeordnete Rolle spielen, zudem sind keine Informationen darüber verfügbar; dieser Faktor wird daher vernachlässigt. 
 	Der entscheidende Zeitfaktor entsteht durch die Übertragung der Daten über das Netzwerk. Der Datenfluss über das Netzwerk hängt von dessen Durchsatz ab, dieser sollte nach kurzer Verbindungsaufbauphase konstant sein.
-	\item tMem ist am einfachsten zu modellieren, denn der hier auftretende Direktzugriffsspeicher (engl. Random-Access Memory) kennzeichnet sich gerade dadurch, dass der Zugriff auf alle Datenblöcke mit geichem Aufwand verbunden ist.
+	\item tMem ist am einfachsten zu modellieren, denn der hier auftretende Direktzugriffsspeicher (engl. Random-Access Memory) kennzeichnet sich gerade dadurch, dass der Zugriff auf alle Datenblöcke mit geichem zeitlichen Aufwand verbunden ist.
 	Ansonsten hängt die Zugriffszeit vom Durchsatz des Speichers ab.
 	Eigentlich handelt es sich bei tMem um die Zusammensetzung der Zeitanteile von Arbeitsspeicher und der Caches, es wird im Modell jedoch vom langsamsten Speicher dominiert, der angesprochen werden muss.
 	\item Die Festplatte ist ähnlich Komplex wie das Netzwerk. Wie beim Netzwerk ist die Zugriffszeit zum einen von dem genauen Speicherort der angefragten Datenblöcke und zum anderen vom Durchsatz der Festplatte abhängig.
@@ -526,15 +526,59 @@ Die zuvor aufgestellte Modellierung kann die Abhängigkeit zwischen E/A-Pfad und
 
 Ein perfektes Modell sollte unter Kenntnis des Pfades den ein E/A-Aufruf nehmen wird und dem Attribut-Tupel die Dauer des Zugriffs sehr gut vorhersagen können. Wenn das Modell nicht vorhersagen kann welcher Pfad genommen wird, kann es nicht zwischen den Gruppierungen innerhalb der Messungen eines Attribut-Tupels unterscheiden. Die Vorhersagekraft ist damit begrenzt.
 
-\section{Leistungs- und Ausreißervorhersage}
-Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den Aufwand der E/A-Aufrufe vorherzusagen. 
-Für die Berechnung eines Modells werden jeweils Informationen über das zu beschreibende System benötigt. Dies wird durch die Vermessung E/A-Aufrufen geschehen.
-Die Vermessung wird als Benchmark-Test bezeichnet und wird in der Evaluation entwickelt. 
-Wenn Messdaten vorliegen, kann das Modell einen Teil der Daten als Trainingsdatensatz zum Lernen nutzen, die restlichen Daten sind dem Modell unbekannt und bilden den Testdatensatz. Die Vorhersagen der Modelle zum Testdatensatz können dann mit den tatsächlichen Werten verglichen werden. Dies ist die Leistungsvorhersage vom Modell zum System. 
-Desweiteren wird die Ausreißervorhersage des Modells betrachtet werden. Als Ausreißer werden dabei die Messungen bezeichnet, die eine ungewöhnlich schnelle oder langsame Laufzeit haben. In unseren Messdaten werden die langsamsten und die schnellsten $10\%$ der Messungen jedes Attribut-Sets als Ausreißer bezeichnet. Es handelt sich hierbei in diesem Kontext nicht um invalide Messungen, für die die Instrumentierung des Experiments verantwortlich ist. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war. 
+\section{Validierung und Metriken}
+Mit den im Weiteren entwickelten Modellen soll untersucht werden, wie gut es gelingt den zeitlichen Aufwand für E/A-Aufrufe vorherzusagen. 
+Jedes Modell trifft bestimmte Annahmen über das E/A-System, zur Entwicklung einer Instanz des Modells werden bestimmte Informationen benötigt.
+Diese benötigten Daten können aus den Messdaten über das System abgeleitet werden.
+Ein Teil der Daten wird als Trainingsdatensatz zum Lernen genutzt, die restlichen Daten sind dem Modell unbekannt und bilden den Testdatensatz. Die Vorhersagen der Modelle zum Testdatensatz können dann mit den tatsächlichen Werten verglichen werden. Dies ist die \textbf{Leistungsvorhersage} vom Modell zum System. 
+\medskip
+
+Neben der Vorhersage der Leistung wird in den komplexeren Modellen selbst auch versucht die Quantile 0.1 und 0.9 der Laufzeit vorherzusagen. Der Wert des 0.1 Quantil gibt an, dass 10\% der Laufzeiten die zu einem Attribut-Tupel gemessen wurden langsamer als dieser Wert waren, entsprechend gibt das 0.9 Quantil an, dass nur 10\% der Messungen zu diesem Attribut-Tupel schneller abgearbeitet wurden.
+Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen. Diese Zuordnung wird als \textbf{Ausreißervorhersage} bezeichnet.
+Bei den Ausreißern handelt es sich in diesem Kontext nicht um ungültige Messungen, die durch einen fehlerhaften Versuchsaufbau oder durch Fehlkalibrierung von Messinstrumenten entstanden sind. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war und die Latenzen dadurch ungewöhnlich hoch waren. 
 Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
 Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. 
-Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht. Da die Informationen, die den Modellen zur Verfügung stehen allerdings nicht für eine verlässliche Ausreißervorhersage ausreichen sollten (beispielsweise wäre dazu Wissen über parallel laufende Prozesse von anderen Benutzern des Hochleistungsrechners notwendig), könnte dieser Test auch ein Maß für eine zu starke Adaption an die Trainingsdaten sein.
+
+Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht.
+
+\subsubsection{Metriken zur Leistungsvorhersage}
+Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
+\begin{itemize}
+	\item \textit{MAE} (vom englischen \textit{mean absolute error}) ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
+	\item Der \textit{MAPE} (vom englischen \textit{mean absolute percentage error}) ist der relative \textit{MAE}, also der \textit{MAE} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.\\
+\end{itemize}
+\textit{MAE} und \textit{MAPE} geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
+\begin{itemize}
+	\item Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der quadratische relative Fehler gemittelt über alle Vorhersagen \textit{MSPE} (vom englischen \textit{mean square percentage error}) nützlich.
+\end{itemize}
+	Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise gut und für andere Messungen schlecht agiert. Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich.
+\begin{itemize}
+	\item \textit{Q3} gibt das obere Quartil des relativen Fehlers über alle Vorhersagen an.
+	\item \textit{Max} entspricht dem größten relativen Fehler der vom Modell gemacht wurde.
+	\item Der Wert von \textit{In-range} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen.
+	Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre \textit{In-range} also bei 80\%. An \textit{In-range} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
+\end{itemize}
+Zwei zusätzliche Fehlermetriken geben zusätzliche Informationen über die Netze, sodass die Leistung besser eingeordnet werden kann.
+\begin{itemize}
+	\item \textit{Avg-MAPE} (Avg für \textit{average}) gibt den durchschnittlichen \textit{MAPE}-Wert für 12 Netze an. Die 12 Netze wurden mit identischen Parametern und Trainingsdaten, jedoch mit unterschiedlicher Initialisierung der Kantengewichte, gelernt. Anhand dieses Wertes kann die Auswirkung der lokalen Konvergenz für die jeweiligen Netzstrukturen betrachtet werden.
+	\item Zusätzlich wird \textit{Train-MAPE} angegeben. Dies ist der erreichte \textit{MAPE}-Wert des Netzes auf den eigenen Trainingsdaten. Dieser Wert sollte immer besser als der normale \textit{MAPE} sein. Anhand der Differenz zu \textit{MAPE} kann beurteilt werden, wie gut die Trainingsdaten die Testdaten repräsentiert haben.
+\end{itemize}
+
+\subsubsection{Metriken zur Ausreißervorhersage}
+Zur Evaluierung der Ausreißervorhersage werden weitere Fehlermetriken eingeführt.
+
+\begin{itemize}
+	\item Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF})
+\end{itemize}
+Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
+ und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
+Sowie den Anteil der korrekt vorhergesagten Ausreißer (TP) und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden (FP).
+In der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive) daher die Bezeichnungen \textit{TP} und \textit{FP}).
+Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
+
+
+
+
 
 \section{Modellklassen}
 Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.
@@ -727,27 +771,11 @@ Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen,
 Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
 Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
 
-Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
-\textit{MAF} ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
-Der \textit{RMAF} ist der relative \textit{MAF}, also der \textit{MAF} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.
-Diese beiden Metriken geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
-Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der relative mittlere quadratische absolute Fehler gemittelt über alle Vorhersagen (\textit{RMQA}) nützlich.
-Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise gut und für andere Messungen schlecht agiert.
-Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich. \textit{Q3} gibt das obere Quartil des absoluten relativen Fehlers über alle Vorhersagen an und \textit{Max} den größten relativen Fehler der vom Modell gemacht wurde.
-Der Wert von \textit{Bereich} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen. Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre dieser Wert also bei 80\%. An \textit{Bereich} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
-Zwei zusätzliche Fehlermetriken sollen dabei helfen die Leistung der Netze einzuordnen. \textit{RMAF Avg} (vom englischen average) gibt den durchschnittlichen \textit{RMAF}-Wert für 12 Netze an, diese haben identische Parameter und Trainingsdaten, starten jedoch mit unterschiedlicher Initialisierung der Kantengewichte. Anhand dieses Wertes kann die Auswirkung der lokalen Konvergenz für die jeweiligen Netzstrukturen betrachtet werden.
-Zusätzlich wird \textit{RMAF Train} angegeben. Dies ist der erreichte \textit{RMAF}-Wert des Netzes auf den eigenen Trainingsdaten. Dieser Wert sollte immer besser als der normale \textit{RMAF} sein. Anhand der Differenz zu \textit{RMAF} kann beurteilt werden, wie gut die Trainingsdaten die Testdaten repräsentiert haben.
+
 
 Die vorgestellten Metriken werden auch zur Beurteilung der Vorhersagen der Basis-Modelle genutzt, die Werte \textit{Bereich}, \textit{RMAF Avg} und \textit{RMAF Train} beziehen sich allerdings nur auf neuronale Netze und werden daher weggelassen.
 
-Neben der Vorhersage der Leistung wird in den höheren Modellen selbst auch versucht die Quantile 0.1 und 0.9 vorherzusagen.
-Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen.
-Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Set vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
-Zur Evaluierung der Ausreißer-Vorhersage werden weitere Fehlermetriken eingeführt.
-Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF}) und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
-Sowie den Anteil der korrekt vorhergesagten Ausreißer (TP) und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden (FP).
-In der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive) daher die Bezeichnungen \textit{TP} und \textit{FP}).
-Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
+
 
 \section{Exploration der Daten}
 \label{exploration}
