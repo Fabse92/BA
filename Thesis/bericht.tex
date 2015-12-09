@@ -534,7 +534,7 @@ Ein Teil der Daten wird als Trainingsdatensatz zum Lernen genutzt, die restliche
 \medskip
 
 Neben der Vorhersage der Leistung wird in den komplexeren Modellen selbst auch versucht die Quantile 0.1 und 0.9 der Laufzeit vorherzusagen. Der Wert des 0.1 Quantil gibt an, dass 10\% der Laufzeiten die zu einem Attribut-Tupel gemessen wurden langsamer als dieser Wert waren, entsprechend gibt das 0.9 Quantil an, dass nur 10\% der Messungen zu diesem Attribut-Tupel schneller abgearbeitet wurden.
-Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifizierung in Ausreißer und Nicht-Ausreißer machen. Diese Zuordnung wird als \textbf{Ausreißervorhersage} bezeichnet.
+Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Sets als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassifikation in Ausreißer und Nicht-Ausreißer machen. Diese Zuordnung wird als \textbf{Ausreißervorhersage} bezeichnet.
 Bei den Ausreißern handelt es sich in diesem Kontext nicht um ungültige Messungen, die durch einen fehlerhaften Versuchsaufbau oder durch Fehlkalibrierung von Messinstrumenten entstanden sind. Stattdessen kann es beispielsweiese sein, dass das System punktuell sehr ausgelastet war und die Latenzen dadurch ungewöhnlich hoch waren. 
 Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
 Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. 
@@ -566,79 +566,120 @@ Zwei zusätzliche Fehlermetriken geben zusätzliche Informationen über die Netz
 
 \subsubsection{Metriken zur Ausreißervorhersage}
 Zur Evaluierung der Ausreißervorhersage werden weitere Fehlermetriken eingeführt.
-
+\medskip
+Die ersten Fehlermetriken beziehen sich auf die Vorhersagen der Laufzeit-Quantile. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
 \begin{itemize}
-	\item Die relativen mittleren arithmetischen Fehler (\textit{Q0.1 RMAF} und \textit{Q0.9 RMAF})
+	\item Die arithmetischen Mittelwerte über den relativen Fehlern (\textit{Q0.1-MAPE} und \textit{Q0.9-MAPE}).
+	\item Die mittleren quadratischen Abweichungen über die relativen Fehler (\textit{Q0.1-MSPE} und \textit{Q0.9-MSPE}).
 \end{itemize}
-Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
- und die relativen mittleren quadratische Abweichungen (\textit{Q0.1 RMQA} und \textit{Q0.9 RMQA}) zu den Vorhersagen beider Quantile.
-Sowie den Anteil der korrekt vorhergesagten Ausreißer (TP) und den Anteil an Datenpunkten, die fälschlicherweise als Ausreißer bestimmt wurden (FP).
-In der Konfusionsmatrix werden diese Werte als richtig positiv und falsch positiv bezeichnet (engl. true positive und false positive) daher die Bezeichnungen \textit{TP} und \textit{FP}).
-Es ist wichtig sowohl \textit{TP}, als auch \textit{FP} zu betrachten, da ein Netz, dass einfach alle Messungen als Ausreißer deklariert einen perfekten \textit{TP}-Wert von 100\% erreicht.
-
-
-
-
+Zudem werden zwei Metriken einbezogen, die gemeinsam die Klassifikation der Messungen in Ausreißer und nicht-Ausreißer bewerten können.
+\begin{itemize}
+	\item TP misst den Anteil der korrekt vorhergesagten Ausreißer, dies sind die richtig positiven Zuordnungen (engl. \textit{true positives}). Dieser Wert sollte möglichst hoch sein.
+	\item FP gibt dagegen die Anzahl Messungen an, die fälschlicherweise als Ausreißer eingestuft wurden (engl. false positives). Dieser Wert sollte gering gehalten werden.
+\end{itemize}
+Es ist wichtig, sowohl \textit{TP}, als auch \textit{FP} zu betrachten. Ein Netz, das einfach alle Messungen als Ausreißer deklariert würde einen perfekten \textit{TP}-Wert von 100\% erreichen, obwohl mit der Zuordnungen nichts anzufangen ist.
 
 \section{Modellklassen}
-Modelle unterscheiden sich an den Informationen, die Ihnen über die Messdaten zur Verfügung stehen.
+Modelle unterscheiden sich einerseits anhand der Informationen, die ihnen über die E/A-Messungen zur Verfügung stehen, dies sind ihre Eingabeattribute, und andererseits an der zugrunde liegenden mathematischen Struktur.
 Da es sich bei der E/A-Leistungsvorhersage um ein komplexes Problem handelt, steht nicht a priori fest, wie eine passende Modellierung auszusehen hat. 
 In dieser Arbeit wurden daher verschiedene Ansätze getestet.
 
-Um besser zu verstehen, welche Ideen einem Modell zugrunde liegen und zur einfacheren Beschreibung der Modelle führe ich verschiedene Kategorien von Modellen ein, die jeweils einem bestimmten Ansatz entsprechen.
-Die Modellklassen unterscheiden sich in ihrer Herangehensweise ans Problem. Modelle, die den selben Klassen zugehören, unterscheiden sich an den Informationen, die ihnen über die Messdaten zur Verfügung stehen.
+Jedes Modell kann einer Teilmenge von Klassen zugeordnet werden. Jede Klasse entspricht einem bestimmten Ansatz, also einer bestimmten Herangehensweise ans Problem.
+Die verschiedenen Modellklassen werden in den folgenden Kapiteln näher erläutert.
 
-\subsection{Triviale und höhere Modelle}
-Triviale Modelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet.
-Die höheren Modelle in dieser Arbeit basieren dagegen auf neuronalen Netzen und müssen aufwendig trainiert werden.
+\subsection{Referenzmodelle}
+Referenzmodelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet.
+Das Ziel bei den Referenzmodellen ist nicht hauptsächlich die Qualität der Vorhersagen zu untersuchen, sondern verschiedene Ansätze zu erkunden und Vergleichswerte für komplexere Modelle zu liefern.
+Einige Referenzmodelle stellen eine untere Schranke für die Vorhersagequalität der aufwendigeren Modelle dar. Andere zeigen auf was maximal mit einem Ansatz erreichbar ist.
+Beispielsweise kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können.
+\medskip
+Bei Referenzmodellen wird nicht zwischen Trainings- und Testdaten unterschieden, sie werden immer über die gesamten Messdaten trainiert und ausgewertet.
+Eine Seperation der Datensätze ist für beide Verwendungszwecke der Referenzmodelle nicht sinnvoll. 
+Wenn untersucht werden soll, ob ein lineares Modell die Messdaten beschreiben kann, sollte der gewählte Trainingssatz nicht eingeschränkt werden, ebenso wenn gezeigt werden soll, wie gut ein Konzept maximal sein kann.
 
-Die trivialen Modelle sind zum einen beim Erkunden verschiedener Ansätze hilfreich, zum anderen dienen sie dem Vergleich zu den aufwendigeren Modelle und stellen eine untere Schranke für deren Leistungen dar.
-So kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können. Die Erwartung ist, dass die höheren Modelle wesentlich bessere Ergebnisse zeigen, als die trivialen. Wenn dies nicht der Fall ist, war entweder die Modellierung schlecht oder die verwendeten Informationen über die Messdaten waren unzureichend für eine zufriedenstellende Beschreibung.
-Eine Ausnahme bilden dabei \textit{unfaire} triviale Modelle, die mit Informationen ausgestattet sind, die sie als legitimes Modell nicht haben dürften. Unfairen Modellen standen sämtliche Messdaten zum Lernen bereit, also neben den Trainingsdaten auch die Testdaten. Diese Modelle dienen zur Überprüfung, was mit einem Konzept maximal machbar ist.
-
-\subsection{Zeitreihen- und Aggregierungs-Modelle}
-Für Aggregierungsmodelle werden die Trainingsdaten stark vereinfacht. Sie verfolgen den Ansatz, dass es nicht möglich ist innerhalb eines Attribut-Sets zu differenzieren. Sodass verschiedene Messungen eines Sets alle die selbe Vorhersage zugewiesen bekommen. Dazu werden alle Trainingsdatenpunkte zusammengefasst, die zum selben Set gehören.
-
-Bei Zeitreihen-Modellen hingegen findet keine Aggregierung statt. Zu verschiedenen Messungen eines Attribut-Sets gibt es entsprechend \glqq widersprüchliche\grqq{} Informationen, da sich ihre Laufzeit unterscheidet. Das Modell muss dann entweder intern die Daten zusammenfassen, um doch die selbe Vorhersage für jede Messung eines Sets zu machen oder es versucht anhand weiterer Informationen über den Systemzustand eine Differenzierung durchzuführen. Dieses zusätzliche Wissen über den aktuellen Zustand des Systems kann allerdings nur über die Kenntnis der vorherigen E/A-Aufrufe abgeleitet werden, denn die in \ref{ea_modell} beschriebenen Attribute bleiben die einzigen Informationen, die zu einer Messung zur Verfügung gestellt werden.
-Die Zeitreihen-Modelle können also versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt. Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Modell erheblich verbessert werden.
+\subsection{NN-Modelle}
+Das Hauptaugenmerk der Arbeit liegt auf der Anwendung von künstlichen neuronalen Netzen zur Leistungsvorhersage der E/A-Zugriffe. Die Modelle, die auf neuronalen Netzen basieren, werden als NN-Modelle bezeichnet.
+Die Erwartungshaltung ist, dass NN-Modelle wesentlich bessere Ergebnisse erzielen, als die Referenzmodelle, die eine untere Schranken für die Leistung definieren.
+Wenn dies nicht der Fall ist, war entweder die Modellierung unzureichend oder die verwendeten Informationen über die Messdaten waren unzureichend für eine gute Beschreibung des E/A-Systems.
+\medskip
+Bei NN-Modellen gibt es die Aufteilung zwischen Trainings- und Testdatensatz.
+Sie könnten daher auch in einer realen Anwendungssituation genutzt werden. 
+Bei der tatsächlichen Anwendung eines E/A-Leistungsprädiktors wäre es nicht möglich, dass das Modell bereits sämtliche E/A-Aufrufe gesehen hat, dessen Laufzeit es vorhersagen soll.
 
 \subsection{Fehlerklassen-Modelle}
 \label{fk-modelle}
-Um die These zu untersuchen, dass sich E/A-Aufrufe im System mit anhand des genommenen Pfades unterscheiden lassen, sollen die verbesserten Vorhersagen untersucht werden, die unter Kenntnis dieser Pfade gemacht werden können. Dazu werden Modelle mit der Zusatzinformation von Fehlerklassen (FK) analysiert.
-Fehlerklassen werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (\ref{ML}) in Cluster unterteilt. Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
-Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Sets richtig bestimmt.
-Ein Pfad kann beispielsweise aus dem Rechnerknoten über das Netzwerk in eine spezifische Festplatte gehen oder nur bis in den internen Arbeitsspeicher des Knotens.
-Die verschiedenen Pfade sollten sich,unabhängig vom gemessenen Attribut-Set, durch signifikante Sprünge in der benötigten Laufzeit unterscheiden, sodass ein Fehler in der Größenordnung eines solchen Sprungs bedeutet, dass die vorliegende Messung einem anderen Pfad zuzuordnen ist. (\textbf{Simmt das so, sollten wir dann nicht lieber unterschiedlich funktionierende Modelle für Generierung der FK und zur Vorhersage mit diesen nutzen?})
+Fehlerklassen (\textbf{FK}) werden mit Hilfe der Vorhersagen eines anderen Modells berechnet. Der Fehler (auch Residuum oder Modellabweichung) der Vorhersagen gegenüber den tatsächlichen Laufzeiten der E/A-Aufrufe wird mit dem k-Means-Algorithmus (siehe Kapitel \ref{back_ML}) in Cluster unterteilt.
+Jede Cluster-Gruppe entspricht einer Klasse und bekommt eine Nummer. 
+Die Klassen repräsentieren unterschiedliche Pfade, die im E/A-System genommen wurden. Dies ist dann der Fall, wenn das Modell mit dem die Fehlerklassen erstellt wurden bereits recht gute Vorhersagen macht und somit den \textit{üblichen} E/A-Pfad des Attribut-Tupels richtig bestimmt.
+Ein gutes Modell, das nicht zwischen Fehlerklassen unterscheidet würde beispielsweise zu den gleichfarbigen Punkten in Abbildung \ref{pfad_for_vorhersage} die mittlere Laufzeit aller zugehörigen Messungen vorhersagen, oder vielleicht allen eine Laufzeit aus der Gruppe mit den meisten Punkten zuordnen. 
+Der dabei gemachte Fehler gegenüber den tatsächlichen Laufzeiten ist dann chrakteristisch für die Sprünge, die bei den Übergängen der Pfade beobachtet wurden.
+Wenn zum Beispiel zu den dunkelgrünen Punkten jeweils ein Wert aus der mittleren Gruppe von Messungen vorhergesagt werden würde, so würde ein sehr kleiner Fehler eine Zugehörigkeit zum dort genommenen E/A-Pfad repräsentieren, ein größerer negativer oder positiver Fehler würde darauf hinweisen, dass bei diesem Aufruf ein entsprechend anderer Pfad genommen wurde.
+\medskip
+Wenn E/A-Pfade so charakteristisch für die Zugriffszeiten sind, dann sollte ein Modell, dass zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennt eine wesentlich geringere Modellabweichung aufzeigen.
+Dies sind die Fehlerklassen-Modelle.
+
+\subsection{Aufbereitung der Trainingsdaten}
+
+Die Eingabedaten der Modelle können auf zwei grundsätzlich verschiedene Weisen aufbereitet werden.
+Entweder werden Informationen zu jeder einzelnen Messung eingegeben oder sie werden zunächst in als Aggregate zusammengefasst.
+\medskip
+Das Problem ist, dass zu verschiedenen Messungen eines Attribut-Tupels \glqq widersprüchliche\grqq{} Angaben zur Laufzeit gemacht werden. 
+Für die Aggregate werden bestimmte Attribute definiert, alle Messungen mit identischen Werten zu allen diesen Attributen werden zusammengefasst.
+Der Wert für die Laufzeit eines Aggregats ergibt sich in dieser Arbeit immer als arithmetischer Mittelwert über alle zugehörigen Messungen.
+Die Modelle, die nur aggregierte Eingabedaten nutzen, vereinfachen das Problem entsprechend sehr stark. Sie verfolgen den Ansatz, dass es mit den gegebenen Informationen nicht möglich ist innerhalb eines Attribut-Sets zu differenzieren. Sodass, verschiedene Messungen eines Sets alle die selbe Vorhersage zugewiesen bekommen.
+
+Modelle die Einzelmessungen als Eingabe bekommen müssen anders mit den \glqq widersprüchlichen\grqq{} Informaitonen umgehen.
+Das Modell muss dann entweder intern die Daten zusammenfassen, um doch die selbe Vorhersage für jede Messung eines Sets zu machen oder es versucht anhand weiterer Informationen über den Systemzustand eine Differenzierung durchzuführen.
+Die zweite Lösung entspricht der Zeitreihenbetrachtung.
+Modelle, die eine Zeitreihenbetrachtung machen, brauchen die (zeitlich sortierten) Einzelmessungen als Eingabe, da bei der Aggregierung alle zeitabhängigen Informationen verloren gehen.
+Sie können dafür versuchen ein periodisches Systemverhalten zu erkennen und dieses für ihre Vorhersage auszunutzen. So könnte es beispielsweise sein, dass jeder dritte Leseaufruf doppelt so lange, wie die vorherigen dauert, weil das E/A-System zunächst einem anderen Prozess Priorität gibt.
+Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Modell erheblich verbessert werden.
 
 \section{Untersuchte Modelle}
 \label{impl:modelle}
 Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die zu Messdaten exploriert (siehe \ref{exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
-Wenn es darum geht gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden. Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keinen linearen Zusammenhang zur anderen hat. Bei einer Korrelation von 1 dagegen, kann eine lineare Funktion angegeben werden aus der sich der Wert der einen Variablen direkt der Wert der anderen berechnen lässt. Somit ist eine hohe Korrelation zwischen einem Attribut eines E/A-Aufrufs und dessen Laufzeit ein Hinweis darauf, dass dieses Attribut zur Vorhersage der Laufzeit verwendet werden könnte. 
+Wenn es darum geht gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden.
+Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den linearen Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keinen linearen Zusammenhang zur anderen hat.
+Bei einer Korrelation von 1 dagegen, kann eine lineare Funktion angegeben werden aus der sich der Wert der einen Variablen direkt der Wert der anderen berechnen lässt. Somit ist eine hohe Korrelation zwischen einem Attribut eines E/A-Aufrufs und dessen Laufzeit ein Hinweis darauf, dass dieses Attribut zur Vorhersage der Laufzeit verwendet werden könnte. 
 Allerdings wird bei der Korrelation bloß die lineare Abhängigkeit betrachtet, ein komplexerer Zusammenhang zweier Variablen wird dadurch schlecht oder gar nicht repräsentiert.
+Abgesehen von der Korrelation war Expertenwissen ausschlaggebend für die Wahl der verwendeten Attribute für jedes Modell.
 
-Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die trivialen Modelle durch, dann die höheren.
-Das einfachste Modell ist \textit{Durchschnitt}, das Modell kennt den globalen arithmetischen Mittelwert aller gemessen Messungen und ist in sofern unfair. Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle Modelle, die dies tun, bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, das jedoch schlechtere Leistungen erzielt könnte unterstellt werden zufällige Vorhersagen zu machen und man kann auf eine Fehlfunktion schließen.
+Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die Referenzmodelle durch, dann die NN-Modelle.
 
-Eine ähnliche Methode verwendet das Modell \textit{Median agg}. Dies ist auch ein unfaires Modell, das Kenntnis über alle Messungen in den Datensätzen hat. Es berechnet für jedes Attribut-Set den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen dieses Sets.
-Dieses Modell stimmt mit dem Ansatz überein, eine Datenbank aufzubauen, in der alle E/A-Aufrufe und deren Laufzeiten gespeichert werden würden.
-Diese triviale Variante ist der Idealfall des Ansatzes, bei dem es zu allen auftretenden Attribut-Sets bereits einen gespeicherten Mittelwert gibt.
+\subsection{Referenzmodelle}
 
-Während die ersten beiden Modelle Aggregations-Modelle sind, sind die folgenden Modelle, denen lineare Regression zugrunde liegt, Zeitreihen-Modelle.
-Lineare Regression ist ein einfaches numerisches Verfahren, dass eine lineare Funktion berechnet, die den Fehler zu den bekannten Messpunkten minimiert.
-Die Funktion ist eine Gerade der Form $f(x) = a + b*x$, mit der Verschiebung a und Steigung b. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
+\begin{itemize}
+	\item Das einfachste Modell ist \textit{\textbf{Durchschnitt}}, das Modell approximiert alle Laufzeiten mit dem globalen arithmetischen Mittelwert der Laufzeiten.
+Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle Modelle, die dies tun, bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt, das jedoch schlechtere Leistungen erzielt könnte unterstellt werden im Wesentlichen zufällige Vorhersagen zu machen.
+\textit{Durchschnitt} ist als untere Schranke für alle NN-Modelle gedacht.
+	\item Eine ähnliche Methode wie \textit{Durchschnitt} verwendet das Modell \textit{\textbf{Median agg}}. Es berechnet für jedes Attribut-Tupel den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen zu diesem Attribut-Tupel.
+Dieses Modell ist eine Referenz dazu, wie gut die Modellierung eines Modells maximal sein kann, das nicht nicht zwischen verschiedenen Messungen zu selben Attribut-Tupel unterscheiden kann.
+	\item Lineare Regression ist ein einfaches numerisches Verfahren, dass eine lineare Funktion berechnet, die den quadratischen Fehler zu den bekannten Messpunkten minimiert (Methode der kleinsten Quadrate).
+Die Funktion ist eine Gerade der Form $f(x) = a + b \cdot x$, mit der Verschiebung $a$ und Steigung $b$. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
 Ich probiere drei verschiedene lineare Modelle aus.
-\textit{LinReg G} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
-\textit{LinReg GA} enthält auch die Werte zu Delta-Abstand und \textit{LinReg GAO} berücksichtigt zudem den Operationstyp der Messungen.
-Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Sets unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
+\textit{\textbf{LinReg G}} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
+\textit{\textbf{LinReg G+D}} enthält auch die Werte zu Delta-Offset und \textit{\textbf{LinReg G+D+O}} berücksichtigt zudem den Operationstyp der Messungen.
+Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Tupels unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
+\textit{LinReg G} wird einmal mit Einzelmessungen als Eingabe berechnet und einmal mit Aggregierten Eingabedaten, aggregiert wird dabei über alle Attribute des Attribut-Tupels (Zugriffsgröße, Delta-Offset und OpTyp). 
+Da die quadratische Abweichung des berechneten linearen Modells zu allen Eingabedaten minimiert wird, findet bei der Einzelmessungs-Eingabe eine Gewichtung nach Häufigkeit des Auftretens eines Attribut-Tupels statt.
+	\item Zuletzt gibt es noch zwei Fehlerklassen-Modelle. Die Eingabedaten sind aggregiert nach dem Attribut-Tupel und den Fehlerklassen. 
+Sie funktionieren also genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für alle Messungen eines Attribut-Tupels berechnet, die zur selben Fehlerklasse gehören.
+\textit{\textbf{LinReg-FK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{\textbf{Tupel1-FK Median agg}} die Klassen die aus den Modellabweichungen der besten Instanz von \textit{Tupel1} berechnet wurden.
+\end{itemize}
 
-Zuletzt gibt es noch zwei weitere Aggregations-Modelle, die Fehlerklassen ausnutzen.
-Sie funktionieren genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für alle Messungen eines Attribut-Sets berechnet, die zur selben Fehlerklasse gehören.
-\textit{Median agg LinReg-FK} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{Median agg Tupel1-FK} die Klassen der besten Instanz von \textit{Tupel1}.
+\subsection{NN-Modelle}
+Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabeattribute unterscheiden.
 
-Die weiteren Modelle sind höhere Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabedaten unterscheiden.
-Das Aggregations-Modell \textit{Tupel1 aggregiert} entspricht der fairen Variante zu \textit{Median}, das Modell kennt, so wie alle höheren Modelle, nur einen Ausschnitt der Messdaten, dies sind seine Trainingsdaten.
+\begin{itemize}
+	\item
+\end{itemize}
+Das Modell \textit{\textbf{NN-Tupel1 agg}} is analog zu \textit{Median agg}. Das Modell kennt allerdings, so wie alle NN-Modelle, nur einen Ausschnitt der Messdaten.
 Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Mess-Attribute interpolieren.
-Das neuronale Netz des Modells bekommt als Eingabedaten alle Daten der Attribut-Sets, sowie die Laufzeiten, von den als Median aggregierten Trainingsdaten.
+
+Das neuronale Netz des Modells bekommt das Attribut-Tupel als Eingabeattribute, die Trainingsdaten werden auch nach diesem aggregiert.
+
+###
+
 Das Netz versucht dann das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
 Das Modell muss sich nicht bloß die mittleren Laufzeiten zu den Attribut-Sets \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Sets sinnvoll vorhersagen zu können.
 
@@ -656,20 +697,20 @@ Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der 
 
 In \cite{kantardzic2011data} (S. 40) ist EMA rekursiv definiert:
 \begin{align*}
-	EMA(i,m) &= p*t(i)+(1-p)*EMA(i-1,m-1)\\
+	EMA(i,m) &= p \cdot t(i)+(1-p) \cdot EMA(i-1,m-1)\\
 	EMA(i,1) &= t(i)
 \end{align*}
 Dabei ist $p$ also die Gewichtung für den direkten Vorgängerwert und $1-p$ die Gewichtung für alle vergangenen Werte, $i$ ist der aktuelle Messwert und es werden die letzten $m$ Messungen berücksichtigt. Nummerieren wir alle Messungen durch $1:n$ und berücksichtigen immer alle bisherigen Messungen, also $i = m$ so sind die ersten Werte:
 \begin{align*}
 EMA(1,1) &= t(1)\\
-EMA(2,2) &=  p*t(2)+(1-p)*t(1)\\
-EMA(3,3) &=  p*t(3)+(1-p)*(p*t(2)+(1-p)*t(1))
+EMA(2,2) &=  p \cdot t(2)+(1-p) \cdot t(1)\\
+EMA(3,3) &=  p \cdot t(3)+(1-p) \cdot (p \cdot t(2)+(1-p) \cdot t(1))
 \end{align*}
 Das Modell \textit{Tupel1 EMA Durchsatz} bekommt alle Attribute als Eingabe, die auch \textit{Tupel1} hat, also die drei Werte der Attribut-Sets, zusätzlich erhält es den EMA mit $p=0.5$ der vergangenen Durchsätze.
 
 Abschließend gibt es, parallel zu den trivialen Modellen, auch zwei höhere Modelle, die mit Fehlerklassen arbeiten.
 Die beiden Modelle bekommen das Attribut-Set der Messungen und zudem deren Fehlerklasse als Informationen.
-\textit{Tupel1 LinReg-FK} mit den Fehlerklassen aus dem trivialen Modell \textit{LinReg G} und \textit{Tupel1 Tupel1-FK} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem RMQA (siehe \ref{Validierung}) berechnet wurden.
+\textit{Tupel1 LinReg-FK} mit den Fehlerklassen aus dem trivialen Modell \textit{LinReg G} und \textit{Tupel1 Tupel1-FK} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem MSPE (siehe \ref{Validierung}) berechnet wurden.
 
 \section{Anwendung und Parameter}
 Nachdem die Modelle, die untersucht werden sollen, bestimmt worden sind, stellt sich die Frage, wie sie am besten angewendet werden können. Dies ist für die trivialen Modelle nicht weiter schwierig und hängt nur von der verwendeten mathematischen Methode ab.
@@ -773,7 +814,7 @@ Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgo
 
 
 
-Die vorgestellten Metriken werden auch zur Beurteilung der Vorhersagen der Basis-Modelle genutzt, die Werte \textit{Bereich}, \textit{RMAF Avg} und \textit{RMAF Train} beziehen sich allerdings nur auf neuronale Netze und werden daher weggelassen.
+Die vorgestellten Metriken werden auch zur Beurteilung der Vorhersagen der Basis-Modelle genutzt, die Werte \textit{Bereich}, \textit{MAPE Avg} und \textit{MAPE Train} beziehen sich allerdings nur auf neuronale Netze und werden daher weggelassen.
 
 
 
@@ -1230,10 +1271,10 @@ Nachdem die Messdaten untersucht worden sind werden nun die verschiedenen Modell
 
 Die Ergebnisse der in \ref{impl:modelle} beschriebenen trivialen Modelle sind in \ref{tab:triv} zu sehen. Die Spalte \textit{Typ} gibt an, ob das Modell auf den aggregierten Daten (agg) oder auf den individuellen Messungen (Ind) in Zeitreihe gelernt wurden.
 Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen.
-Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen RMQA-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
+Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen MSPE-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
 Wie erwartet (\textbf{ABSCHNITT}) sind die Vorhersagen auf dem randomisierten Datensatz schwieriger zu machen, sodass die Modellabweichungen wesentlich höher sind.
 Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren.
-Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND sehr schlecht vorhergesagt werden, sodass RMax und RMQA höher als bei sequentiellen Datensatz sind.
+Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND sehr schlecht vorhergesagt werden, sodass RMax und MSPE höher als bei sequentiellen Datensatz sind.
 
 Allgemein sind die Ergebnisse bereits überraschend gut.
 Die Modelle \textit{Median} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.6-0.8 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen und 16-44 Millisekunden gegenüber den zufälligen Dateizugriffen.
@@ -1254,7 +1295,7 @@ Die geringen Unterschiede in den Modellabweichungen von \textit{Median LinReg-FK
 	\scriptsize
 	\subfloat[cached-off0-seq]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
+			Modell & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
 			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Typ}%
@@ -1262,7 +1303,7 @@ Die geringen Unterschiede in den Modellabweichungen von \textit{Median LinReg-FK
 	} \\
 	\subfloat[cached-off0-rnd]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Modell & MAF (s)  & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
+			Modell & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & Typ \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
 			{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max & \Typ}%
@@ -1340,7 +1381,7 @@ In \ref{fig:densities_baselines_seq}a ist die Vorhersage vom Modell \textit{Durc
 Die Vorhersage ist nicht sehr genau, der vom Modell geschätzte Wert ist wesentlich näher am 0.1 Quantil, als am tatsächlichen Mittelwert.
 Die Vorhersage mit dem geringsten Fehler von \textit{LinReg G} ist in \ref{fig:densities_baselines_seq}b zu sehen.
 Der vorhergesagte Wert befindet sich ziemlich genau am Maximum der Dichtefunktion. Entsprechend sagt dieses Modell für eine möglichst große Anzahl Messungen den richtigen Wert voraus. 
-%Das im Modell \textit{Median} eben gerade der Median der Attribut-Sets vorhergesagt wird, statt z.B. dem arithmetischen Mittel, kommt in \ref{fig:densities_baselines_seq}c zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  RMAF noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.
+%Das im Modell \textit{Median} eben gerade der Median der Attribut-Sets vorhergesagt wird, statt z.B. dem arithmetischen Mittel, kommt in \ref{fig:densities_baselines_seq}c zu tragen. Würde das Modell das arith. Mittel vorhersagen, wäre die Vorhersage für dieses Set exakt an der Stelle der schwarzen Markierung. Dadurch wäre der Wert des Fehlermaßes  MAPE noch geringer, denn durch die Ausläufer der Messungen dieses Sets zu höheren Laufzeiten wird das arith. Mittel im Graph nach rechts gezogen. Stattdessen wird nun durch den Median ein Großteil der Messungen genauer vorhergesagt, nämlich die Messungen zu den Aufrufen mit der typischen Laufzeit, während die Ausreißer vernachlässigt werden.
 Die Vorhersage von \textit{Median LinReg-FK} liegt auf dem in \ref{fig:densities_baselines_seq}c dargestellten Attribut-Set ziemlich genau auf dem Wert des arithmetischen Mittels, sodass der arithmetische Fehler hier gerade minimal wird.
 Als letztes Beispiel soll der Verlauf der Laufzeit-Dichte eines Attribut-Sets gezeigt werden, zu dem das Modell \textit{Median} eine seiner größten Modellabweichungen hat.
 Interessanterweise sind die Residuen für dieses Attribut-Set sehr groß, dabei ist der Vorhergesagte Wert des Modells in direkter Nähe des tatsächlichen arith. Mittelwerts.
@@ -1374,7 +1415,7 @@ Die Analyse zu den aufwendigeren Modellen, die auf neuronalen Netzen basieren, i
 Zunächst eine kurze Betrachtung der Struktur des erfolgreichsten neuronalen Netzes zu dem Modell. 
 Dann die Untersuchung der Qualität der Vorhersagen auf SEQ und RND.
 Und zuletzt wird für die Anwendung auf SEQ zusätzlich die Ausreißer-Vorhersage genauer studiert.
-Es wird zu jedem Modell das neuronale Netz angegeben, das bei der Untersuchung des Parameterraums gefunden wurde und den geringsten RMQA-Wert erzielt hat.
+Es wird zu jedem Modell das neuronale Netz angegeben, das bei der Untersuchung des Parameterraums gefunden wurde und den geringsten MSPE-Wert erzielt hat.
 Informationen über die Struktur der Netze und den Aufwand des Trainingsprozesses finden sich in \ref{tab:model-stats}. Im Detail sind dies die Anzahl der verdeckten Schichten, sowie die Anzahl Neuronen, die jede Schicht enthält, die Anzahl Iterationen, die der Algorithmus gebraucht hat, bis der Schwellenwert für die Konvergenz erreicht war, und die Trainingsdauer, also wie lange die Berechnung des Netzes tatsächlich gedauert hat.
 In Tabelle \ref{tab:results} sind für alle NN-Modelle die Werte der verschiedenen Fehlermetriken angegeben, zusätzlich sind zum Vergleich die Basis-Modelle \textit{Durchschnitt}, \textit{LinReg G} angewendet auf individuelle Messungen und \textit{Median LinReg-FK} aufgelistet.
 Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage betrachtet.
@@ -1406,7 +1447,7 @@ Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage be
 	\makebox[\textwidth][c]{
 		\subfloat[Fehlermetriken auf SEQ]{
 			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAF (s) & RMAF Avg (\%) & RMAF Train (\%) &  RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
+				Modell & MAE (s) & Avg-MAPE (\%) & Train-MAPE (\%) &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
@@ -1416,7 +1457,7 @@ Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage be
 	\makebox[\textwidth][c]{
 		\subfloat[Fehlermetriken auf RND]{
 			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAF (s) & RMAF Avg (\%) &  RMAF Train (\%) & RMAF (\%) & RMQA (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
+				Modell & MAE (s) & Avg-MAPE (\%) &  Train-MAPE (\%) & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & Bereich (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
@@ -1431,7 +1472,7 @@ Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißer-Vorhersage be
 	\scriptsize
 	\subfloat{
 	\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-		Modell & Q0.1 RMAF (\%) &Q0.1 RMQA (\%) & Q0.9 RMAF (\%) & Q0.9 RMQA (\%) & TP (\%) & FP (\%) \\\hline\hline
+		Modell & Q0.1-MAPE (\%) &Q0.1-MSPE (\%) & Q0.9-MAPE (\%) & Q0.9-MSPE (\%) & TP (\%) & FP (\%) \\\hline\hline
 		\csvreader[late after line=\\\hline]%
 		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt, FalschPositiv = \FalschPositiv}%
 		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt & \FalschPositiv}%
@@ -1451,13 +1492,13 @@ Innerhalb eines Attribut-Sets kann das Modell jedoch keine weitere Differenzieru
 Stattdessen wird für eine Häufung immer der selbe Wert vorhergesagt.
 Das zeigt sich auch am Wert für \textit{Bereich}, der angibt wie viele Vorhersagen zwischen den Quantilen 0.1 und 0.9 der Laufzeit des Attribut-Sets gelandet sind. Da das Modell nur eine Art Mittelwert vorhersagt, ist der Wert für \textit{Bereich} folgerichtig bei 100\%.
 Dieses Verhalten entspricht dem des Basis-Modells \textit{Median}, tatsächlich ist der entsprechende Graph \ref{fig:zeit_baselines_rnd}c mit dem zu \textit{Tupel1} kaum zu unterscheiden.
-Auch die Leistungswerte sind vergleichbar. Während \textit{Tupel1} einen etwas besseren RMQA mit 22\% zu 24\% hat, hat \textit{Median} mit einem RMAF von 11.1\% gegenüber 14.1\% leicht die Nase vorn. 
+Auch die Leistungswerte sind vergleichbar. Während \textit{Tupel1} einen etwas besseren MSPE mit 22\% zu 24\% hat, hat \textit{Median} mit einem MAPE von 11.1\% gegenüber 14.1\% leicht die Nase vorn. 
 Dieses ähnliche Verhalten entspricht auch der Modellierung. \textit{Tupel1} stehen keine Informationen zur Unterscheidung der Attribut-Sets zur Verfügung, sodass intern ein möglichst guter Mittelwert zur Laufzeit jedes Sets gebildet werden muss. Dies gelingt \textit{Tupel1} mit dem kleinen Trainingsdatensatz in etwa genauso gut, wie \textit{Median} mit Kenntnis sämtlicher Messungen.
 Der Modellierung entsprechend macht \textit{Tupel1} ungenaue Vorhersagen für Attribut-Sets, mit
 großer Varianz in den Zugriffszeiten. 
 Dies lässt sich in \ref{fig:tupel1_seq}c an der Markierung der nach oben gestreuten Laufzeiten erkennen.
 Die besten Vorhersagen werden für Messungen gemacht, die möglichst der mittleren Dauer ihres Attribut-Sets entsprechen.
-Das entwickelte neuronale Netz zeigt sich sehr zuverlässlich. Der \textit{RMAF} auf den Trainingsdatensatz und der durchschnittliche \textit{RMAF} über identische Netze ist sehr nah am \textit{RMAF} des betrachteten Netz.
+Das entwickelte neuronale Netz zeigt sich sehr zuverlässlich. Der \textit{MAPE} auf den Trainingsdatensatz und der durchschnittliche \textit{MAPE} über identische Netze ist sehr nah am \textit{MAPE} des betrachteten Netz.
 
 \begin{figure}
 	\centering
@@ -1479,7 +1520,7 @@ Das entwickelte neuronale Netz zeigt sich sehr zuverlässlich. Der \textit{RMAF}
 	\label{fig:tupel1_seq}
 \end{figure} 
 
-Bei der Leistungsvorhersage auf cached-off0-rnd setzt sich Tupel1 mit 45\% RMAF und 122\% RMQA nun wesentlich vom linearen Modell mit 5019.1\% und 13188\% ab. Hier war LinReg G nicht mehr in der Lage die Häufungspunkte korrekt zu differenzieren. Tupel1 hingegen modelliert alle Häufungen korrekt (\ref{fig:tupel1_on_rnd}). Dadurch dass die Häufungen bei den randomisierten Messungen nicht mehr alle dem selben Attribut-Set angehören, sondern sich durch die Zugriffsort in der Datei unterscheiden, hat Tupel1 Informationen, um innerhalb einer Häufung verschiedene Vorhersagen zu treffen. Die Abhängigkeit der Laufzeit von Delta-Abstand ist jedoch sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten. Die Stärken und Schwächen des Modells liegen
+Bei der Leistungsvorhersage auf cached-off0-rnd setzt sich Tupel1 mit 45\% MAPE und 122\% MSPE nun wesentlich vom linearen Modell mit 5019.1\% und 13188\% ab. Hier war LinReg G nicht mehr in der Lage die Häufungspunkte korrekt zu differenzieren. Tupel1 hingegen modelliert alle Häufungen korrekt (\ref{fig:tupel1_on_rnd}). Dadurch dass die Häufungen bei den randomisierten Messungen nicht mehr alle dem selben Attribut-Set angehören, sondern sich durch die Zugriffsort in der Datei unterscheiden, hat Tupel1 Informationen, um innerhalb einer Häufung verschiedene Vorhersagen zu treffen. Die Abhängigkeit der Laufzeit von Delta-Abstand ist jedoch sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten. Die Stärken und Schwächen des Modells liegen
 in den selben Bereichen, wie bei den sequentiellen Messungen.\\
 Das Unvermögen innerhalb eines Attribut-Sets zu unterscheiden spiegelt sich auch darin wieder, dass 100\% der Vorhersagen von Tupel1 auf cached-off0-seq zwischen den tatsächlichen 0.1 und 0.9 Quantil des Sets liegt, idealerweise wenn alle Ausreißer richtig erkannt werden würden, wäre dieser Wert bei 80\%. Entsprechend sagt das Modell keine Ausreißer voraus, sodass TP und FP bei 0\% liegen. Auf cached-off0-rnd sind diese Werte nicht sehr Ausdrucksstark, denn zu jedem Attribut-Set gibt es jeweils nur ein bis drei Messungen, sodass die Quantile recht willkürlich sind.
 Wie erwartet fällt die Vorhersage der Quantile auf cached-off0-seq leicht. Dort gibt es bloß 76 verschiedene Attribut-Sets, das Netz muss die entsprechenden Werte bloß \glqq merken\grqq{} und richtig zuordnen. Dies gelingt dem Netz mit wenigen Prozent Abweichung. 
