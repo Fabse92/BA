@@ -1,0 +1,6 @@
+digraph {
+	node [style=filled]
+	rankdir=LR;
+	Messdaten -> Trainingsdaten
+        Messdaten -> Testdaten
+}
