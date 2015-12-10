@@ -1,6 +1,6 @@
 digraph {
 	node [style=filled]
 	rankdir=LR;
-	Messdaten -> Trainingsdaten
+	Messdaten -> Trainingsdaten [label = "auswählen"]
         Messdaten -> Testdaten
 }

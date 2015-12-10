@@ -178,13 +178,20 @@ In den verschiedenen Cache-Ebenen geschieht Vergleichbares, die Ebenen gehen von
 \medskip
 
 Die Zugriffszeit auf eine Datei ist durch diese Struktur stark davon abhängig in welcher Speicherebene die gesuchten Speicheradressen gefunden werden. Wenn die Daten bereits vollständig im Level 1 Cache liegen, sind sie schon nach wenigen Prozessorzyklen geladen. Es dauert mehrere Größenordnungen länger wenn sie aus dem Arbeitsspeicher geholt werden müssen. Weiterhin ist das Lesen von der Festplatte erneut signifikant aufwendiger. Im Wesentlichen kann unterschieden werden, ob angefragte Daten \textit{gecached} sind, sich also im Arbeitsspeicher befinden oder noch von der Festplatte geladen werden müssen.
-Die Ebenen der Speicherhierachie sind durch einen typische Durchsatz gekennzeichnet. Der Durchsatz ist definiert als verarbeitetes Speichervolumen pro Zeiteinheit. Die Abbildung \textit{ABBILDUNG} ist eine Visualisierung der Speicherhierachie, in der übliche Durchsätze und sich daraus ergebende typische Zugriffszeiten dargestellt sind.
-\medskip
+Die Ebenen der Speicherhierachie sind durch einen typische Durchsatz gekennzeichnet. Der Durchsatz ist definiert als verarbeitetes Speichervolumen pro Zeiteinheit. Die Abbildung \ref{fig:mem_hierachie} ist eine Visualisierung der Speicherhierachie, in der übliche Durchsätze und sich daraus ergebende typische Zugriffszeiten dargestellt sind.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[height=.35\textwidth]{Bilder/hierachie.png}
+	\end{center}
+	\caption{Die Speicherhierachie des E/A-Systems}
+	\label{fig:mem_hierachie}
+\end{figure}
 
 Verschiedene Caching-Strategien erlauben eine effizientere Nutzung der Zwischenspeicher.
 \begin{itemize}
 \item Ein Beispiel für lesende E/A-Aufrufe ist das Einschalten der Read-Ahead-Einstellung, dadurch werden weitere Sektoren in den Cache geladen, die sich in der unmittelbaren physischen Umgebung der angefragten Datenblöcke auf dem  Speichermedium befinden. Falls ein Programm fortlaufend über einen großen Datenbereich arbeitet, weil dort beispielsweise direkt hintereinander Bilddateien eines Fotoalbums befinden, das gerade im Präsentationsmodus gezeigt wird, so ist der Zugriff auf ein weiteres Bild für das E/A-System nicht mehr 'überraschend'. Statt erst in dem Moment des E/A-Aufrufs des nächsten Bildes die erforderlichen Datenblöcke von der Festplatte zu lesen, befinden sich diese nun bereits in einem der vorgeschalteten Zwischenspeicher. Diese Caching-Strategie macht nur Sinn, wenn ein solches sequentielles Zugriffsverhalten eines Programms stattfindet. 
-Wenn aufeinanderfolgende Zugriffe in unterschiedlichen Bereichen der Festplatte Datenblöcke anfordern, wird bei dieser Strategie zusätzlicher Aufwand für das Lesen der umgebenden Daten betrieben ohne davon einen Nutzen zu haben. 
+Wenn aufeinanderfolgende Zugriffe in unterschiedlichen Bereichen der Festplatte Datenblöcke anfordern, wird bei dieser Strategie zusätzlicher Aufwand für das Lesen der umgebenden Daten betrieben ohne davon einen Nutzen zu haben (vgl. \cite{corbet2015}). 
 \item Eine Caching-Strategie, die eine schnellere Verarbeitung schreibender E/A-Aktionen erlaubt, ist das Wechseln von Write-Through zu Write-Back. Beim Write-Through werden Schreibbefehle, die zunächst nur direkt im Cache umgesetzt werden, direkt in das Speichersystem übernommen. Datenblöcke im Speichersystem und Arbeitsspeicher sind so immer im gleichen und daher widerspruchsfreien Zustand, sodass auch nach plötzlicher Löschung des Caches keine Informationen verloren gehen.
 Diese Sicherheit ist beim Write-Back nicht gegeben, da der geänderte Zustand von Daten zunächst nur im Cache bekannt bleibt, damit der Prozessor nicht eine lange Zeit auf die Vollendung des Schreibvorgangs auf der Festplatte warten muss. Das Ausschreiben der Änderungen im Arbeitsspeicher geschieht erst in einem günstigen Moment, wenn beispielsweise ansonsten gerade wenige E/A-Zugriffe geschehen.
 \end{itemize}
@@ -261,7 +268,7 @@ Oft ist es notwendig die zur Verfügung stehenden Daten aufzubereiten, bevor ein
 Nach Alpaydin können fehlerhafte Daten ein Problem sein, die durch zufällige Messfehler oder eine systematisch inkorrekte Messung entstehen können (vgl. \cite{Alpaydin:2010:IML:1734076} S. 13-15). Zudem schreibt er, dass Teile der Daten überflüssig sein können, da sie redundant sind oder keine relevanten Informationen enthalten. Problematisch sind auch Datenpunkte mit gleichen Eingabewerten, aber unterschiedlichen Werten zur Zielvariablen (vgl. \cite{Alpaydin:2010:IML:1734076} S. 14).
 Mit all diesen Problemen muss, unter Beachtung der Eigenschaften des vorliegenden Datensatzes, bei der Aufbereitung der Daten sinnvoll umgegangen werden. So können beispielsweise Ausreißer bei den Daten aussortiert werden, da diese eventuell durch eine Fehlmessung entstanden sind. Widersprüchliche Datenpunkte können zusammengefasst werden, indem sie zusammen einen neuen Datenpunkt mit eindeutigen Ausgabewerten bilden (dies könnten die Mittelwerte sein).
 
-\subsection{Clusteranalyse}
+\subsubsection{Clusteranalyse}
 Eine typische Anwendung der Klassifizierung ist die Clusteranalyse.
 Kantardzic beschreibt Clusteranalyse folgendermaßen: \glqq Cluster analysis is the formal study of methods and algorithms for natural grouping, or clustering, of objects according to measured or perceived intrinsic characteristics or similarities.\grqq{} \cite{kantardzic2011data} (S. 250). Ein einfaches und anschauliches Beispiel sind Punkte im zweidimensionalen Raum, die hinsichtlich ihrer Position gruppiert werden (siehe Abbildung \ref{fig:clustering_beispiel}).
 
@@ -288,10 +295,9 @@ Zur Verwendung eines neuronalen Netzes gibt man dem Netz eine Menge von Eingabev
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[totalheight=0.2\textheight]{Bilder/Multi-Layer_Neural_Network-Vector.png}
+		\includegraphics[height=.20\textwidth]{Dot/netz.png}
 	\end{center}
-	\caption{Zweischichtiges Netz Quelle: Offnfopt, \url{https://de.wikipedia.org/w/index.php?title=Datei:Multi-Layer_Neural_Network-Vector.svg&lang=de}}
-	%
+	\caption{feedforward-Netz mit $n=2$, $m=1$ und 2 verborgenen Schichten}
 	\label{fig:Schichten}
 \end{figure}
 
@@ -369,7 +375,7 @@ Zur Entwicklung des mathematischen Modells wird eine Regressionsanalyse durchgef
 \end{itemize}
 Ich unterscheide daher im Folgenden zwischen der White-Box-Modellierung, bei der versucht wird das Festplattensystem nachzubilden (in der englischen Fachliteratur auch als \textit{analytic device modeling} und \textit{simulation modeling} bezeichnet) und der Black-Box-Modellierung, bei dem ein mathematisches Modell entwickelt wird.
 
-\subsection{White-Box-Modellierung gegenüber Black-Box-Modellierung}
+\subsubsection{White-Box-Modellierung gegenüber Black-Box-Modellierung}
 Die Nachteile von Modellen der White-Box-Modellierung liegen insbesondere darin, dass sie aufwendig zu konfigurieren sind. Beispielsweise schreiben Crume et al.:\glqq In fact, one of us (Oldfield) spent several months configuring DiskSim to model an existing device\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S.45). Naturgemäß altern White-Box-Modelle schnell, da sie jeweils an spezielle Hardware angepasst sind. Der Vorteil dagegen ist, dass sie bei korrekter Konfiguration sehr präzise sind. Ruemmler und Wilkes erzielten mit einem gut kallibrierten White-Box-Modell geringe Residuen bei der Vorhersage von Festplatten-Zugriffszeiten (vgl. \cite{Ruemmler94anintroduction}). Um das Problem des hohen Aufwands der exakten Parametriesierung für jedes Festplattenmodell anzugehen, haben sie untersucht, wie sich die Berücksichtigung verschiedener Festplattenkomponenten bzw. -eigenschaften auf den Modellfehler auswirkt. Sodass beim Einsatz des Modells Aufwand der Parametriesierung und Präzision der Modellierung gegeneinander abgewägt werden können.
 
 Eine weitere Arbeit, in der White-Box-Modellierung genutzt wurde, stammt von Lebrecht et al. \cite{Lebrecht:2009:10.1109/QEST.2009.31}. Darin wird besonders auf ein Verfahren eingegangen, das dafür sogt, dass E/A-Anfragen in einer Reihenfolge abgearbeitet werden, die die notwendigen Bewegungen des Lese-/Schreibkopfes möglichst gering hält.
@@ -387,7 +393,7 @@ Wie bereits im Kapitel \ref{back_nn} beschrieben wurde, gibt es einige Forschung
 Ein mathematisch anspruchsvolles Verfahren mit Black-Box-Modellierung unter der Verwendung von neuronalen Netzen wurde von Adam Crume et al. entwickelt \cite{Crume:2013:FML:2538542.2538561}. Sie gehen davon aus, dass der entscheidende Faktor bei der Vorhersage von Zugriffszeiten auf Festplatten in der Erkennung von periodischen Mustern liegt: \glqq One of the complications in the problem is the existence of unknown, high frequency components caused by the rotational aspect of the drive\grqq{} \cite{Crume:2013:FML:2538542.2538561} (S. 46).
 Durch eine Fourier-Analyse finden sie die Hauptfrequenzen heraus und können diese dann nutzen, um mit einem neuronalen Netz Vorhersagen zu treffen.
 
-In einer weiteren Arbeit führen Crume und Maltzahn diesen Ansatz fort. Sie zeigen, dass die Periodizität der Festplattenlatenzen auch ohne Fourier-Analyse von neuronalen Netzen ausgenutzt werden kann. Dazu geben sie den verwendeten Netzen zusätzliche Sinuskurven als Eingabeattribute. \cite{crumeadammaltzahncarlos2015}
+In einer weiteren Arbeit führen Crume und Maltzahn diesen Ansatz fort. Sie zeigen, dass die Periodizität der Festplattenlatenzen auch ohne Fourier-Analyse von neuronalen Netzen ausgenutzt werden kann. Dazu geben sie den verwendeten Netzen zusätzliche Sinuskurven als Eingabeattribute. \cite{adamcrumecarlosmaltzahn2015}
 
 Der hohe Aufwand für das Auffinden interessanter Frequenzen in einer einzelnen Festplatte zeigt, dass dieser Ansatz für das komplexe E/A-System im Hochleistungsrechner zunächst einmal nicht geeignet erscheint.
 
@@ -458,7 +464,15 @@ Dort ist der reine Verwaltungsaufwand der Anfrage im wesentlichen für alle Aufr
 \item Nun müssen die angefragten Daten aus dem Arbeitsspeicher des Knotens über die Cache-Ebenen in den Prozessor geladen werden. 
 \end{enumerate}
 Falls die Daten bereits im Arbeitsspeicher oder einem der Caches liegen, werden entsprechend Schritte übersprungen.
-\medskip
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=.43\textwidth]{Bilder/rechnerknoten_ea_pfad.png}
+	\end{center}
+	\caption{E/A-Pfad im System; der rot gekennzeichnete Prozessor macht einen E/A-Zugriff , der Pfad führt entlang der roten Markierung}
+	\label{fig:ea_pfad}
+\end{figure}
+
 Für einen Schreibzugriff gilt im Wesentlichen ein ähnlicher Ablauf.
 Die Daten müssen beim Schreiben eigentlich immer über das Netzwerk auf Festplatte geschrieben werden. Dies ist nur dann nicht der Fall, wenn eine Caching-Strategie, wie Write-Back, eingreift. Dann wird die Datei nur im Hauptspeicher des Rechnerknotens geändert und erst später endgültig auf Festplatte geschrieben.
 Der Datenfluss fließt umgekehrt zu dem des Lesezugriffs.
@@ -548,24 +562,28 @@ Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Le
 \subsubsection{Metriken zur Leistungsvorhersage}
 Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
 \begin{itemize}
-	\item \textit{MAE} (vom englischen \textit{mean absolute error}) ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
-	\item Der \textit{MAPE} (vom englischen \textit{mean absolute percentage error}) ist der relative \textit{MAE}, also der \textit{MAE} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.\\
+	\item \textit{\textbf{MAE}} (vom englischen \textit{mean absolute error}) ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
+	\item Der \textit{\textbf{MAPE}} (vom englischen \textit{mean absolute percentage error}) ist der relative \textit{MAE}, also der \textit{MAE} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.\\
 \end{itemize}
 \textit{MAE} und \textit{MAPE} geben eine Vorstellung davon welchen Fehler man bei einer Vorhersage erwarten kann.
 \begin{itemize}
-	\item Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der quadratische relative Fehler gemittelt über alle Vorhersagen \textit{MSPE} (vom englischen \textit{mean square percentage error}) nützlich.
+	\item Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der quadratische relative Fehler gemittelt über alle Vorhersagen \textit{\textbf{MSPE}} (vom englischen \textit{mean square percentage error}) nützlich.
 \end{itemize}
 	Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise gut und für andere Messungen schlecht agiert. Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich.
 \begin{itemize}
-	\item \textit{Q3} gibt das obere Quartil des relativen Fehlers über alle Vorhersagen an.
-	\item \textit{Max} entspricht dem größten relativen Fehler der vom Modell gemacht wurde.
-	\item Der Wert von \textit{In-range} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen.
+	\item \textit{\textbf{Q3}} gibt das obere Quartil des relativen Fehlers über alle Vorhersagen an.
+	\item \textit{\textbf{Max}} entspricht dem größten relativen Fehler der vom Modell gemacht wurde.
+	\item Der Wert von \textit{\textbf{In-range}} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Sets lagen.
 	Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre \textit{In-range} also bei 80\%. An \textit{In-range} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
 \end{itemize}
 Zwei zusätzliche Fehlermetriken geben zusätzliche Informationen über die Netze, sodass die Leistung besser eingeordnet werden kann.
+
 \begin{itemize}
-	\item \textit{Avg-MAPE} (Avg für \textit{average}) gibt den durchschnittlichen \textit{MAPE}-Wert für 12 Netze an. Die 12 Netze wurden mit identischen Parametern und Trainingsdaten, jedoch mit unterschiedlicher Initialisierung der Kantengewichte, gelernt. Anhand dieses Wertes kann die Auswirkung der lokalen Konvergenz für die jeweiligen Netzstrukturen betrachtet werden.
-	\item Zusätzlich wird \textit{Train-MAPE} angegeben. Dies ist der erreichte \textit{MAPE}-Wert des Netzes auf den eigenen Trainingsdaten. Dieser Wert sollte immer besser als der normale \textit{MAPE} sein. Anhand der Differenz zu \textit{MAPE} kann beurteilt werden, wie gut die Trainingsdaten die Testdaten repräsentiert haben.
+	\item \textit{\textbf{Avg-MAPE}} (Avg für \textit{average}) gibt den durchschnittlichen \textit{MAPE}-Wert für 12 Netze an. 
+	Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
+	Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
+	Anhand des \textit{Avg-MAPE} kann die Auswirkung der lokalen Konvergenz für die jeweiligen Netzstrukturen betrachtet werden.
+	\item Zusätzlich wird \textit{\textbf{Train-MAPE}} angegeben. Dies ist der erreichte \textit{MAPE}-Wert des Netzes auf den eigenen Trainingsdaten. Dieser Wert sollte immer besser als der normale \textit{MAPE} sein. Anhand der Differenz zu \textit{MAPE} kann beurteilt werden, wie gut die Trainingsdaten die Testdaten repräsentiert haben.
 \end{itemize}
 
 \subsubsection{Metriken zur Ausreißervorhersage}
@@ -573,13 +591,13 @@ Zur Evaluierung der Ausreißervorhersage werden weitere Fehlermetriken eingefüh
 \medskip
 Die ersten Fehlermetriken beziehen sich auf die Vorhersagen der Laufzeit-Quantile. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
 \begin{itemize}
-	\item Die arithmetischen Mittelwerte über den relativen Fehlern (\textit{Q0.1-MAPE} und \textit{Q0.9-MAPE}).
-	\item Die mittleren quadratischen Abweichungen über die relativen Fehler (\textit{Q0.1-MSPE} und \textit{Q0.9-MSPE}).
+	\item Die arithmetischen Mittelwerte über den relativen Fehlern (\textit{\textbf{Q0.1-MAPE}} und \textit{\textbf{Q0.9-MAPE}}).
+	\item Die mittleren quadratischen Abweichungen über die relativen Fehler (\textit{\textbf{Q0.1-MSPE}} und \textit{\textbf{Q0.9-MSPE}}).
 \end{itemize}
 Zudem werden zwei Metriken einbezogen, die gemeinsam die Klassifikation der Messungen in Ausreißer und nicht-Ausreißer bewerten können.
 \begin{itemize}
-	\item TP misst den Anteil der korrekt vorhergesagten Ausreißer, dies sind die richtig positiven Zuordnungen (engl. \textit{true positives}). Dieser Wert sollte möglichst hoch sein.
-	\item FP gibt dagegen die Anzahl Messungen an, die fälschlicherweise als Ausreißer eingestuft wurden (engl. false positives). Dieser Wert sollte gering gehalten werden.
+	\item \textit{\textbf{TP}} misst den Anteil der korrekt vorhergesagten Ausreißer, dies sind die richtig positiven Zuordnungen (engl. \textit{true positives}). Dieser Wert sollte möglichst hoch sein.
+	\item \textit{\textbf{FP}} gibt dagegen die Anzahl Messungen an, die fälschlicherweise als Ausreißer eingestuft wurden (engl. false positives). Dieser Wert sollte gering gehalten werden.
 \end{itemize}
 Es ist wichtig, sowohl \textit{TP}, als auch \textit{FP} zu betrachten. Ein Netz, das einfach alle Messungen als Ausreißer deklariert würde einen perfekten \textit{TP}-Wert von 100\% erreichen, obwohl mit der Zuordnungen nichts anzufangen ist.
 
@@ -620,9 +638,14 @@ Ein gutes Modell, das nicht zwischen Fehlerklassen unterscheidet würde beispiel
 Der dabei gemachte Fehler gegenüber den tatsächlichen Laufzeiten ist dann charakteristisch für die Sprünge, die bei den Übergängen der Pfade beobachtet wurden.
 Wenn zum Beispiel zu den dunkelgrünen Punkten jeweils ein Wert aus der mittleren Gruppe von Messungen vorhergesagt werden würde, so würde ein sehr kleiner Fehler eine Zugehörigkeit zum dort genommenen E/A-Pfad repräsentieren, ein größerer negativer oder positiver Fehler würde darauf hinweisen, dass bei diesem Aufruf ein entsprechend anderer Pfad genommen wurde.
 \medskip
-Wenn E/A-Pfade charakteristisch für die Zugriffszeiten sind, dann sollte ein Modell, dass zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennt eine wesentlich geringere Modellabweichung aufzeigen.
-Sowohl Referenzmodelle, als auch NN-Modelle werden im Folgenden entwickelt und untersucht , die Fehlerklassen nutzen.
+Es muss beachtet werden, dass Modelle, die Fehlerklassen ausnutzen, keine verwendbaren Prädiktoren zur Leistungsvorhersage ergeben.
+Die Fehlerklassen müssen ebenso auf den Trainingsdaten, wie auch auf den Testdaten berechnet werden, damit die Modelle daraus auf die Laufzeit schließen können.
+Für die Zuordnung in Fehlerklassen werden jedoch die Modellabweichungen eines anderen Modells benötigt. Die tatsächlichen Laufzeiten der Testdaten müssen für Modelle mit Fehlerklassen also bekannt sein.
+\medskip
+Die Modelle, die zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennen, werden untersucht, um die Aussagekraft von E/A-Pfaden zu analysieren.
+Wenn E/A-Pfade charakteristisch für die Zugriffszeiten sind, dann sollten diese Modelle, eine wesentlich geringere Modellabweichung aufzeigen als Modelle ohne Fehlerklassen.
 
+Sowohl Referenzmodelle, als auch NN-Modelle werden im Folgenden entwickelt und untersucht.
 \subsection{Aufbereitung der Trainingsdaten}
 
 Die Eingabedaten der Modelle können auf zwei grundsätzlich verschiedene Weisen aufbereitet werden.
@@ -669,7 +692,7 @@ Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Tupel
 Da die quadratische Abweichung des berechneten linearen Modells zu allen Eingabedaten minimiert wird, findet bei der Einzelmessungs-Eingabe eine Gewichtung nach Häufigkeit des Auftretens eines Attribut-Tupels statt.
 	\item Zuletzt gibt es noch zwei Fehlerklassen-Modelle. Die Eingabedaten sind aggregiert nach dem Attribut-Tupel und den Fehlerklassen. 
 Sie funktionieren also genauso, wie \textit{Median agg}, nur das sie Messungen zusätzlich noch durch ihre Fehlerklasse unterscheiden. Es wird also der Median für alle Messungen eines Attribut-Tupels berechnet, die zur selben Fehlerklasse gehören.
-\textit{\textbf{LinReg-FK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{\textbf{Tupel1-FK Median agg}} die Klassen die aus den Modellabweichungen der besten Instanz von \textit{Tupel1} berechnet wurden.
+\textit{\textbf{LinRegFK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{\textbf{Tupel1FK Median agg}} die Klassen die aus den Modellabweichungen der besten Instanz von \textit{Tupel1} berechnet wurden.
 \end{itemize}
 
 \begin{table}
@@ -683,7 +706,7 @@ Sie funktionieren also genauso, wie \textit{Median agg}, nur das sie Messungen z
 			{\Modell & \Beschreibung & \Art & \Attribute}%
 		\end{tabular}
 	}
-	\label{tab:meta}
+	\label{tab:zusammenfasssung_referenz}
 	\caption{Kurzbeschreibungen der der Referenzmodelle}
 \end{table}
 
@@ -699,14 +722,27 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	\item Ganz ähnlich wie \textit{NN-Tupel1 agg} ist das Modell \textit{\textbf{NN-Tupel1}} aufgebaut. Die Eingabedaten werden allerdings nicht aggregiert.
 	Es versucht also direkt das beschriebene Tripel auf die zugehörigen Laufzeiten abzubilden. Es erhält sonst keine weiteren Informationen, sodass es ebenso wenig, wie das aggregierende Modell, zwischen Messungen mit gleichen Attributen unterscheiden kann.
 	Es muss dann selbständig einen Mittelwert zu jedem Attribut-Tupel bilden und mit diesem assoziieren.
+\end{itemize}
+	\begin{figure}
+		\centering
+		\subfloat[Skizze von Tupel1 agg]{
+			\includegraphics[width=.5\textwidth,height=.5\textwidth]{Dot/tupel1agg.png}
+		}
+		\subfloat[Skizze von Tupel1]{
+			\includegraphics[width=.5\textwidth,height=.5\textwidth]{Dot/tupel1.png}
+		}
+		\caption{Vergleich der Erstellung und Anwendung von Tupel1 agg (links) und Tupel1(rechts)}
+		\label{fig:tupel1vstupel1agg}
+	\end{figure} 
+\begin{itemize}
 	\item \textit{\textbf{NN-Tupel2}} ist das erste Modell, das die zeitliche Reihenfolge der Messungen ausnutzen soll. Das neuronale Netz bekommt nicht nur die Werte zum Attribut-Tupel der Messung, dessen Leistung es vorhersagen soll, sondern auch die zum Attribut-Tupel und die Laufzeit der vorherigen Messung.
 	Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, sollte sich dies an der vergangenen E/A-Leistung niederschlagen.
 	Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
-	\item Eine tieferliegende Periodizität könnte unter Umständen durch \textit{\textbf{NN-EMA Durchsatz}} für die Vorhersage der Laufzeit ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average} (EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort.
+	\item Eine tieferliegende Periodizität könnte unter Umständen durch \textit{\textbf{NN-EMA}} für die Vorhersage der Laufzeit ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average} (EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort.
 	Mit dessen Funktionswert kann ein Einblick in den generellen Trend der Zeitreihe gewährt werden, da temporäre Spitzen geglättet werden.
 	Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im wesentlichen von den direkten Vorgängern beeinflusst wird, in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen.
 	In dem hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat, die über das Netzwerk zum Rechnerknoten geholt werden müssen, da das Netzwerk jedoch gerade durch andere Zugriffe ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Arbeitsspeichers gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass ein erneuter Aufruf über das weiterhin ausgelasteten Netzwerk eventuell genauer gemacht werden könnte.
-	Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz berechnet sich als $Durchsatz = Zugriffsgrö\text{ß}e / Laufzeit$.
+	Um die Auslastung des E/A-Systems sinnvoll wiederzugeben wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz berechnet sich als $Durchsatz =  \frac{Zugriffsgrö\text{ß}e}{Laufzeit}/$.
 	
 	Karardzic definiert den EMA rekursiv \cite{kantardzic2011data} (S. 40):
 	\begin{align*}
@@ -719,11 +755,23 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	EMA(2,2) &=  p \cdot t(2)+(1-p) \cdot t(1)\\
 	EMA(3,3) &=  p \cdot t(3)+(1-p) \cdot (p \cdot t(2)+(1-p) \cdot t(1))
 	\end{align*}
-	Der Eingabevektor des neuronalen Netzes \textit{NN-EMA Durchsatz} enthält alle Attribute des Attribut-Tupels, zusätzlich erhält es den EMA mit $p=0.5$ der vergangenen Durchsätze.
+	Der Eingabevektor des neuronalen Netzes \textit{NN-EMA} enthält alle Attribute des Attribut-Tupels, zusätzlich erhält es den EMA mit $p=0.5$ der vergangenen Durchsätze.
 	\item Abschließend gibt es, parallel zu den trivialen Modellen, auch zwei NN-Modelle, die mit Fehlerklassen arbeiten.
 	Die beiden Modelle bekommen das Attribut-Tupel der Messungen und zudem deren Fehlerklasse als Eingabeattribute.
-	\textit{\textbf{NN-LinReg-FK}} mit den Fehlerklassen die aus den Residuen des Referenzmodells \textit{LinReg G} berechnet wurden und \textit{\textbf{NN-Tupel1-FK}} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem MSPE-Wert berechnet wurden.
+	\textit{\textbf{NN-LinRegFK}} mit den Fehlerklassen die aus den Residuen des Referenzmodells \textit{LinReg G} berechnet wurden und \textit{\textbf{NN-Tupel1FK}} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem MSPE-Wert berechnet wurden.
 \end{itemize}
+
+\begin{figure}
+	\centering
+	\subfloat[Skizze von NN-LinRegFK]{
+		\includegraphics[height=.6\textwidth]{Dot/linregfk.png}
+	}\\
+	\subfloat[Skizze von NN-Tupel1FK]{
+		\includegraphics[height=.6\textwidth]{Dot/tupel1fk.png}
+	}
+	\caption{Vergleich der Erstellung und Anwendung von NN-LinRegFK (oben) und NN-Tupel1FK(unten)}
+	\label{fig:linregfkvstupel1fk}
+\end{figure}
 
 \begin{table}
 	\centering
@@ -736,7 +784,7 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 			{\Modell & \Beschreibung & \Art & \Attribute}%
 		\end{tabular}
 	}
-	\label{tab:meta}
+	\label{tab:zusammenfasssung_nn}
 	\caption{Kurzbeschreibungen der der NN-Modelle. Diese basieren auf neuronalen Netzen und bilden den Eingabevektor auf die Laufzeit ab.}
 \end{table}
 
@@ -771,39 +819,45 @@ In diesem Kapitel soll kurz auf ein paar wesentliche Punkte eingegangen werden, 
 }
 \bigskip
 
-\section{Verwendete Programmiersprache und Bibliotheken}
-Die Aufbereitung der Messdaten, die Berechnung der Modelle, sowie die Auswertung der Ergebnisse wurden mit R gemacht.
-Die neuronalen Netze wurden mit dem \textit{neuralnet} Paket \ref{gunther2010neuralnet} berechnet. Der Lernvorgang der Netze ist recht aufwendig und kann mehrere Stunden in Anspruch nehmen.
+\subsubsection{Verwendete Programmiersprache und Bibliotheken}
+Die Skripte zur Aufbereitung der Messdaten, Berechnung der Modelle, sowie zur Auswertung der Ergebnisse wurden mit der Programmiersprache R geschrieben.
+Die neuronalen Netze wurden mit dem \textit{neuralnet} Paket \cite{gunther2010neuralnet} berechnet. Der Lernvorgang der Netze ist recht aufwendig und kann mehrere Stunden in Anspruch nehmen.
 Desweiteren sind die idealen Parameterwerte nicht bekannt, sodass viele Netze berechnet werden müssen, um den Parameterraum zu durchsuchen.
-Der Zeitaufwand kann durch die parallele Berechnung mehrerer Netze deutlich reduziert werden, sodass die Mehrkernprozessoren der Rechner, auf denen gearbeitet wird, ausgenutzt werden.
-Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher am einfachsten durch die Parallelisierung von Schleifen erreicht werden. Dafür verwende ich die Pakete \textit{doParallel} und \textit{foreach} \ref{weston2014getting}.
-Die \textit{EMA}-Werte für \textit{Tupel1 EMA Durchsatz} werden mit dem Paket \textit{TTR} berechnet.
+Der Zeitaufwand kann durch die parallele Berechnung mehrerer Netze deutlich reduziert werden, sodass die Mehrkernprozessoren der Rechner ausgenutzt werden.
+Eine Code-Parallelisierung kann für ein System mit gemeinsamen Arbeitsspeicher am einfachsten durch die Parallelisierung von Schleifen erreicht werden. Dafür verwende ich die Pakete \textit{doParallel} und \textit{foreach} \cite{weston2014getting}.
+Die \textit{EMA}-Werte für \textit{NN-EMA} werden mit dem Paket \textit{TTR} berechnet.
 
-\section{Implementationsdetails}
+\subsubsection{Implementationsdetails}
 Um die neuronalen Netze am effektivsten zu Nutzen, sollten die Eingabewerte normiert werden. Ansonsten würde einem Attribut mit hoher Werte-Domäne sonst eine größere Bedeutung vom Gradientienverfahren beigemessen, als einem Attribut mit niederwertiger Domäne. 
 Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1. 
+\medskip
 Bei der Exploration der Daten wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt.
 Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird, da hier das größte Optimierungspotential liegt. Gleiches gilt für die Zugriffsgrößen.
 Deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
 Die Ergebnisse der neuronalen Netze müssen mit passenden Umkehrfunktionen ihrer Vorverarbeitung entsprechend wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.
-
+\medskip
 Da der Algorithmus der die neuronalen Netze berechnet nur ein Haltekriterium hat, das von der Konvergenz der Gewichte abhängt, kann es beliebig lange bis zur Termination dauern.
 Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst groß gewählt, wenn sich zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
+
+\paragraph{Zusammenfassung:}
+\textit{
+	Nachdem die wichtigsten Details der Implemetierung beschrieben wurden, wird im folgenden Kapitel die Evaluierung der zuvor vorgestellten Analyse durchgeführt.
+}
 
 \chapter{Evaluierung}
 \label{eval}
 \textit{%
-	In der Evaluierung sollen die zuvor beschriebenen Ideen und Kozepte in der Umsetzung auf ein reales System untersucht werden.
-	Zunächst wird der Testaufbau und die Durchführung der Experimente beschrieben.
-	Dann wird darauf eingegangen, wie die Ergebnisauswertung angegangen wird.
-	Es ist dann hilfreich die erhaltenen Messdaten aus verschiedenen Blickwinkeln zu betrachten, aus diesen Informationen können bereits Schlussfolgerungen über das untersuchte E/A-System gezogen werden und die Ergebnisse der Modelle können danach besser eingeordnet werden.
-	Ein besonderes Augenmerk soll im Kapitel \ref{fk_analyse} auf die erhaltenen Fehlerklassen und deren mögliche Repräsentation von E/A-Pfaden geworfen werden.
-	Abschließend werden dann die Leistungs-Vorhersagen der verschiedenen Modelle anhand der eingeführten Fehlermetriken und durch die Betrachtung der Verteilung der Modellabweichungen analysiert.
+	In der Evaluierung sollen die zuvor beschriebenen Modelle in der Umsetzung auf ein reales System untersucht werden.
+	Zunächst wird in Abschnitt \ref{eval:testsystem} kurz der untersuchte Hochleistungsrechner vorgestellt.	
+	Kapitel \ref{eval:benchmark} beschreibt im Detail, welche Messungen auf dem System durchgeführt wurden.
+	Die erhaltenen Messdaten werden in Kapitel \ref{eval:exploration} genauer betrachtet. Die gewonnenen Informationen können bereits dabei helfen das E/A-System besser zu verstehen.
+	Die erhaltenen Daten zu den Fehlerklassen werden in Kapitel \ref{eval:fk_analyse} genauer analysiert.
+	Abschließend werden in Kapitel \ref{eval:leistungsvorhersage} die Leistungsvorhersagen der verschiedenen Modelle anhand der in Abschnitt \ref{analyse:valid} eingeführten Fehlermetriken und durch die Betrachtung der Verteilung der Modellabweichungen analysiert.
 }
 \bigskip
 
 \section{Testsystem, Mistral}
-\label{impl:testsystem}
+\label{eval:testsystem}
 Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt.
 Mistral befindet sich in der derzeit aktuellen Publikation vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt.
 Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache.
@@ -811,7 +865,7 @@ Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisy
 Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
 
 \section{Aufbau der Benchmark-Tests}
-\label{benchmark}
+\label{eval:benchmark}
 Das Testsystem muss durch Vermessung von Experimenten untersucht werden.
 Mit Hilfe der Messdaten können die vorgestellten Modelle aus \ref{impl:modelle} entwickelt und anschließend getestet werden.
 Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt. Es werden vier verschiedene Experimente gemacht, sie repräsentieren zwei unterschiedliche Anwendungsfälle.
@@ -832,25 +886,8 @@ Zwischen zwei Messreihen besteht kein Zusammenhang, sodass nur zeitliche Abhäng
 Unter der Bezeichnung cached-off0-seq ist die Hintereinanderkettung der beiden Datensätze cached-off0-seq-R und cached-off0-seq-W zu verstehen. Gleiches gilt für cached-off0-rnd.
 Da alle Messungen zu cached-off0 gehören, werden die Daten als SEQ-R, SEQ-W, RND-R und RND-W bzw. SEQ und RND für die zusammengefassten Datensätze bezeichnet. 
 
-\section{Validierung der Modelle}
-\label{Validierung}
-Die Modelle werden jeweils auf den zwei Datensätzen der beiden getesteten Anwendungsfälle gelernt, also sowohl auf lesenden als auch auf schreibenden E/A-Zugriffen.
-Die neuronalen Netze bekommen 1000 zufällig bestimmte Messungen pro Zugriffsgröße und Operationstyp als Trainingsdatensatz. Insgesamt stehen somit 34000 Datenpunkte zur Verfügung.
-Dies sollte eine relevante Stichprobe der Messdaten sein, gleichzeitig bleibt der Trainingsaufwand für die Netze so in einem angemessen Rahmen von meist einigen Minuten bis wenigen Stunden.
-Die restlichen Datenpunkte werden als Testdatensatz zur Berechnung der Fehlermetriken verwendet.
-
-Anstatt eine Kreuzvalidierung (engl. cross-validation) der Netze durchzuführen, werden viele Netze mit ähnlichen oder gleichen Parametern mit jeweils neuen Trainingsdaten berechnet, dadurch kann der komplexe Parameterraum gleichzeitig durchsucht werden.
-Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz im Fehlerraum durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
-Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
-
-
-
-Die vorgestellten Metriken werden auch zur Beurteilung der Vorhersagen der Basis-Modelle genutzt, die Werte \textit{Bereich}, \textit{MAPE Avg} und \textit{MAPE Train} beziehen sich allerdings nur auf neuronale Netze und werden daher weggelassen.
-
-
-
 \section{Exploration der Daten}
-\label{exploration}
+\label{eval:exploration}
 Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Metainformationen zu sammeln.
 In der Tabelle \ref{tab:meta} sind für alle vier Datensätze jeweils für die drei Attribute Dauer, Zugriffsgröße und Delta-Abstand der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils, der maximale Wert und die Korrelation zu Dauer.
 
@@ -1127,8 +1164,9 @@ Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems is
 \end{figure} 
 \clearpage
 
+
 \section{Analyse der Fehlerklassen}
-\label{fk_analyse}
+\label{eval:fk_analyse}
 Alle Modelle werden auf den zusammengeführten Datensätzen aus lesenden und schreibenden Zugriffen angewendet. Daher gibt es im folgenden nur noch jeweils eine Abbildung zu den sequentiellen und eine zu den Messungen mit zufälligem Dateizugriff.
 Zunächst werden alle Daten der Messreihen zu einer Zugriffsgröße mit lesenden Aufrufen gezeichnet, danach kommen die schreibenden Zugriffe. 
 Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse des Residuums von \textit{LinReg G} entstanden sind.
@@ -1296,10 +1334,15 @@ Insgesamt sind die Zuweisungen sehr ähnlich. Auf SEQ gibt es eine sehr große �
 \clearpage
 
 \section{Leistungsvorhersage}
+\label{eval:leistungsvorhersage}
 Nachdem die Messdaten untersucht worden sind werden nun die verschiedenen Modelle auf die Daten angewendet. Die Modellabweichungen gegenüber den tatsächlich gemessen Werten können dazu genutzt werden weitere Aussagen über die Beschaffenheit der Messdaten zu machen und das E/A-System kann letztendlich besser verstanden werden.
+\medskip
+Die Modelle werden jeweils auf den zwei Datensätzen der beiden getesteten Anwendungsfälle gelernt, also sowohl auf lesenden als auch auf schreibenden E/A-Zugriffen.
+Die neuronalen Netze bekommen 1000 zufällig bestimmte Messungen pro Zugriffsgröße und Operationstyp als Trainingsdatensatz. Insgesamt stehen somit 34000 Datenpunkte zur Verfügung.
+Dies sollte eine relevante Stichprobe der Messdaten sein, gleichzeitig bleibt der Trainingsaufwand für die Netze so in einem angemessen Rahmen von meist einigen Minuten bis wenigen Stunden.
+Die restlichen Datenpunkte werden als Testdatensatz zur Berechnung der Fehlermetriken verwendet.
 
 \subsection{Analyse der trivialen Modelle}
-
 Die Ergebnisse der in \ref{impl:modelle} beschriebenen trivialen Modelle sind in \ref{tab:triv} zu sehen. Die Spalte \textit{Typ} gibt an, ob das Modell auf den aggregierten Daten (agg) oder auf den individuellen Messungen (Ind) in Zeitreihe gelernt wurden.
 Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen.
 Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen MSPE-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.

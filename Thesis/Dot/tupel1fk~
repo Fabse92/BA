@@ -1,0 +1,19 @@
+digraph {
+	node [style=filled]
+ 	node [fontname = "helvetica"];
+ 	edge [fontname = "helvetica"];	
+	node [fontsize = 20];
+ 	edge [fontsize = 20];
+	rankdir=UD;
+	Messdaten -> "Messdaten mit Fehlerklassen"
+	Messdaten -> Fehlerklassen[label = "clustern der Residuen"]
+	"Tupel1 Prädiktor" -> Fehlerklassen
+	Fehlerklassen -> "Messdaten mit Fehlerklassen"
+	"Messdaten mit Fehlerklassen" -> "Trainingsdaten = Eingabevektoren" [label = "aufteilen"]
+	"Messdaten mit Fehlerklassen" -> Testdaten[label = "aufteilen"]
+	"Trainingsdaten = Eingabevektoren" -> Lernverfahren
+	NeuronalesNetz -> Lernverfahren [label = ""]
+	Lernverfahren -> Prädiktor[label = "erzeugt"]
+	Testdaten -> Residuen [label = ""]
+	Prädiktor -> Residuen [label = "berechnen der Modellabweichungen"]
+}

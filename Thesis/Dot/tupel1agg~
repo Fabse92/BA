@@ -1,0 +1,12 @@
+digraph {
+	node [style=filled]
+	rankdir=UD;
+	Messdaten -> Trainingsdaten[label = "aufteilen"]
+	Messdaten -> Testdaten[label = ""]
+	Trainingsdaten -> "Aggregate = Eingabevektoren" [label = "aggregieren"]
+	"Aggregate = Eingabevektoren" -> Lernverfahren [label = ""]
+	NeuronalesNetz -> Lernverfahren [label = ""]
+	Lernverfahren -> Prädiktor[label = "erzeugt"]
+	Testdaten -> Residuen [label = ""]
+	Prädiktor -> Residuen [label = "berechnen der Modellabweichungen"]
+}

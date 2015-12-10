@@ -5,4 +5,4 @@ LinReg G,Lineare Regression über die Zugriffsgröße,Einzelmessungen oder Aggre
 LinReg G+D,Lineare Regression über die Zugriffsgröße und Operationstyp,Einzelmessungen,Zugriffsgröße; Optyp
 LinReg G+D+O,Lineare Regression über die Zugriffsgröße; Operationstyp; Delta-Offset,Einzelmessungen,Zugriffsgröße; Optyp; Delta-Offset
 LinReg-FK Median agg,Sagt den Median der Laufzeiten der Aggregate voraus. Nutzt das LinReg G Modell als Klassifikator für die Fehlerklassen,Aggregiert über Zugriffsgröße; OpTyp; Delta-Offset; LinReg-FK,Zugriffsgröße; OpTyp; Delta-Offset
-Tupel1-FK Median agg,Sagt den Median der Laufzeiten der Aggregate voraus. Nutzt eine Instanz des Tupel1 Modells als Klassifikator für die Fehlerklassen,Aggregiert über Zugriffsgröße; OpTyp; Delta-Offset; Tupel1-FK,Zugriffsgröße; OpTyp; Delta-Offset
+Tupel1FK Median agg,Sagt den Median der Laufzeiten der Aggregate voraus. Nutzt eine Instanz des Tupel1 Modells als Klassifikator für die Fehlerklassen,Aggregiert über Zugriffsgröße; OpTyp; Delta-Offset; Tupel1FK,Zugriffsgröße; OpTyp; Delta-Offset
