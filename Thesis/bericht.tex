@@ -672,6 +672,21 @@ Sie funktionieren also genauso, wie \textit{Median agg}, nur das sie Messungen z
 \textit{\textbf{LinReg-FK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen worden, und \textit{\textbf{Tupel1-FK Median agg}} die Klassen die aus den Modellabweichungen der besten Instanz von \textit{Tupel1} berechnet wurden.
 \end{itemize}
 
+\begin{table}
+	\centering
+	\scriptsize
+	\subfloat{
+		\begin{tabular}{|r|p{4.6cm}|p{4.4cm}|p{3.2cm}|}\hline%
+			\textbf{Modell} & \textbf{Beschreibung}  & \textbf{Art der Trainingsdaten} & \textbf{Attribute des Eingabevektors}\\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/zusammenfassung_der_referenz_modelle.csv}{Modell=\Modell, Beschreibung=\Beschreibung, Art=\Art, Attribute = \Attribute}%
+			{\Modell & \Beschreibung & \Art & \Attribute}%
+		\end{tabular}
+	}
+	\label{tab:meta}
+	\caption{Kurzbeschreibungen der der Referenzmodelle}
+\end{table}
+
 \subsection{NN-Modelle}
 Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabeattribute unterscheiden.
 
@@ -681,13 +696,13 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	Der Eingabevektor, den das neuronale Netz zu jedem Aggregat erhält, beinhaltet die Werte zu allen Attributen des Attribut-Tupels, nach diesen Attributen wurden die Trainingsdaten auch aggregiert.
 	Das Netz versucht dann also das Tripel $(Zugriffsgr\text{ß}e, Delta\text{-}Abstand, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
 	Das Modell muss sich nicht bloß die Mediane der Laufzeiten zu den Attribut-Tupeln \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Sets sinnvoll vorhersagen zu können.
-	\item Ganz ähnlich wie \textit{\textbf{NN-Tupel1 agg}} ist das Modell \textit{\textbf{NN-Tupel1}} aufgebaut. Die Eingabedaten werden allerdings nicht aggregiert.
+	\item Ganz ähnlich wie \textit{NN-Tupel1 agg} ist das Modell \textit{\textbf{NN-Tupel1}} aufgebaut. Die Eingabedaten werden allerdings nicht aggregiert.
 	Es versucht also direkt das beschriebene Tripel auf die zugehörigen Laufzeiten abzubilden. Es erhält sonst keine weiteren Informationen, sodass es ebenso wenig, wie das aggregierende Modell, zwischen Messungen mit gleichen Attributen unterscheiden kann.
 	Es muss dann selbständig einen Mittelwert zu jedem Attribut-Tupel bilden und mit diesem assoziieren.
 	\item \textit{\textbf{NN-Tupel2}} ist das erste Modell, das die zeitliche Reihenfolge der Messungen ausnutzen soll. Das neuronale Netz bekommt nicht nur die Werte zum Attribut-Tupel der Messung, dessen Leistung es vorhersagen soll, sondern auch die zum Attribut-Tupel und die Laufzeit der vorherigen Messung.
 	Die Idee hierbei ist, dass anhand des Wissens, wie schnell die letzte E/A-Prozedur bearbeitet werden konnte, eine Aussage über die Nächste getroffen werden kann. Falls das System beispielsweise gerade besonders ausgelastet ist, sollte sich dies an der vergangenen E/A-Leistung niederschlagen.
 	Es könnte auch sein, dass das System eine sehr simple Periodizität aufweist. Sodass, nach einer schnellen Bearbeitung eine langsame folgt oder Ähnliches.
-	\item Eine tieferliegende Periodizität könnte unter Umständen durch \textit{NN-EMA Durchsatz} für die Vorhersage der Laufzeit ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average} (EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort.
+	\item Eine tieferliegende Periodizität könnte unter Umständen durch \textit{\textbf{NN-EMA Durchsatz}} für die Vorhersage der Laufzeit ausgenutzt werden. Die Grundlage für dieses Modell bildet die exponentielle Glättung (im englischen \textit{exponentiell moving average} (EMA)), in der Signalverarbeitung ist dies ein Tiefpassfilter mit unendlicher Impulsantwort.
 	Mit dessen Funktionswert kann ein Einblick in den generellen Trend der Zeitreihe gewährt werden, da temporäre Spitzen geglättet werden.
 	Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im wesentlichen von den direkten Vorgängern beeinflusst wird, in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen.
 	In dem hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat, die über das Netzwerk zum Rechnerknoten geholt werden müssen, da das Netzwerk jedoch gerade durch andere Zugriffe ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Arbeitsspeichers gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass ein erneuter Aufruf über das weiterhin ausgelasteten Netzwerk eventuell genauer gemacht werden könnte.
@@ -709,6 +724,21 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	Die beiden Modelle bekommen das Attribut-Tupel der Messungen und zudem deren Fehlerklasse als Eingabeattribute.
 	\textit{\textbf{NN-LinReg-FK}} mit den Fehlerklassen die aus den Residuen des Referenzmodells \textit{LinReg G} berechnet wurden und \textit{\textbf{NN-Tupel1-FK}} mit den Fehlerklassen, die aus den Ergebnissen der \textit{Tupel1} Instanz mit geringstem MSPE-Wert berechnet wurden.
 \end{itemize}
+
+\begin{table}
+	\centering
+	\scriptsize
+	\subfloat{
+		\begin{tabular}{|r|p{4.6cm}|p{4.4cm}|p{3.2cm}|}\hline%
+			\textbf{Modell} & \textbf{Beschreibung}  & \textbf{Art der Trainingsdaten} & \textbf{Attribute des Eingabevektors}\\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/zusammenfassung_der_NN_modelle.csv}{Modell=\Modell, Beschreibung=\Beschreibung, Art=\Art, Attribute = \Attribute}%
+			{\Modell & \Beschreibung & \Art & \Attribute}%
+		\end{tabular}
+	}
+	\label{tab:meta}
+	\caption{Kurzbeschreibungen der der NN-Modelle. Diese basieren auf neuronalen Netzen und bilden den Eingabevektor auf die Laufzeit ab.}
+\end{table}
 
 \section{Parametrisierung von NN-Modellen}
 \label{parametrisierung}
