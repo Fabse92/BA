@@ -316,10 +316,12 @@ Ein Neuron mit der gewichteten Summe aller Eingaben als Übertragungsfunktion un
 \medskip
 
 Ein feedforward-Netzwerk aus Perzeptrons, in dem jedes Neuron mit allen Neuronen der folgenden Schicht verbunden ist, wird als \textit{multilayer perceptron} (kurz MLP) bezeichnet.
-Ein neuronales Netz lernt die Abbildung zwischen den vorgegebenen Paaren von Eingabe- und Ausgabedaten durch Anpassung der Gewichte an den Kanten, nachdem es mit zufälligen Kantengewichten initialisiert wurde.
-Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagation). Dabei wird der mittlere quadratische Fehler der berechneten Ausgabe gegenüber der vorgegebenen Ausgabe ermittelt und daraufhin unter Rücksichtnahme auf eine Lernrate mit Hilfe des Gradientenverfahren minimiert.
 
-\subsection{Berechenbarkeitstheorie neuronaler Netze}
+\subsubsection{Trainieren von neuronalen Netzen}
+Ein neuronales Netz lernt die Abbildung zwischen den vorgegebenen Paaren von Eingabe- und Ausgabedaten durch Anpassung der Gewichte an den Kanten, nachdem es mit zufälligen Kantengewichten initialisiert wurde.
+Diese Anpassung geschieht beim MLP durch Fehlerrückführung (engl. backpropagation). Dabei wird der mittlere quadratische Fehler der berechneten Ausgabe gegenüber der vorgegebenen idealen Ausgabe ermittelt und daraufhin unter Rücksichtnahme auf eine Lernrate mit Hilfe des Gradientenverfahren minimiert.
+
+\subsubsection{Berechenbarkeitstheorie neuronaler Netze}
 Vor der Anwendung von künstlichen neuronalen Netzen für ein Problem stellt sich die Frage, ob diese für das Problem geeignet sind. Dazu gibt es einige interessante mathematische Beweise.
 Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exakt approximieren (vgl. \cite{Rojas:1996:NNS:235222} S. 62-63), wobei lineare Separierbarkeit nach Rojas definiert ist als:
 
@@ -618,8 +620,8 @@ Ein gutes Modell, das nicht zwischen Fehlerklassen unterscheidet würde beispiel
 Der dabei gemachte Fehler gegenüber den tatsächlichen Laufzeiten ist dann charakteristisch für die Sprünge, die bei den Übergängen der Pfade beobachtet wurden.
 Wenn zum Beispiel zu den dunkelgrünen Punkten jeweils ein Wert aus der mittleren Gruppe von Messungen vorhergesagt werden würde, so würde ein sehr kleiner Fehler eine Zugehörigkeit zum dort genommenen E/A-Pfad repräsentieren, ein größerer negativer oder positiver Fehler würde darauf hinweisen, dass bei diesem Aufruf ein entsprechend anderer Pfad genommen wurde.
 \medskip
-Wenn E/A-Pfade so charakteristisch für die Zugriffszeiten sind, dann sollte ein Modell, dass zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennt eine wesentlich geringere Modellabweichung aufzeigen.
-Dies sind die Fehlerklassen-Modelle.
+Wenn E/A-Pfade charakteristisch für die Zugriffszeiten sind, dann sollte ein Modell, dass zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennt eine wesentlich geringere Modellabweichung aufzeigen.
+Sowohl Referenzmodelle, als auch NN-Modelle werden im Folgenden entwickelt und untersucht , die Fehlerklassen nutzen.
 
 \subsection{Aufbereitung der Trainingsdaten}
 
@@ -1324,7 +1326,7 @@ Besonders die höheren Zugriffsgrößen können besser von \textit{Median LinReg
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
 	}
 	\hfill
-	\subfloat[Modell \textit{LinReg G}; Achtung: verschobene Y-Achse]{
+	\subfloat[Modell \textit{LinReg G}; Obacht: verschobene Y-Achse]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_linreg_Size.png}
 	}\\
 	\subfloat[Modell \textit{Median}]{
