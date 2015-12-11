@@ -1,9 +1,9 @@
-Modell,Beschreibung,Art,Attribute
-NN-Tupel1 agg, Bildet die Attribute der Aggregate auf ihre Median Laufzeit ab,Aggregiert über Zugriffsgröße; OpTyp; Delta-Offset, Zugriffsgröße; OpTyp; Delta-Offset 
-NN-Tupel1, Bildet die Attribute der Messungen auf ihre Laufzeit ab. Es muss ein interner Mittelwert zu jedem Attribut-Tupel gebildet werden,Einzelmessungen,Zugriffsgröße; OpTyp; Delta-Offset
-NN-Tupel2, Zusätzlich zu den Attributen der aktuellen Messung; sind die Attribute und Laufzeit der vorherigen Messung bekannt,Einzelmessungen,Zugriffsgröße; OpTyp; Delta-Offset; Vorgänger Zugriffsgröße; Vorgänger OpTyp; Vorgänger Delta-Offset; Vorgänger Laufzeit
-NN-EMADurchsatz, Versucht über die Kenntnis des \glqq exponential moving averages\grqq{} des Daten-Durchsatzes die aktuelle Auslastung des E/A-Systems zu berücksichtigen,Einzelmessungen,Zugriffsgröße; OpTyp; Delta-Offset;EMA des Durchsatzes
-NN-LinRegFK,Nutzt das LinReg G Modell als Klassifikator für die Fehlerklassen. Bildet nach Klassierung der Messung die Attribute auf die Laufzeit ab,Einzelmessungen,Zugriffsgröße; OpTyp; Delta-Offset
-NN-Tupel1FK,Nutzt eine Instanz des Tupel1 Modells als Klassifikator für die Fehlerklassen. Bildet nach Klassierung der Messung die Attribute auf die Laufzeit ab,Einzelmessungen,Zugriffsgröße; OpTyp; Delta-Offset
+Modell;Beschreibung;Art;Attribute
+NN-Tupel1 agg; Bildet die Attribute der Aggregate auf ihre Median Laufzeit ab;Aggregiert über Zugriffsgröße, OpTyp, Delta-Offset; Zugriffsgröße, OpTyp, Delta-Offset 
+NN-Tupel1; Bildet die Attribute der Messungen auf ihre Laufzeit ab. Es muss ein interner Mittelwert zu jedem Attribut-Tupel gebildet werden;Einzelmessungen;Zugriffsgröße, OpTyp, Delta-Offset
+NN-Tupel2; Zusätzlich zu den Attributen der aktuellen Messung, sind die Attribute und Laufzeit der vorherigen Messung bekannt;Einzelmessungen;Zugriffsgröße, OpTyp, Delta-Offset, Vorgänger Zugriffsgröße, Vorgänger OpTyp, Vorgänger Delta-Offset, Vorgänger Laufzeit
+NN-EMA; Versucht über die Kenntnis des \glqq exponential moving averages\grqq{} des Daten-Durchsatzes die aktuelle Auslastung des E/A-Systems zu berücksichtigen;Einzelmessungen;Zugriffsgröße, OpTyp, Delta-Offset,EMA des Durchsatzes
+NN-LinRegFK;Nutzt das LinReg G Modell als Klassifikator für die Fehlerklassen. Bildet nach Klassierung der Messung die Attribute auf die Laufzeit ab;Einzelmessungen;Zugriffsgröße, OpTyp, Delta-Offset
+NN-Tupel1FK;Nutzt eine Instanz des Tupel1 Modells als Klassifikator für die Fehlerklassen. Bildet nach Klassierung der Messung die Attribute auf die Laufzeit ab;Einzelmessungen;Zugriffsgröße, OpTyp, Delta-Offset
 
 
