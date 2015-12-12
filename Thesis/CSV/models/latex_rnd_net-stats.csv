@@ -1,7 +1,7 @@
 Modell,verdeckteSchichten,Neuronen,Trainingsdauer,Iterationen
-Tupel1 Tupel1-FK,17,28,12067,1366
-Tupel1 LinReg-FK, 9,22, 1201, 283
-Tupel1, 4, 5,  222,1310
-Tupel1 Aggregiert, 1, 1,  258,7743
-Tupel1 EMA Durchsatz, 7, 5,  461,1106
-Tupel2,14,17, 2099, 368
+NN-Tupel1FK,17,28,12067,1366
+NN-LinRegFK, 9,22, 1201, 283
+NN-Tupel1, 4, 5,  222,1310
+NN-Tupel1 agg, 1, 1,  258,7743
+NN-EMA, 7, 5,  461,1106
+NN-Tupel2,14,17, 2099, 368

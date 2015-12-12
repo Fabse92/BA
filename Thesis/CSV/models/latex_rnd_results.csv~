@@ -1,5 +1,5 @@
 Modell,MAF,RMAF,RMQA,Q3,Max,RMAFTraining,Bereich,RMAFavg
-Median LinReg-Fehlerklasse ,0.00029,   11.8,   74,   9.6,   4527,NA,NA,NA
+Median LinReg-FK ,0.00029,   11.8,   74,   9.6,   4527,NA,NA,NA
 Tupel1 Tupel1-FK,0.00089, 24,  94, 22,  3676, 24,46,3782678
 Tupel1 LinReg-FK,0.00103, 31, 119, 27,  4272, 32,40,     32
 Tupel1,0.00313,103, 530, 70, 21786,104,38,    106

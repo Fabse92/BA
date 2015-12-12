@@ -1,3 +1,6 @@
-Modell,Q0.1 RMAF,Q0.1 RMQA,Q0.9 RMAF,Q0.9 RMQA,Korrekt
-Tupel1, 1.6, 2.4, 1.4, 3.6,  80
-Tupel1 LinReg-Fehlerklasse,-1.0,-1.0,-1.0,-1.0,-100
+Modell,QRMAF,QRMQA,LRMAF,LRMQA,Korrekt,FalschPositiv
+Tupel1 LinReg-FK, 1.41,  6.18, 0.90,  6.93,15.95,5.38
+Tupel1 Tupel1-FK, 1.91, 15.38, 1.47, 10.43,12.39,2.08
+Tupel2,17.08,428.47,24.10,343.09,11.12,8.43
+Tupel1 EMA Durchsatz, 5.03,  9.63, 3.81,  9.93, 4.59,3.41
+Tupel1, 3.46,  5.29, 2.52,  3.94, 0.00,0.00
