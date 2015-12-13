@@ -851,17 +851,17 @@ Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu 
 	In der Evaluierung sollen die zuvor beschriebenen Modelle in der Umsetzung auf ein reales System untersucht werden.
 	Zunächst wird in Abschnitt \ref{eval:testsystem} kurz der untersuchte Hochleistungsrechner vorgestellt.	
 	Unterkapitel \ref{eval:benchmark} beschreibt im Detail, welche Messungen auf dem System durchgeführt wurden.
-	Die erhaltenen Messdaten werden in Unterkapitel \ref{eval:exploration} genauer betrachtet. Die gewonnenen Informationen können bereits dabei helfen das E/A-System besser zu verstehen.
+	Die erhaltenen Messdaten werden in Unterkapitel \ref{eval:exploration} genauer betrachtet. Die gewonnenen Informationen können bereits dabei helfen, das E/A-System besser zu verstehen.
 	In Unterkapitel \ref{eval:fk_analyse} werden die generierten Fehlerklassen genauer analysiert.
 	Und abschließend werden in Kapitel \ref{eval:leistungsvorhersage} die Leistungsvorhersagen der verschiedenen Modelle anhand der in Abschnitt \ref{analyse:valid} eingeführten Fehlermetriken und durch die Betrachtung der Verteilung der Modellabweichungen analysiert.
 }
 \bigskip
 
-\section{Testsystem, Mistral}
+\section{Das Testsystem}
 \label{eval:testsystem}
 Als Testsystem für alle Messungen, die in dieser Arbeit untersucht werden, wurde der Hochleistungsrechner Mistral vom Deutschen Klimarechenzentrum (DKRZ) genutzt.
 Mistral befindet sich in der derzeit aktuellen Publikation vom November 2015 auf Platz 64 der von der TOP500-Organisation geführten Liste der schnellsten Supercomputer der Welt.
-Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind, diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache.
+Das System besteht aus über 1500 Knoten, die jeweils mit zwei Intel E5-2680v3 bestückt sind. Diese laufen mit einer Taktfrequenz von 2.5GHz und haben jeweils 30MiB L3 Cache.
 Das Speichersystem des Rechners läuft mit dem parallelen und verteilten Dateisystem Lustre.
 Es bietet 30 Petabyte Speicherkapazität und eine Speicherbandbreite von 300 GiB/s. Die Messungen wurden während einer üblichen Belastungssituation des Systems durchgeführt, sodass Schwankungen in der Nutzung des E/A-Systems durch andere Nutzer die Messungen beeinflusst haben können.
 
@@ -871,12 +871,12 @@ Das Testsystem wird durch eine Reihe von Experimenten untersucht.
 Mit Hilfe der daraus erhaltenen Messdaten können die vorgestellten Modelle aus Kapitel \ref{analyse:modelle} entwickelt und anschließend getestet werden.
 Um die Stärken und Schwächen der Modelle gut untersuchen zu können, wird ein systematischer Ansatz für die Experimente gewählt.\medskip
 
-Es werden vier verschiedene Experimente durchgeführt, sie repräsentieren zwei unterschiedliche Anwendungsfälle.
+Es werden vier verschiedene Experimente durchgeführt, die zwei unterschiedliche Anwendungsfälle repräsentieren.
 Bei allen Tests wurde die Datei, auf die sich die E/A-Anfragen beziehen, zunächst einmal eingelesen. Das System hat die Datei also bereits geladen, die Daten könnten also gecached sein.
 Die Testdatei ist allerdings 10GiB groß und passt daher nicht komplett in den Arbeitsspeicher, sodass Zugriffe zu einigen E/A-Anfragen über das Netzwerk auf die Festplatte mit der Datei gehen müssen.
 Das genutzte Speicherlayout ist ein \textit{off0}-Layout, das bedeutet, dass die gelesenen Daten von Position 0 des verwendeten Puffers im Arbeitsspeichers ausgelesen bzw. ausgeschrieben werden.
 Die Unterscheidung der beiden Anwendungsfälle wird bei der Art des Dateizugriffs gemacht.
-Im einem Fall wurde ein sequentieller Zugriff (\textit{seq}) auf die Datei gewählt, im anderen ein zufälliger (\textit{rnd}).
+In einem Fall wurde ein sequentieller Zugriff (\textit{seq}) auf die Datei gewählt, im anderen ein zufälliger (\textit{rnd}).
 Beim sequentiellen Layout werden die E/A-Operationen jeweils hintereinander auf der Datei ausgeführt. Beispielsweise liest der erste Aufruf die ersten 16KiB, der nächste die darauf folgenden 16KiB.
 Dagegen wird beim randomisierten Layout auf eine beliebige Position der Datei zugegriffen.
 Beide Anwendungsfälle werden einmal mit lesenden (\textit{R} für read) und einmal mit schreibenden (\textit{W} für write) E/A-Operationen getestet.
@@ -892,7 +892,7 @@ Da alle Messungen die Eigenschaften \textit{cached} und \textit{off0} aufweisen,
 
 \section{Exploration der Daten}
 \label{eval:exploration}
-Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich einige Übersichtsinformationen über sie zu sammeln.
+Zunächst werde ich die vier Datensätze genauer betrachten. Dazu eignet es sich, einige Übersichtsinformationen über sie zu sammeln.
 In der Tabelle \ref{tab:meta} sind für alle vier Datensätze zu den drei Attributen Dauer, Zugriffsgröße und Delta-Offset der minimale Wert, der Wert des ersten Quartils, der Median, das arithmetische Mittel, der Wert des dritten Quartils und der maximale Wert angegeben. Zusätzlich sind in Tabelle \ref{tab:korrealtionen} zu Zugriffsgröße, Delta-Offset und OpTyp die Korrelationen gegenüber der Zugriffsdauer angegeben.\medskip
 
 Die Korrelation zwischen Delta-Offset und Laufzeit ist für die Datensätze mit sequentiellen Zugriffen nicht berechenbar. Dies liegt daran, dass der Delta-Offset dort durchgehend 0 beträgt, das ist gerade das Kennzeichen des sequentiellen Zugriffs.
@@ -939,15 +939,14 @@ und SEQ-W bzw. RND-R und RND-W betrachtet werden, da der Operationstyp auf den e
 \end{table}
 \medskip
 
-Wie das Modell zur Laufzeit in Kapitel \ref{analyse:ea_modell} postuliert hat ist die Korrelation zwischen Zugriffsgröße und Laufzeit sehr stark.
-Die wesentlich größere Korrelation bei sequentiellen Datensatz spricht für einen erfolgreichen Einsatz von Caching-Strategien, wie der Read-Ahead-Einstellung.
-Die geringe Korrelation zwischen Zugriffszeit und Delta-Offset auf RND kann zwei Ursachen haben: Entweder ist die Abhängigkeit der Attribute wirklich sehr gering oder er lässt sich nicht durch einen linearen Zusammenhang über den gesamte Datensatz ausdrücken. 
+Wie das Modell zur Laufzeit in Kapitel \ref{analyse:ea_modell} postuliert hat, ist die Korrelation zwischen Zugriffsgröße und Laufzeit sehr stark.
+Die geringe Korrelation zwischen Zugriffszeit und Delta-Offset auf RND kann zwei Ursachen haben: Entweder ist die Abhängigkeit der Attribute wirklich sehr gering oder sie lässt sich nicht durch einen linearen Zusammenhang über den gesamte Datensatz ausdrücken. 
 Die zweite Erklärung trifft gerade für OpTyp zu. 
 Das kann bereits beim Vergleich der Mediane und arithmetischen Mittelwerte zwischen SEQ-R und SEQ-W bzw. RND-R und RND-W erkannt werden.
 Obwohl bei den beiden Experimenten mit sequentiellen Zugriffen die exakt gleichen Zugriffe gemacht wurden, ist das arithmetische Mittel der Zugriffszeiten auf SEQ-W etwa 13\% und der Median etwa 65\% höher, die errechnete Korrelation liegt dagegen nur bei 1.8\%. Zwischen RND-R und RND-W ergibt sich ein ähnliches Bild.
-Um dies noch genauer zu untersuchen werden die arithmetischen Mittelwerte der Zugriffszeiten auf SEQ-R und SEQ-W für einzelne Zugriffsgrößen miteinander verglichen.
+Um dies noch genauer zu untersuchen, werden die arithmetischen Mittelwerte der Zugriffszeiten auf SEQ-R und SEQ-W für einzelne Zugriffsgrößen miteinander verglichen.
 Die mittlere Zugriffsdauer für 16MiB liegt im sequentiellen Fall für lesende Zugriffe bei 14.09 Millisekunden und für schreibende bei 16.96 Millisekunden, das Lesen geht also etwa 17\% schneller.
-Für die Zugriffsgröße von einem 4KiB ergibt sich mit einer Zugriffszeit von 0.0154 Millisekunden beim Schreiben gegenüber 0.0139 Millisekunden für das Schreiben eine etwa 10\% längere Laufzeit beim Lesen.
+Für die Zugriffsgröße von einem 4KiB ergibt sich mit einer Zugriffszeit von 0.0154 Millisekunden beim Lesen gegenüber 0.0139 Millisekunden für das Schreiben eine etwa 10\% längere Laufzeit beim Lesen.
 
 \begin{table}
 	\scriptsize
@@ -974,7 +973,7 @@ Die Korrelation der beiden Attribut Zugriffsgröße und Laufzeit ist deutlich er
 
 Wenn nicht anders angegeben wird in allen Graphen nur jeder 25te Datenpunkt gezeichnet, um es etwas übersichtlicher zu machen.
 Zudem werden alle Punkte halbtransparent dargestellt, sodass überdeckte Schichten und Häufungspunkte erkannt werden können.
-In Zeitreihen Abbildungen werden die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten, um den wesentlichen Teil der Punkte besser erkennen zu können.
+In den Abbildungen, in denen die Messungen in zeitlicher Reihenfolge abgebildet werden, werden die obersten 1\%, also die langsamsten Datenpunkte, abgeschnitten, um den wesentlichen Teil der Punkte besser erkennen zu können.
 Oft ist eine logarithmische Darstellung der Y-Achse hilfreich, damit zwischen den Messungen einer Zugriffsgröße unterschieden werden kann. 
 \begin{figure}
 	\subfloat[Messungen in Zeitreihe zu SEQ-R]{
@@ -996,14 +995,14 @@ Oft ist eine logarithmische Darstellung der Y-Achse hilfreich, damit zwischen de
 \end{figure} 
 
 \subsubsection{Verteilung der Zugriffszeiten}
-Der in Abschnitt \ref{analyse:ea_pfad_zurvorhersage} Beschriebene Zusammenhang zwischen E/A-Pfad und Zugriffszeit wurde anhand von Abbildung \ref{Laufzeiten_Zeitreihe}a verdeutlicht.
+Der in Abschnitt \ref{analyse:ea_pfad_zurvorhersage} beschriebene Zusammenhang zwischen E/A-Pfad und Zugriffszeit wurde anhand von Abbildung \ref{Laufzeiten_Zeitreihe}a verdeutlicht.
 Für RND-R ergeben sich ähnliche Beobachtungen, während die Abhängigkeit zwischen E/A-Pfad und Laufzeit bei den beiden Abbildungen zu Messreihen mit zufälligen Dateizugriffen weniger deutlich zu sein scheint. Aber auch hier lässt sich teilweise eine Aufspaltung der Messungen mit gleicher Zugriffsgröße in zwei Gruppen beobachten.\medskip
 
 Wenn die Messpunkte nach der Laufzeit sortiert werden (siehe Abbildung \ref{Laufzeiten_Sortiert}), können die verschiedenen Stufen der Laufzeiten besser betrachtet werden.
 Bestimmte Laufzeiten kommen häufiger vor, sie kennzeichnen sich als Auftritt der Stufen. Andere Laufzeiten kommen dagegen seltener vor, sie bilden eine Senkrechte.
 Die Stufen entstehen einerseits durch die Messung unterschiedlicher Zugriffsgrößen (mit größeren Abständen zwischen verschiedenen Größen), teilweise lassen sie sich aber auch als die beschriebenen E/A-Pfade im System interpretieren.\medskip
 
-Die geringe Aufteilung der Messungen in Gruppen bei den beiden Datensätzen zu schreibenden E/A-Aufrufen, sprechen dafür, dass die Stufen der Messung verschiedener Zugriffsgrößen zuzusprechen ist.
+Die geringe Aufteilung der Messungen in Gruppen bei den beiden Datensätzen zu schreibenden E/A-Aufrufen sprechen dafür, dass die Stufen durch die Messung verschiedener Zugriffsgrößen entstanden sind.
 Der andere Fall lässt sich besonders gut bei RND-R erkennen. Die Zugriffszeiten zu einer Größe teilen sich in Abbildung \ref{Laufzeiten_Zeitreihe}c in etwa drei Gruppen auf, eine langsame, eine mittlere und eine schnelle.
 Die Gruppen verschiedener Zugriffsgrößen können teilweise zu einem E/A-Pfad zusammengefasst werden. Die Häufungen finden sich dann auf einer horizontalen Linie. 
 Die Laufzeit ist für die horizontal nebeneinanderliegenden Gruppen nicht vorwiegend von der Zugriffsgröße abhängig, sondern in unserer Interpretation von dem Pfad, den die entsprechenden Aufrufe im System genommen haben. 
@@ -1055,8 +1054,8 @@ In einigen Bildern lassen sich auch kurzzeitige Maxima oder Minima zwischen den 
 Beim sequentiell lesenden Fall für ein Byte (Abbildung \ref{fig:groesse1}a) dauern die ersten Messungen jeweils wesentlich länger, bis sich ein niedriger Wert eingependelt hat. Es könnte sein, dass hier nach einigen Zugriffen die Read-Ahead Caching-Strategie greift, die geforderten Daten befinden sich dann im Moment der Anfrage bereits im Cache. Dies macht auch Sinn, da der sequentielle Zugriff sehr gut vorhersagbar ist.\\
 Für die randomisierten Datensätze ist ein solches Verhalten nicht möglich und kann auch in keiner Abbildung erkannt werden.\\
 Ein interessantes Verhalten kann in Abbildung \ref{fig:groesse16384}a beobachtet werden.
-Zu Beginn jeder Messerreihe werden die ersten E/A-Zugriffe zuverlässig sehr schnell ausgeführt, dann steigt die mittlere Zugriffszeit rapide an und oszilliert stark.
-Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt, bis der Platz nicht mehr ausreicht und aufwendigere Speicherverwaltungen Platz für die neuen Daten im Speicher schaffen müssen.
+Zu Beginn jeder Messreihe werden die ersten E/A-Zugriffe zuverlässig sehr schnell ausgeführt, dann steigt die mittlere Zugriffszeit rapide an und oszilliert stark.
+Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt bis der Platz nicht mehr ausreicht und aufwendigere Speicherverwaltungen Platz für die neuen Daten im Speicher schaffen müssen.
 
 \begin{figure}
 	\subfloat[Messungen mit Zugriffsgröße 1B auf SEQ-R]{
@@ -1117,13 +1116,14 @@ Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt, bis
 \clearpage
 \subsubsection{Ausschnittweise Betrachtung der Messungen}
 Um die Messdaten zur Untersuchung noch detaillierter darzustellen, müssen kleine Ausschnitte herausgegriffen werden. Zunächst betrachte ich die ersten $250$ Messungen jedes Experiments.
-In der Abbildung \ref{fig:first250}b zum Datensatz SEQ-W eine gewisse Periodizität der Zugriffszeiten vorhanden zu sein. Etwa alle 45 Messungen gibt es einen größeren Sprung, alternierend sind die Laufzeiten jeweils etwas langsamer und schneller.
+In der Abbildung \ref{fig:first250}b zum Datensatz SEQ-W scheint eine gewisse Periodizität der Zugriffszeiten vorhanden zu sein. Etwa alle 45 Messungen gibt es einen größeren Sprung, alternierend sind die Laufzeiten jeweils etwas langsamer und schneller.
 Nach genau $123$ Punkten scheint sich das Muster zu wiederholen, dort befindet sich der zweitgrößte Messwert der Laufzeit in diesem Ausschnitt.\\
 Ein erstes simples Modell könnte es nun sein, eine Fortführung der augenscheinlichen Periodizität anzuwenden, indem die ersten $123$ Zugriffszeiten für die Laufzeiten 123 bis 246 vorhergesagt werden.
 Wenn man diese Vorhersagen jedoch über die tatsächlichen Zugriffszeiten legt (siehe Abbildung \ref{fig:periodicity}), so erkannt man doch, dass der Verlauf der Messungen von dieser Periode abweicht.\\ 
 Bei den anderen Graphen kann keine so simple Periodizität beobachtet werden.
 In den Graphen \ref{fig:first250}a und \ref{fig:first250}c sind besonders starke Ausreißer nach oben in den Laufzeiten zu erkennen. In Abbildung \ref{fig:first250}d sind dagegen einige Ausreißer, die wesentlich schneller bearbeitet wurden.\\
-Einzelne sehr starke Ausreißer, wie bei SEQ-R, sind vermutlich durch außergewöhnlich große queue-Zeiten entstanden, regelmäßigere Ausreißer sind ein Zeichen für systematisch anders behandelte E/A-Zugriffe, die sich vielleicht durch verschiedene E/A-Pfade unterscheiden.
+Einzelne sehr starke Ausreißer wie bei SEQ-R sind vermutlich durch außergewöhnlich große queue-Zeiten entstanden.
+Regelmäßigere Ausreißer sind ein Zeichen für systematisch anders behandelte E/A-Zugriffe, die sich vielleicht durch verschiedene E/A-Pfade unterscheiden.
 
 \begin{figure}
 	\subfloat[Die ersten 250 Messungen in SEQ-R]{
@@ -1156,7 +1156,7 @@ Einzelne sehr starke Ausreißer, wie bei SEQ-R, sind vermutlich durch außergew�
 \medskip
 
 Eine weitere Detailbetrachtung mache ich willkürlich bei den Messungen 100001 bis 100250.
-In diesem Fall scheint eine Periodizität in den Zugriffszeiten zu SEQ-R vorhanden zu sein. In Abbildung \ref{fig:periodicity100001} wurde eine Überlappung von Laufzeit und Vorhersage wie zuvor durchgeführt wird (diesmal werden die ersten 129 Messungen wiederholt). Man erkennt, dass dieses simple Modell die Ausreißer für diesen kleinen Ausschnitt tatsächlich exakt vorhersagen kann.\\
+In diesem Fall scheint eine Periodizität in den Zugriffszeiten zu SEQ-R vorhanden zu sein. In Abbildung \ref{fig:periodicity100001} wurde eine Überlappung von Laufzeit und Vorhersage wie zuvor durchgeführt (diesmal werden die ersten 129 Messungen wiederholt). Man erkennt, dass dieses simple Modell die Ausreißer für diesen kleinen Ausschnitt tatsächlich exakt vorhersagen kann.\\
 Im Allgemeinen kann dies jedoch offensichtlich nicht funktionieren.
 Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems scheint gerechtfertigt zu sein.
 Ein Modell, das versucht diese auszunutzen muss dabei eine komplexere Methode als schlichtes Übertragen vorheriger Leistungswerte ausnutzen, ansonsten kann es wohl nur in äußerst eingeschränktem Maße korrekte Leistung vorhersagen.
@@ -1197,9 +1197,9 @@ Alle Modelle werden auf den zusammengeführten Datensätzen aus lesenden und sch
 Zunächst werden zu einer Zugriffsgröße alle Messreihen mit lesenden Aufrufen gezeichnet, danach kommen die schreibenden Zugriffe. 
 Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse der Residuen von \textit{LinReg G} entstanden sind.\medskip
 
-In \ref{fig:error_class_clustering_seq}a, sowie \ref{fig:error_class_clustering_rnd}a sind in Zeitreihe die Residuen aufgezeichnet, die \textit{LinReg G} auf den sequentiell, respektive randomisiert ausgeführten Messungen, mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten erreicht hat.
+In den Abbildungen \ref{fig:error_class_clustering_seq}a und \ref{fig:error_class_clustering_rnd}a sind in Zeitreihe die Residuen aufgezeichnet, die \textit{LinReg G} auf den sequentiell, respektive randomisiert, ausgeführten Messungen mit seinen Vorhersagen gegenüber den tatsächlichen Laufzeiten erreicht hat.
 Das Modell \textit{LinReg G} kann nicht zwischen den Operationsarten unterscheiden, auf SEQ führt dies zu etwa gleichen Modellabweichungen für lesende und schreibende Zugriffe, auf RND werden die weit verstreuten Laufzeiten zu lesenden Zugriffen schlechter approximiert.
-Die absolute Abweichung wächst bei sequentiellen Zugriff mit der Größe der E/A-Aufrufe, für die zufälligen Zugriffe gilt dies nur bedingt. Auf den kleinsten Zugriffsgrößen werden kleine Fehler gemacht, danach bleibt der Betrag in etwa auf einem Niveau.
+Die absolute Abweichung wächst bei sequentiellem Zugriff mit der Größe der E/A-Aufrufe, für die zufälligen Zugriffe gilt dies nur bedingt. Auf den kleinsten Zugriffsgrößen werden kleine Fehler gemacht, danach bleibt der Betrag in etwa auf einem Niveau.
 Ein Grund für höhere Abweichungen bei Messungen mit längeren Zugriffszeiten ist, dass ein bestimmter relativer Fehler zu entsprechend höheren absoluten Fehlern führt.
 Für den plötzlichen und sehr starken Anstieg der Residuen auf höheren Zugriffsgrößen kann dies aber vermutlich nicht die einzige Erklärung sein.
 
@@ -1245,7 +1245,7 @@ Die Unterscheidung in verschiedene Klassen findet in horizontalen Linien statt.
 Jede Klasse deckt einen bestimmten Bereich der Residuen ab.
 Bei den sequentiellen Messungen werden nur die höheren Zugriffsgrößen durch Fehlerklassen differenziert, bei den zufälligen Zugriffen wird bereits bei kleineren Zugriffsgrößen unterschieden. Die auf RND gefunden Fehlerklassen beziehen sich größtenteils auf die lesenden Zugriffe, dies deckt sich mit der Beobachtung in Kapitel \ref{eval:exploration}, dass es in RND-R große Varianzen in den Laufzeiten zu einer Zugriffsgröße gibt.\medskip
 
-Bei der Betrachtung der Graphen in denen nach Fehler sortiert wurde (Abbildung \ref{fig:error_class_clustering_seq}c und \ref{fig:error_class_clustering_rnd}c ), können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden.
+Bei der Betrachtung der Graphen, in denen nach Fehler sortiert wurde (Abbildung \ref{fig:error_class_clustering_seq}c und \ref{fig:error_class_clustering_rnd}c ), können die Anzahlen der jeweils zugeordneten Punkte zu den Klassen gut quantifiziert werden.
 In beiden Fällen enthält eine Klasse den Großteil der Punkte.
 Die Klassen, die Bereiche mit ähnlich großen Residuen abdecken, enthalten noch einen größeren Anteil der Messdaten. Den weiteren Fehlerklassen werden nur sehr wenige Messungen zugeordnet.
 Es gibt recht wenig Messungen mit sehr hohen und niedrigen Residuen, die werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten 5\% der Modellabweichungen vom sequentiellen Datensatz in 5 Klassen aufgeteilt.\medskip
@@ -1253,15 +1253,15 @@ Es gibt recht wenig Messungen mit sehr hohen und niedrigen Residuen, die werden 
 Die beiden Abbildungen \ref{fig:error_class_clustering_seq}d und \ref{fig:error_class_clustering_rnd}d zeigen die Dichteverteilungen der Fehlerklasse, die den kleinsten Fehler abdeckt, sowie der nächst kleineren und größeren Fehlerklasse.\\
 Idealerweise sollte die Dichte einer Fehlerklasse nur eine Spitze enthalten. Die Klasse repräsentiert dann genau einen Fehlerbetrag, der dann einem E/A-Pfad entsprechen sollte.\\
 Auf den sequentiellen Daten weisen die Dichten klar voneinander unterscheidbare Spitzen auf.
-Ebenso hat die Dichten der Fehlerklasse links vom Nullpunkt, sowie die um den Nullpunkt, auf RND klar definierte Spitzen. Die Verteilung der Dichte rechts vom Nullpunkt auf den randomisierten Daten weist allerdings keine Spitze auf. Diese Klasse stellt daher keinen E/A-Pfad da.\\
+Ebenso hat die Dichte der Fehlerklasse links vom Nullpunkt sowie die um den Nullpunkt auf RND klar definierte Spitzen. Die Verteilung der Dichte rechts vom Nullpunkt auf den randomisierten Daten weist allerdings keine Spitze auf. Diese Klasse stellt daher keinen E/A-Pfad dar.\\
 Die Fehlerklassen mit mehreren Spitzen hätten unter Umständen noch weiter unterteilt werden müssen, um die E/A-Pfade korrekt darzustellen.\\
-Diese Beobachtungen könnten darauf hinweisen, dass auf den Messungen mit sequentiellen Zugriff eigentlich eine größere Anzahl Cluster-Gruppen benötigt worden wäre, um alle E/A-Pfade zu repräsentieren, während bei den Messungen mit zufälligen Dateizugriffen weniger genutzt werden müssten. \medskip
+Diese Beobachtungen könnten darauf hinweisen, dass auf den Messungen mit sequentiellem Zugriff eigentlich eine größere Anzahl Cluster-Gruppen benötigt worden wäre, um alle E/A-Pfade zu repräsentieren, während bei den Messungen mit zufälligen Dateizugriffen weniger genutzt werden müssten. \medskip
 
 Das Modell \textit{LinReg G} scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln.
 Es gibt allerdings einige Datenpunkte, die das Modell sehr schlecht vorhersagen konnte. Die Annahme ist nun, dass die Messergebnisse mit stark abweichenden Residuen im Allgemeinen unterschiedlich vom System verarbeitet wurden, sodass Fehlerklassen die unterschiedlichen E/A-Wege im System repräsentieren. 
 Dabei muss immer beachtet werden, dass die Vorhersage von Messungen mit höheren Zugriffsgrößen auch zu größeren Abweichungen führt.\\
-Ein Modell, dass eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzuordnungen vornimmt, sollte die Ausreißer, die \textit{LinReg G} schlecht bestimmt hat, wesentlich besser vorhersagen können.
-Für die Vorhersage der vielen Messungen, mit Residuen um den Nullpunkt herum, hat ein Modell mit Fehlerklasseninformationen jedoch keine weiteren Vorteile. 
+Ein Modell, das eine Modellierung mit dem zusätzlichen Wissen dieser Klassenzuordnungen vornimmt, sollte die Ausreißer, die \textit{LinReg G} schlecht bestimmt hat, wesentlich besser vorhersagen können.
+Für die Vorhersage der vielen Messungen mit Residuen um den Nullpunkt herum hat ein Modell mit Fehlerklasseninformationen jedoch keine weiteren Vorteile. 
 
 \subsubsection{Detailbetrachtung der Fehlerklassen}
 \begin{table}
@@ -1287,16 +1287,16 @@ Für die Vorhersage der vielen Messungen, mit Residuen um den Nullpunkt herum, h
 \end{table}
 
 In den Tabellen \ref{tab:error_classes_switched} wurden die Fehlerklassen nach dem arithmetischen Mittel der Residuen (Durchschnitt) der enthaltenen Datenpunkte sortiert.
-Zu jeder Fehlerklasse wird der von ihnen abgedeckte Bereich der Residuen angegeben, dieser erstreckt sich von der ihm zugeordneten Messung mit dem kleinsten Fehler (Min) bis zu der Messung mit größten Fehler (Max).
-Desweiteren ist zu jeder Klasse der mittlere Durchsatz in Byte pro Sekunde, die mittlere Zugriffsgröße in Bytes und die Mittlere Laufzeit in Sekunden.
-Zuletzt wird die Anzahl Datenpunkte angegeben, die sich in dem abgedeckten Bereich der Klasse befinden, zum einen für den Datensatz auf dem sie erstellt wurden und auch für den jeweils anderen Datensatz.\medskip
+Zu jeder Fehlerklasse wird der von ihnen abgedeckte Bereich der Residuen angegeben, dieser erstreckt sich von der ihm zugeordneten Messung mit dem kleinsten Fehler (Min) bis zu der Messung mit dem größten Fehler (Max).
+Desweiteren ist zu jeder Klasse der mittlere Durchsatz in Byte pro Sekunde, die mittlere Zugriffsgröße in Bytes und die mittlere Laufzeit in Sekunden aufgeführt.
+Zuletzt wird die Anzahl Datenpunkte, die sich in dem abgedeckten Bereich der Klasse befinden, angegeben, zum einen für den Datensatz auf dem sie erstellt wurden und auch für den jeweils anderen Datensatz.\medskip
 
 An den Anzahlen der Messungen, die den Fehlerklassen zugeordnet wurden (\textit{auf SEQ selbst} bzw. \textit{auf RND selbst}) spiegelt sich wieder, was bereits zuvor beobachtet wurde.
-Den Fehlerklassen im Bereich der kleinen Residuen werden sehr viele Messungen zugeordnet, umso größer der absolute Wert der abgedeckten Residuen ist, desto weniger Messungen gehören zu der Klasse.\medskip
+Den Fehlerklassen im Bereich der kleinen Residuen werden sehr viele Messungen zugeordnet. Umso größer der absolute Wert der abgedeckten Residuen ist, desto weniger Messungen gehören zu der Klasse.\medskip
 
-Wenn die Fehlerklassen E/A-Pfade repräsentieren sollten sie sich durch einen spezifischen Durchsatz kennzeichnen.
+Wenn die Fehlerklassen E/A-Pfade repräsentieren, sollten sie sich durch einen spezifischen Durchsatz kennzeichnen.
 Für die Fehlerklassen auf RND wird dies im Wesentlichen auch erreicht.
-Den ansteigenden durchschnittlichen Residuen werden abnehmende Durchsätze zugeordnet, es gibt ein umgekehrt proportionales Verhalten zwischen Residuum und Durchsatz.
+Den ansteigenden durchschnittlichen Residuen werden abnehmende Durchsätze zugeordnet, es gibt also ein umgekehrt proportionales Verhalten zwischen Residuum und Durchsatz.
 Die Fehlerklassen 4, 5 und 6 entsprechen alle etwa dem gleichen Durchsatz, hier scheint es eher eine Differenzierung nach Zugriffsgrößen gegeben zu haben.
 Die Zuordnung von Durchsatz zum mittleren Residuum auf SEQ gelingt nicht so erfolgreich.\medskip
 
@@ -1309,7 +1309,7 @@ Insgesamt scheint die Zuordnung von Fehlerklassen zu E/A-Pfaden durchaus zu geli
 \subsubsection{Anwendung der Fehlerklassen auf dem jeweils anderen Datensatz}
 Anhand einer weiteren Betrachtung der Fehlerklassen sollen die Unterschiede zwischen den Klassen auf den beiden Datensätzen analysiert werden.
 Dazu werden die Fehlerklassen-Klassifikatoren auf einem Datensatz generiert und auf dem jeweils anderen Datensatz zur Zuordnung der Messungen genutzt.
-Eine Skizze zu diesem Ablauf ist in Abbildung \ref{fig:switched_classificators}
+Eine Skizze zu diesem Ablauf ist in Abbildung \ref{fig:switched_classificators} zu sehen.
 
 \begin{figure}
 	\begin{center}
@@ -1321,21 +1321,21 @@ Eine Skizze zu diesem Ablauf ist in Abbildung \ref{fig:switched_classificators}
 	\end{center}
 \end{figure} 
 
-Die Neuzuordnung wurde ebenso durchgeführt, wie es der k-means-Algorithmus gemacht wird.
-Für alle Klassen wurden die mittleren Residuen nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse mit dem mittleren Residuum zugeordnet, der am nächsten an seinem eigenen Residuum liegt.\medskip
+Die Neuzuordnung wurde ebenso gemacht, wie die Klassierung vom k-means-Algorithmus durchgeführt wird.
+Für alle Klassen wurden die mittleren Residuen nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse zugeordnet, die am nächsten an seinem eigenen Residuum liegt.\medskip
 
 Die Ergebnisse sind einerseits in Abbildung \ref{fig:error_classes_switched} dargestellt und andererseits in den letzten Spalten in den Tabellen \ref{tab:error_classes_switched}a und \ref{tab:error_classes_switched}b beziffert.\\
-Für SEQ ist deutlich zu sehen, dass ein Großteil der Punkte der selben Fehlerklasse zugeordnet worden sind. Dadurch findet zwischen den Messungen in der Abbildung \ref{fig:error_classes_switched}a keine Unterscheidung mehr statt.
-In der Abbildung \ref{fig:error_classes_switched}b mit sortierten Residuen ist zu erkennen, dass das gesamte Plateau aus Messungen mit Residuen um den Nullpunkt und die Fortsätze in beide Richtung zu dieser einen Klasse gehören.
+Für SEQ ist deutlich zu sehen, dass ein Großteil der Punkte derselben Fehlerklasse zugeordnet worden sind. Dadurch findet zwischen den Messungen in der Abbildung \ref{fig:error_classes_switched}a keine Unterscheidung mehr statt.
+In der Abbildung \ref{fig:error_classes_switched}b mit sortierten Residuen ist zu erkennen, dass das gesamte Plateau aus Messungen mit Residuen um den Nullpunkt und die Fortsätze in beide Richtungen zu dieser einen Klasse gehören.
 Die Zahlen zu \textit{auf SEQ} in Tabelle \ref{tab:error_classes_switched}b bestätigen diese Erkenntnis.
-Es befinden sich 836841 von von 837600 Messungen in der selben Klasse, wenn RND-Fehlerklassen auf SEQ genutzt werden.
+Es befinden sich 836841 von von 837600 Messungen in derselben Klasse, wenn RND-Fehlerklassen auf SEQ genutzt werden.
 Dies ist die Klasse mit kleinstem mittleren Residuum, der auch auf RND selbst ein Großteil der Messungen zugeordnet wurden.\medskip
 
 Dagegen wird bei RND mit Fehlerklassen aus SEQ (Abbildungen \ref{fig:error_class_clustering_rnd}c und \ref{fig:error_class_clustering_rnd}d) in dem Bereich mit kleinerem Fehler nun stärker als zuvor differenziert, während alle Messungen mit größerem Residuum die selbe Klasse haben.
 Die Fehlerklassen von SEQ sind so gesehen recht gut zur Differenzierung der Datenpunkte auf RND nutzbar.
-Dies ist auch Tabelle \ref{tab:error_classes_switched}a den Werten für \textit{auf RND} zu entnehmen. Die meisten Messungen wurden Klasse 2 zugeordnet, allerdings wurden auch den anderen Klassen einige Messungen zugewiesen.
-Dies ist dem Umstand geschuldet, dass die SEQ-Fehlerklassen in dem Bereich mit kleinem Residuum stärker differenziert als die RND-Fehlerklassen.
-Da die aller meisten Messungen aus RND zur Klasse mit dem geringsten Residuum gehören, konnten diese Messungen nun etwas besser unterschieden werden.\medskip
+Dies ist auch in Tabelle \ref{tab:error_classes_switched}a den Werten für \textit{RND} zu entnehmen. Die meisten Messungen wurden Klasse 2 zugeordnet, allerdings wurden auch den anderen Klassen einige Messungen zugewiesen.
+Dies ist dem Umstand geschuldet, dass die SEQ-Fehlerklassen in dem Bereich mit kleinem Residuum stärker differenzieren als die RND-Fehlerklassen.
+Da die allermeisten Messungen aus RND zur Klasse mit dem geringsten Residuum gehören, konnten diese Messungen nun etwas besser unterschieden werden.\medskip
 
 Diese Beobachtungen ergeben sich, da die Aufrufe mit sequentiellen Dateizugriff im Allgemeinen erheblich kleinere Residuen haben, als die Aufrufe mit zufälligem Dateizugriff.
 
@@ -1546,7 +1546,7 @@ Die Analyse zu den komplexeren Modellen, die auf neuronalen Netzen basieren, ist
 	\item Es wird zu jedem Modell das neuronale Netz betrachtet, das bei der Untersuchung des Parameterraums gefunden wurde und den geringsten \textit{MSPE}-Wert erzielt hat.
 Informationen über die Struktur der gefundenen Netze und den Aufwand des Trainingsprozesses finden sich in Tabelle \ref{tab:model-stats}. Im Detail sind dies die Anzahl der verdeckten Schichten, die Anzahl Neuronen pro Schicht, die Anzahl Iterationen, die der Algorithmus gebraucht hat, bis der Schwellenwert für die Konvergenz erreicht war und die Trainingsdauer, also wie lange die Berechnung des Netzes tatsächlich gedauert hat.
 	\item In Tabelle \ref{tab:results} sind für alle NN-Modelle die Werte der verschiedenen Fehlermetriken angegeben, zusätzlich sind zum Vergleich die Referenzmodelle \textit{Durchschnitt}, \textit{LinReg G} angewendet auf individuelle Messungen und \textit{LinRegFK Median agg} aufgelistet.
-	\item Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißervorhersage betrachtet. In der Tabelle sind alle beschriebenen Fehlermetriken zu den NN-Modellen auf SEQ angegeben. Wie bereits beschrieben wurde, gibt es bei den Messungen mit zufälligen Dateizugriffen zu wenig Messungen pro Attribut-Tupel um die Ausreißervorhersage auf diesen Daten sinnvoll zu betrachten.
+	\item Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißervorhersage betrachtet. In der Tabelle sind alle beschriebenen Fehlermetriken zu den NN-Modellen auf SEQ angegeben. Wie bereits beschrieben wurde, gibt es bei den Messungen mit zufälligen Dateizugriffen zu wenig Messungen pro Attribut-Tupel, um die Ausreißervorhersage auf diesen Daten sinnvoll zu betrachten.
 \end{itemize}
 Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen auf den Testergebnissen geschildert, dann werden im Detail die Ergebnisse von den Modellen \textit{NN-Tupel1} und \textit{NN-LinRegFK} betrachtet.
 
@@ -1616,17 +1616,17 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 Die Strukturen der erhaltenen neuronalen Netze sind teilweise recht erstaunlich.
 Einige Netze sind äußerst komplex.
 So hat beispielsweise das erhaltene Netz zu \textit{NN-Tupel1FK} auf RND 17 verdeckte Schichten mit jeweils 28 Neuronen.
-Die Berechnungen der vorhergesagte Laufzeit aus den vier Attributen des Eingabevektors zu diesem Netz sind entsprechend äußerst aufwendig.
-Auch das Lernverfahren zum Erstellen des Netzes selbst war sehr aufwendig und hat über 3.5 Stunden gedauert.
+Das Lernverfahren zum Erstellen des Netzes selbst war recht aufwendig und hat über 3.5 Stunden gedauert.
 Trotz dieser komplexen Struktur des Netzes wurde keine zu starke Anpassung an den Trainingsdatensatz betrieben, denn der erreiche \textit{MAPE} auf Trainings- und Testdaten ist mit etwa 24\% gleich. Andere Fälle, wie \textit{NN-Tupel1FK} auf SEQ, oder \textit{NN-Tupel2} auf SEQ und RND weisen ein ähnliches Verhalten auf; die berechneten Netze sind sehr komplex, der Fehler auf Trainings- und Testdaten aber gleichauf.\\
-Daraus kann entweder geschlussfolgert werden, dass es bei einigen Modellierungen sehr aufwendig ist, aus den gegebenen Informationen gute Vorhersagen für die Laufzeiten zu berechnen, oder aber, dass sich Trainings- und Testdatensätze zu ähnlich sind, sodass ein eigentlich überangepasstes Netz gute Ergebnisse erzielt. Es ist gut möglich, dass eine Kombination beider Gründe der Wahrheit am nächsten kommt.\\
+Daraus kann entweder geschlussfolgert werden, dass es bei einigen Modellierungen sehr aufwendig ist, aus den gegebenen Informationen gute Vorhersagen für die Laufzeiten zu berechnen, oder aber, dass sich Trainings- und Testdatensätze zu ähnlich sind, sodass ein eigentlich überangepasstes Netz gute Ergebnisse erzielt.
+Es ist gut möglich, dass eine Kombination beider Gründe der Wahrheit am nächsten kommt.\\
 Da die Trainingsdaten 1000 Messungen zu jeder gemessenen Zugriffsgröße enthalten und dies scheinbar der wichtigste Indikator für die Laufzeit der Messungen ist, könnte die Überanpassung an die Trainingsdaten durchaus ein Problem sein.\medskip
 
 Ob die Strukturen der neuronalen Netze zu gleichmäßiger Konvergenz geführt haben, kann an den Werten für \textit{Avg-MAPE} abgelesen werden.\\
 Die meisten Strukturen erreichen konstant gute Ergebnisse über die 12 trainierten Netze.
 Bei der Suche nach guten Parametern für die NN-Modelle ist aber immer wieder aufgefallen, dass einige Strukturen höchst instabil sind.
 Ein solcher Fall ist mit \textit{NN-Tupel1FK} auf RND auch unter den Netzen mit besten \textit{MSPE}-Wert gelandet.
-Während der \textit{MAPE} des erfolgreichen Netzes nur 24\% beträgt, beträgt der durchschnittliche \textit{MAPE} über die 12 Netze 3782678\%.
+Während unter den Netzen zu diesem Modell, das mit dem geringsten \textit{MSPE} einen \textit{MAPE} von nur 24\% erreicht, beträgt der durchschnittliche \textit{MAPE} über die 12 Netze 3782678\%.
 Die Ergebnisse einiger Strukturen von neuronalen Netzen hängen also sehr stark von der Initialisierung der Kantengewichte ab.\\
 Aus dieser Beobachtung wird klar, für reproduzierbare und verlässliche Ergebnisse in den neuronalen Netzen, sollte in Betracht gezogen werden, nicht nur nach einem Netz mit den besten Ergebnissen zu suchen, sondern auch die gemittelten Ergebnisse über eine Mehrzahl Netze mit unterschiedlicher Initialisierung zu berücksichtigen.
 
@@ -1634,6 +1634,15 @@ Aus dieser Beobachtung wird klar, für reproduzierbare und verlässliche Ergebni
 Wie in \ref{back_nn} geschrieben wurde, können künstliche neuronale Netze nicht-lineare Zusammenhänge modellieren.
 Außer \textit{NN-Tupel2} auf SEQ gelingt es allen NN-Modellen bessere Ergebnisse, als \textit{LinReg G} zu erzielen. Dies bestätigt die zuvor gewonnene Einsicht, dass lineare Zusammenhänge unzureichend für die Beschreibung der E/A-Leistung der Messungen sind.
 Die nicht-linearen Abhängigkeiten können von den NN-Modellen für bessere Leistungsvorhersagen ausgenutzt werden.\medskip
+
+Bei der Betrachtung linearer Modelle muss allerdings auch \textit{NN-Tupel1 agg} auf RND berücksichtigt werden.
+Auffällig ist sind die vergleichsweise kleinen Netze die zu \textit{NN-Tupel1 agg} erstellt wurden.
+Auf RND kommt das Modell mit einer einzigen verdeckten Schicht mit einem Neuron aus.
+Mit einer solchen Struktur kann das Netz nur lineare Zusammenhänge des Eingangsvektors mit der Laufzeit ausnutzen, denn jeder Wert des Vektors wird mit nur einem Kantengewicht verrechnet und dann in dem einen Neuron der verdeckten Schicht zusammengerechnet.\medskip
+
+Das für \textit{NN-Tupel1 agg} auf RND erhaltene Netz ist in \ref{fig:agg_net} zu sehen.
+Jedes Attribut des Eingangsvektors wird mit dem Kantengewicht multipliziert und in dem einen Neuron der verdeckten Schicht aufaddiert. Zusätzliche Bias-Neuronen verschieben den Schwellwert der Aktivierungsfunktion.
+Abschließend werden die Quantile 0.1, 0.5 und 0.9 zum Attribut-Tupel als Ausgabevektor berechnet. Das 0.5 Quantil der Laufzeit entspricht für dieses Modell der Vorhersage der Laufzeit, da es nicht zwischen Messungen mit diesen Attributen unterscheiden kann.\medskip
 
 \begin{figure}
 	\centering
@@ -1644,12 +1653,8 @@ Die nicht-linearen Abhängigkeiten können von den NN-Modellen für bessere Leis
 	\label{fig:agg_net}
 \end{figure} 
 
-Auffällig ist sind die vergleichsweise kleinen Netze von \textit{NN-Tupel1 agg}.
-Auf RND kommt das Modell mit einer einzigen verdeckten Schicht mit einem Neuron aus.
-Mit einer solchen Struktur kann das Netz nur lineare Zusammenhänge des Eingangsvektors mit der Laufzeit ausnutzen, denn jeder Wert des Vektors wird mit nur einem Kantengewicht verrechnet und dann in dem einen Neuron der verdeckten Schicht zusammengerechnet.
-Dieses neuronale Netz macht daher auch nichts anderes als eine lineare Regression, es gelingt im durch das aufwendige Lernverfahren allerdings eine wesentlich bessere Approximation der Laufzeiten zu erreichen als dies \textit{LinReg G} gelungen ist.\medskip
-
-Um dieses Verhalten näher zu untersuchen sind in Abbildung \ref{fig:lin_vergleich} die Graphen der Vorhersagen zu \textit{LinReg G} und \textit{NN-Tupel1 agg} dargestellt.
+Dieses neuronale Netz macht daher auch nichts anderes als eine lineare Regression, es gelingt ihm durch das aufwendige Lernverfahren allerdings eine wesentlich bessere Approximation der Laufzeiten zu erreichen als dies \textit{LinReg G} gelungen ist.
+Um dieses Verhalten näher zu untersuchen sind in Abbildung \ref{fig:lin_vergleich} die Graphen der Vorhersagen zu \textit{LinReg G} und \textit{NN-Tupel1 agg} auf RND dargestellt.
 Es ist gut zu erkennen, dass \textit{NN-Tupel1 agg} die Information über den Operationstypen sehr gut ausnutzen kann, um unterschiedliche Vorhersagen für lesende und schreibende Zugriffe zu machen.
 Dies war dem Modell \textit{LinReg G+D+O} zuvor nicht gelungen.
 RND kann also doch besser als zuvor gedacht in mit einem linearen Zusammenhang approximiert werden.
@@ -1671,10 +1676,13 @@ Das Modell \textit{NN-Tupel1} kann dennoch mit einem aufwendigeren neuronalen Ne
 Es soll hier auf einige Beobachtungen aus der Tabelle \ref{tab:outlier} eingegangen werden.
 Die 0.1 und 0.9 Quantile der Laufzeiten zu den Attribut-Tupeln vorherzusagen gelingt, außer bei \textit{NN-Tupel2}, recht gut und mit wesentlich kleineren Fehlerwerten, als die Vorhersage der tatsächlichen Laufzeiten.
 Dies macht auch Sinn, denn für die Quantile gibt es nur jeweils einen Wert pro Attribut-Tupel, die sich die neuronalen Netze \glqq merken \grqq{}müssen.\\
-Für eine korrekte Ausreißervorhersage müssen die Modelle zwei Dinge erfüllen, zum einen müssen die Quantile richtig approximiert werden und zum anderen müssen zu den Ausreißern auch sehr hohe (bzw. niedrige) Laufzeiten vorhergesagt werden.\\
-So erreicht \textit{NN-Tupel1} zwar eine gute Näherung der Quantile, macht aber sehr konservative Vorhersagen, wie auch am \textit{In-Range}-Wert in Tabelle \ref{tab:results}a von 100\% erkannt werden kann. Daher sagt \textit{NN-Tupel1} keinen einzigen Ausreißer korrekt oder falsch voraus.\\
+Für eine korrekte Ausreißervorhersage müssen die Modelle zwei Dinge erfüllen, zum einen müssen die Quantile richtig approximiert werden und zum anderen müssen zu den Ausreißern auch entsprechend hohe (bzw. niedrige) Laufzeiten vorhergesagt werden.\\
+So erreicht \textit{NN-Tupel1} zwar eine gute Näherung der Quantile, macht aber sehr konservative Vorhersagen, wie auch am \textit{In-range}-Wert in Tabelle \ref{tab:results}a von 100\% erkannt werden kann.
+Die \textit{In-range} Fehlermetrik gibt an wie viele Vorhersagen zwischen den Quantilen 0.1 und 0.9 der Laufzeit des Attribut-Tupels gelandet sind.
+ Daher sagt \textit{NN-Tupel1} keinen einzigen Ausreißer korrekt oder falsch voraus.\\
 Die beiden Modelle \textit{NN-Tupel2} und \textit{NN-EMA} mit zeitabhängigen Attributen haben im Gegensatz zu \textit{NN-Tupel1} eine Grundlage für die Vorhersage von Ausreißern, da sie mit diesen Informationen innerhalb der Messungen zu einem Attribut-Tupel unterscheiden können.
-Tatsächlich sagen sie jeweils einige Ausreißer vorher und liegen mit diesen Vorhersagen einige Male richtig, aber sehr oft auch falsch (11.12\% richtig Positiv und 8.43\% falsch Positiv klassierte Ausreißer von \textit{NN-Tupel2}; 4.59\% richtig Positive und 3.41\% falsch Postive von \textit{NN-EMA}). Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, werden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt werden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{Max} der beiden Modelle.\\
+Tatsächlich sagen sie jeweils einige Ausreißer vorher und liegen mit diesen Vorhersagen einige Male richtig, aber sehr oft auch falsch (11.12\% richtig Positiv und 8.43\% falsch Positiv klassierte Ausreißer von \textit{NN-Tupel2}, sowie 4.59\% richtig Positive und 3.41\% falsch Postive von \textit{NN-EMA}).
+Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, wurden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt wurden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{Max} der beiden Modelle.\\
 Wie zu erwarten war, können die beiden Modelle \textit{NN-LinRegFK} und \textit{NN-Tupel1FK} mit Hilfe der Fehlerklassen am erfolgreichsten Ausreißer vorhersagen. 
 \textit{NN-LinRegFK} hat 26664 der 167175 (15.95\%) der Ausreißer korrekt identifiziert.
 Gleichzeitig wurden allerdings 36069 der 670425 (5.38\%) Nicht-Ausreißer fälschlicherweise als Ausreißer klassiert.
@@ -1684,9 +1692,10 @@ Die erfolgreichere Ausreißervorhersage von \textit{NN-Tupel1FK} gegenüber \tex
 \begin{enumerate}
 	\item Die aus \textit{NN-Tupel1} gewonnenen Fehlerklassen beschreiben die E/A-Pfade besser als die \textit{LinReg G}-Fehlerklassen und können somit auch bei der Approximation der Laufzeiten der schwierig vorherzusagenden Ausreißer helfen.
 	\item \textit{NN-Tupel1} und \textit{NN-Tupel1FK} beruhen auf einer sehr ähnlichen Modellierung.
-	Während Ersteres von dem Attribut-Tupel zu jeder Messung weiß, kennt Letzteres noch die \textit{NN-Tupel1}-Fehlerklassen.
+	Während Ersteres das Attribut-Tupel zu jeder Messung als Eingabevektor bekommt, arbeitet Letzteres zusätzlich noch mit den \textit{NN-Tupel1}-Fehlerklassen.
 	\textit{NN-Tupel1FK} würde also idealerweise zunächst mit dem Attribut-Tupel intern die gleiche Vorhersage wie \textit{NN-Tupel1} machen, dann die Fehlerklassen in ihre mittleren Residuen übersetzen und zu dieser Vorhersage hinzurechnen.
-	Es ist recht wahrscheinlich, dass die \textit{NN-Tupel1FK}-Netze eine derartige Berechnung der Laufzeiten vornehmen. In dem Fall stellen die \textit{NN-Tupel1}-Fehlerklassen nicht unbedingt eine bessere Repräsentation der E/A-Pfade da, sondern sie können nur besser in die zugrundeliegenden Residuen entschlüsselt werden.
+	Es ist recht wahrscheinlich, dass die \textit{NN-Tupel1FK}-Netze eine derartige Berechnung der Laufzeiten vornehmen.
+	In dem Fall stellen die \textit{NN-Tupel1}-Fehlerklassen nicht unbedingt eine bessere Repräsentation der E/A-Pfade da, sondern sie können nur besser in die zugrundeliegenden Residuen entschlüsselt werden.
 \end{enumerate}
 Damit sich wirklich nur der Zusammenhang zwischen Fehlerklassen und E/A-Pfaden in den verbesserten Vorhersagen widerspiegelt, sollte in Betracht gezogen werden unterschiedliche Modellierungen zur Erstellung der Fehlerklassen und für die Nutzung dieser zu verwenden.
 
@@ -1697,14 +1706,14 @@ Die Ergebnisse dieser beiden Modelle soll hier analysiert werden.\medskip
 Die Modellierung von \textit{NN-Tupel2} scheint nicht ganz aufzugehen, auf SEQ erreicht das Modell einen schlechteren \textit{MSPE}-Wert als die lineare Regression auf RND beträgt er über 2000\%.
 Tatsächlich sind die meisten Vorhersagen von \textit{NN-Tupel2} allerdings recht passabel.
 Wie der sehr hohe \textit{Max}-Wert von 132820\% und der \textit{MSPE} mit 2124\% gegenüber dem \textit{MAPE} mit 234\% andeuten, scheint das Modell einige Messungen äußerst schlecht vorhersagen zu können.
-Andererseits werden 75\% der Laufzeiten auf SEQ mit kleinerem relativen Fehler als 17\% und auf RND mit 56\% vorhergesagt. Dies sind verhältnismäßig gute Werte für \textit{RQ3}.\\
+Es werden allerdings 75\% der Laufzeiten auf SEQ mit kleinerem relativen Fehler als 17\% und auf RND mit kleinerem Fehler als 56\% vorhergesagt. Dies sind verhältnismäßig gute Werte für \textit{RQ3}.\\
 Alle neuronalen Netze müssen allerdings dem Verlgeich mit \textit{NN-Tupel1} (bzw. \textit{NN-Tupel1 agg}) standhalten, denn alle anderen Modelle arbeiten mit mehr Informationen über die Messungen.
 Wenn ein Modell schlechtere Ergebnisse als \textit{NN-Tupel1} und \textit{NN-Tupel1 agg} erzielt, war die aufwendigere Modellierung kontraproduktiv.\\
 Wenn dieser Vergleich an \textit{NN-Tupel2} gemacht wird, so wird offensichtlich, dass es dem Modell zwar gelingt gute Vorhersagen zu einem Großteil der Messdaten zu machen, aber insgesamt in den meisten Belangen schlechter als \textit{NN-Tupel1} ist.\\
 Ganz ähnliche Beobachtungen können zu \textit{NN-EMA} gemacht werden.
 Auch diesem Modell gelingt es nicht, sich trotz zusätzlicher Informationen signifikant von \textit{NN-Tupel1} abzusetzen.\medskip
 
-Wie beschrieben scheinen die Zusatzinformationen des \textit{exponential moving averages} für \textit{NN-EMA} bzw. die Kenntnis über den vorherigen E/A-Aufruf in \textit{NN-Tupel2} dazu zu führen, dass einige Laufzeiten sehr schlecht vorhergesagt werden können, daher die hohen Werte zu \textit{MSPE} und \textit{Max} bei diesen Modellen.
+Die Zusatzinformationen des \textit{exponential moving averages} für \textit{NN-EMA} bzw. die Kenntnis über den vorherigen E/A-Aufruf in \textit{NN-Tupel2} scheinen dazu zu führen, dass einige Laufzeiten sehr schlecht vorhergesagt werden können, daher die hohen Werte zu \textit{MSPE} und \textit{Max} bei diesen Modellen.
 Teilweise können die beiden Modelle diese Informationen allerdings für bessere Vorhersagen nutzen. So erreicht \textit{NN-EMA} auf SEQ mit 13.7\% einen besseren \textit{MAPE}-Wert als \textit{NN-Tupel1} und \textit{NN-Tupel1 agg} mit 14.1\% respektive 14.3\%, 
 Auch auf RND erreicht \textit{NN-EMA} ein besseres \textit{MAPE}-Ergebnis mit 86\% zu 103\% bzw. 270\% von \textit{NN-Tupel1} und \textit{NN-Tupel1 agg}.
 Zudem sind die \textit{RG3}-Werte von \textit{NN-EMA} und \textit{NN-Tupel2} auf RND besser.\medskip
@@ -1712,30 +1721,29 @@ Zudem sind die \textit{RG3}-Werte von \textit{NN-EMA} und \textit{NN-Tupel2} auf
 Es scheint also so sein, dass das in Kapitel \ref{eval:exploration} beobachtete periodische Verhalten im E/A-System von \textit{NN-Tupel2}, insbesondere aber von \textit{NN-EMA}, für bessere Laufzeit-Vorhersagen ausgenutzt werden kann.
 Bei einigen Messungen, bei denen ein zeitlich abhängiges Verhalten von den Modellen angenommen wird, wurde die Vorhersage durch diese Annahme negativ beeinflusst, sodass die Ergebnisse der beiden Modelle gemittelt über den gesamten Testdatensatz schlechter sind als die des Modells ohne Kenntnis der periodischen Zusammenhänge.
 
-\subsubsection{Detailbetrachtung: NN-Tupel1}
+\subsubsection{Detailbetrachtung: \textit{NN-Tupel1}}
 Das Modell \textit{NN-Tupel1} gehört auf beiden Datensätzen zu den besten Modellen, die keine Fehlerklassen nutzen, es soll nun im Detail untersucht werden.
 Das erfolgreichste neuronale Netz des Modells auf den sequentiellen Daten hat 12 verdeckte Schichten mit jeweils 8 Neuronen, es wurde über 24 Minuten in 1934 Iterationen entwickelt.
 Trotz der höheren Varianz der Messdaten auf RND kommt das Modell hier mit 4 verdeckten Schichten mit 5 Neuronen aus, zudem wurde es mit nur 1310 Iterationen über knapp 4 Minuten wesentlich schneller berechnet.
 Da die Leistungswerte des Modells auf RND schlechter sind, scheint die Modellierung für dieses Problems nicht so erfolgreich zu sein, sodass ein simples Netz, dass stärker von den Trainingsdaten abstrahiert, einem Komplexeren überlegen ist.
 Das Modell scheint stärker von der Tiefe der Schichten des neuronalen Netzes zu profitieren, als an der Anzahl Neuronen.\medskip
 
-Die Abbildungen \ref{fig:tupel1_on_seq} und \ref{fig:tupel1_on_rnd} visualisieren die Vorhersagen von \textit{NN-Tupel1} auf SEQ respektive RND.
+Die Abbildungen \ref{fig:tupel1_seq} und \ref{fig:tupel1_rnd} visualisieren die Vorhersagen von \textit{NN-Tupel1} auf SEQ respektive RND.
 In den ersten beiden Graphen werden, wie zuvor bei der Analyse der Referenzmodelle, die Vorhersagen in blau gegenüber den tatsächlichen Laufzeiten in dunkelgrau für lesende und hellgrau für schreibende Zugriffe dargestellt.
-Abbildung \ref{fig:tupel1_on_seq}b zeigt die Vorhersagen des Modells zu den Quantilen für die Ausreißervorhersage.
+Abbildung \ref{fig:tupel1_seq}b zeigt die Vorhersagen des Modells zu den Quantilen für die Ausreißervorhersage.
 Die letzten beiden Diagramme heben die Messungen hervor dessen Laufzeiten zu den 1\% der Vorhersagen gehören, die mit den größten bzw. kleinsten Residuen vom Modell bestimmt wurden.\medskip
 
 Zunächst werden die Vorhersagen von \textit{NN-Tupel1} auf SEQ analysiert.
-In Abbildung \ref{fig:tupel1_on_seq}a ist gut zu erkennen, dass es dem Modell gut gelingt, zwischen den Zugriffsgrößen und Operationstypen zu differenzieren und dadurch recht zuverlässig einen guten Mittelwert zu den verschiedenen Attribut-Tupeln vorhersagt.
+In Abbildung \ref{fig:tupel1_seq}a ist zu erkennen, dass es dem Modell gut gelingt, zwischen den Zugriffsgrößen und Operationstypen zu differenzieren. Dadurch approximiert es die verschiedenen Attribut-Tupel recht zuverlässig mit einem guten Mittelwert.
 Innerhalb eines Attribut-Tupels kann das Modell jedoch keine weitere Differenzierung durchführen, stattdessen wird für die selben Attribute immer der selbe Wert vorhergesagt.
-Das zeigt sich auch am Wert für \textit{In-range}, der angibt wie viele Vorhersagen zwischen den Quantilen 0.1 und 0.9 der Laufzeit des Attribut-Tupels gelandet sind.
-Da das Modell nur eine Art Mittelwert vorhersagt, ist der Wert für \textit{In-range} folgerichtig bei 100\%.
+Das zeigt sich auch am Wert für \textit{In-range}, da das Modell nur eine Art Mittelwert vorhersagt, ist der Wert für \textit{In-range} folglich bei 100\%.
 Dieses Verhalten entspricht dem des Referenzmodells \textit{Median agg}, tatsächlich ist der entsprechende Graph \ref{fig:zeit_baselines_seq}c von dem zu \textit{NN-Tupel1} kaum unterscheidbar.
 Auch die Leistungswerte sind vergleichbar. Während \textit{NN-Tupel1} einen etwas besseren \textit{MSPE} mit 22\% zu 24\% hat, hat \textit{Median} mit einem MAPE von 11.1\% gegenüber 14.1\% leicht die Nase vorn. 
 Dieses ähnliche Verhalten  der beiden Modelle macht auch im Rahmen der Modellierung von \textit{NN-Tupel1} Sinn.
-Dem Modell stehen keine Informationen zur Unterscheidung der Attribut-Tupel zur Verfügung, sodass intern ein möglichst guter Mittelwert zur Laufzeit jedes Sets gebildet werden muss. Dies gelingt \textit{NN-Tupel1} mit seinem Trainingsdatensatz in etwa genauso gut, wie \textit{Median agg} unter Kenntnis sämtlicher Messungen. Das NN-Modell kann also sehr gut von seinem Auszug der Messdaten die Laufzeiten ungesehener Messungen interpolieren.\medskip
+Dem Modell stehen keine Informationen zur Unterscheidung der Attribut-Tupel zur Verfügung, sodass intern ein möglichst guter Mittelwert zur Laufzeit jedes Sets gebildet werden muss. Dies gelingt \textit{NN-Tupel1} mit seinem Trainingsdatensatz in etwa genauso gut, wie \textit{Median agg} unter Kenntnis sämtlicher Messungen. Das NN-Modell kann also sehr gut von seinem Ausschnitt der Messdaten die Laufzeiten ungesehener Messungen interpolieren.\medskip
 
 Wie bereits in Tabelle \ref{tab:outlier} gesehen wurde, kann \textit{NN-Tupel1} die 0.1 und 0.9 Quantile der Laufzeiten sehr gut abschätzen.
-In Abbildung \ref{fig:tupel1_on_seq}b ist entsprechend eine gute Eingrenzung der Messungen durch die eingezeichneten roten und grünen Punkte zu sehen.\medskip
+In Abbildung \ref{fig:tupel1_seq}b ist entsprechend eine gute Eingrenzung der Messungen durch die eingezeichneten roten und grünen Punkte zu sehen.\medskip
 
 Der Modellierung entsprechend macht \textit{NN-Tupel1} ungenaue Vorhersagen für Attribut-Tupel, mit großer Varianz in den Zugriffszeiten. 
 Dies lässt sich in \ref{fig:tupel1_seq}c an der Markierung der nach oben gestreuten Laufzeiten erkennen.\\
@@ -1762,8 +1770,7 @@ Die besten Vorhersagen werden für Messungen gemacht, die möglichst genau der m
 \end{figure} 
 
 Nun werden die Vorhersagen von \textit{NN-Tupel1} auf RND genauer betrachtet.
-
-Im Vergleich mit \textit{NN-Tupel1 agg} (Abbildung \ref{fig:lin_vergleich}b ) kann in Abbildung \ref{fig:tupel1_on_rnd}a gut erkannt werden, wie das neuronale Netz ausnutzt, dass es nicht an lineare Zusammenhänge gebunden ist.
+Im Vergleich mit \textit{NN-Tupel1 agg} (Abbildung \ref{fig:lin_vergleich}b ) kann in Abbildung \ref{fig:tupel1_rnd}a gut erkannt werden, wie das neuronale Netz ausnutzt, dass es nicht an lineare Zusammenhänge gebunden ist.
 Die Laufzeiten der lesenden Zugriffe machen ab einer gewissen Zugriffsgröße einen Sprung nach oben. \textit{NN-Tupel1} kann diesen Sprung wesentlich besser in seine Vorhersagen mit einbeziehen, als das Netz zu \textit{NN-Tupel1 agg} mit nur einer verdeckten Schicht mit einem Neuron.
 Die schreibenden Zugriffe weisen keinen solchen Sprung in den Laufzeiten auf und werden scheinbar mit einer linearen Gerade von \textit{NN-Tupel1} approximiert.\\
 Dadurch dass die Messungen mit gleichen Zugriffsgrößen und Operationstypen bei den randomisierten Zugriffen nicht mehr alle dem selben Attribut-Tupel angehören, sondern sich durch das Delta-Offset unterscheiden, stehen \textit{NN-Tupel1} Informationen zu Verfügung, um innerhalb einer Messreihe unter den Messungen zu unterscheiden.
@@ -1789,16 +1796,66 @@ in den selben Bereichen, wie bei den sequentiellen Messungen.
 	\label{fig:tupel1_rnd}
 \end{figure} 
 
+\subsubsection{Detailbetrachtung: \textit{NN-LinRegFK}}
+Analog zu der Betrachtung von \textit{LinRegFK Median agg} erkennt man in den Abbildungen \ref{fig:linregfk_seq}a und \ref{fig:linregfk_rnd}a, dass das Modell mit Hilfe der Fehlerklassen innerhalb der Messungen einer Messreihe unterscheiden können.\medskip
+
+Auf SEQ hat das Modell noch einige Schwierigkeiten, wie an den rot markierten Punkten in \ref{fig:linregfk_seq}c zu erkennen ist, gibt es drei Gruppen lesender Aufrufe, die nicht korrekt vom Modell erkannt werden. Diese wurden auch von \textit{NN-Tupel1FK} nicht abgedeckt.
+Dieses Verhalten kann erklärt werden, wenn die Abbildung \ref{fig:error_class_clustering_seq} aus Kapitel \ref{eval:fk_analyse} betrachtet wird.
+Bei der Analyse der Fehlerklassen war bereits aufgefallen, dass auf SEQ alle Messungen mit kleineren Zugriffsgrößen der selben Fehlerklasse zugeordnet wurden.
+Nur die langsameren Messungen mit höheren Zugriffsgrößen wurden in verschiedene Klassen aufgeteilt.
+Dadurch das nur der absolute Fehler für die Fehlerklassenerstellung betrachtet wurde, der für kurze Laufzeiten natürlich kleiner ist, wurden diese drei Punktgruppen mit keiner eigenen Fehlerklasse ausgestattet.
+Die langsameren E/A-Zugriffe werden dagegen entsprechend stark differenziert.\medskip
+
+Bei den Vorhersagen zu RND ist dagegen gut zu sehen, dass jede größere Anhäufung von Messungen gut von dem Modell approximiert wurde.
+Der Sprung in den Laufzeiten der lesenden Zugriffe auf RND kann leicht von dem Modell berücksichtigt werden, die langsamen Leseaufrufe werden scheinbar hauptsächlich durch zwei Fehlerklassen abgedeckt.
+Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig über die Zugriffsgrößen hinweg eine Differenzierung der Messungen durch die Fehlerklassen vorgenommen.
+
+\begin{figure}
+	\centering
+	\subfloat[Vorhersage der Laufzeiten]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\hfill
+	\subfloat[Näherungen des Modells zu den Quantilen der Laufzeiten, Quantil 0.1 in grün und Quantil 0.9 in rot]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}\\
+	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in grün markiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\hfill
+	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	}
+	\caption{Modell \textit{NN-LinRegFK} angewendet auf SEQ}
+	\label{fig:linregfk_seq}
+\end{figure} 
+
+\begin{figure}
+	\centering
+	\subfloat[Vorhersage der Laufzeiten]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}\\
+	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in grün markiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}
+	\hfill
+	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	}
+	\caption{Modell \textit{NN-LinRegFK} angewendet auf RND}
+	\label{fig:linregfk_rnd}
+\end{figure} 
+
+\clearpage
 \paragraph{Zusammenfassung:}
 \textit{
-	Lineare Modelle sind unzureichend, Vergleich von Tupel1 zu LinReg
-	Wir haben gesehen, dass Ausreißer-Vorhersage nur auf den sequentiellen Messungen mit Hilfe der Quantile zu sinnvollen Ergebnissen geführt hat, da die Anzahl Messungen pro Attribut-Tupel für den randomisierten Datensatz nicht aussagekräftig sind.
+	In diesem Kapitel wurden zunächst das Testsystem und die Durchführung der Messreihen von E/A-Zugriffen auf diesem beschrieben.
+	Dabei wurde ein systematischer Ansatz gewählt, bei dem zum einen sequentielle Dateiaufrufe und zum anderen Aufrufe mit zufälligem Zugriffspunkt getestet wurden.
+	Dann wurden die erhaltenen Daten auf ihre Struktur und auf Abhängigkeiten der Laufzeit mit verschiedenen Faktoren untersucht.
+	Speziell die gewonnenen Fehlerklassen wurden dann noch einmal detailierter analyisert.
+	Abschließend konnten dann die verschiedenen Modelle der Referenzmodelle und NN-Modelle untersucht und untereinander verglichen werden.
+	Dabei wurde klar, dass lineare Ansätze nur unzureichende Modellierungen erreichen können, dass eine gewisse periodische Abhängigkeit der Laufzeiten besteht, diese aber schwierig genutzt werden kann, und dass die Fehlerklassen zwar bereits sehr gut dabei helfen das E/A-System zu beschreiben, aber noch verbessert werden müssten.
 	}
-\clearpage
-
-\paragraph{Zusammenfassung:}
-\textit{2-5 Sätze, BLA In diesem Kapitel hab ich gesehen BLA und jetzt sehen wir Z. Wie hängen die Sections dieses Kapitels zusammen und warum brachte es was das zu lesen.}
-
 \chapter{Fazit}
 \label{Fazit}
 Welche Modelle sind für welchen Fall erfolgsversprechend?\\
@@ -1852,6 +1909,6 @@ Speichermedium entspricht.
 \bigskip
 \bigskip
 
-Hamburg, den 01.01.2012  \quad \dotfill
+Hamburg, den 17.12.2015  \quad \dotfill
 
 \end{document}

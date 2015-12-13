@@ -1,0 +1,4 @@
+Attribut,Min,Quartil1,Median,Mittel,Quartil3,Max,Korrelation
+Dauer,6.2e-06,6.9e-06,9.7e-06,3.8e-04,1.3e-04,5.6e-02,1.00
+Größe,1.0e+00,6.4e+01,4.1e+03,4.5e+05,2.6e+05,1.7e+07,0.96
+Delta-Abstand,0.0e+00,0.0e+00,0.0e+00,0.0e+00,0.0e+00,0.0e+00,  NA
