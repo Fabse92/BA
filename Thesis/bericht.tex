@@ -1548,7 +1548,7 @@ Informationen über die Struktur der gefundenen Netze und den Aufwand des Traini
 	\item In Tabelle \ref{tab:results} sind für alle NN-Modelle die Werte der verschiedenen Fehlermetriken angegeben, zusätzlich sind zum Vergleich die Referenzmodelle \textit{Durchschnitt}, \textit{LinReg G} angewendet auf individuelle Messungen und \textit{LinRegFK Median agg} aufgelistet.
 	\item Die Tabelle \ref{tab:outlier} wird für die Analyse der Ausreißervorhersage betrachtet. In der Tabelle sind alle beschriebenen Fehlermetriken zu den NN-Modellen auf SEQ angegeben. Wie bereits beschrieben wurde, gibt es bei den Messungen mit zufälligen Dateizugriffen zu wenig Messungen pro Attribut-Tupel um die Ausreißervorhersage auf diesen Daten sinnvoll zu betrachten.
 \end{itemize}
-Im Folgenden werden zunächst einige allgemeine Beobachtungen zu verschiedenen Bereichen auf den Testergebnissen geschildert, dann wird gesondert auf die Erkenntnisse über die zeitliche Abhängigkeit der E/A-Anfragen im System eingegangen und zuletzt werden die Ergebnisse von den Modellen \textit{NN-Tupel1} und \textit{NN-LinRegFK} im Detail betrachtet.
+Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen auf den Testergebnissen geschildert, dann werden im Detail die Ergebnisse von den Modellen \textit{NN-Tupel1} und \textit{NN-LinRegFK} betrachtet.
 
 \begin{table}
 	\scriptsize
@@ -1612,38 +1612,84 @@ Im Folgenden werden zunächst einige allgemeine Beobachtungen zu verschiedenen B
 	\label{tab:outlier}
 \end{table}
 
-\subsubsection{Allgemeine Betrachtungen zu den Ergebnissen}
-Hier sollen zunächst drei Beobachtungen in den erhaltenen Ergebnissen beschrieben werden.
-Zum einen die Struktur der erhaltenen neuronalen Netze und deren Zusammenhang mit dem \textit{Avg-MAPE}, dann die Erkenntnisse, die aus dem Vergleich von \textit{Train-MAPE} und \textit{MAPE} gezogen werden können, dann werden die Ergebnisse von \textit{LinReg G }mit den NN-Modellen verglichen und abschließend auf die Ergebnisse der Ausreißervorhersage eingegangen.
-
-\begin{itemize}
-	\item Die Strukturen der erhaltenen neuronalen Netze sind teilweise recht erstaunlich.
+\subsubsection{Strukturen der neuronalen Netze}
+Die Strukturen der erhaltenen neuronalen Netze sind teilweise recht erstaunlich.
 Einige Netze sind äußerst komplex.
 So hat beispielsweise das erhaltene Netz zu \textit{NN-Tupel1FK} auf RND 17 verdeckte Schichten mit jeweils 28 Neuronen.
 Die Berechnungen der vorhergesagte Laufzeit aus den vier Attributen des Eingabevektors zu diesem Netz sind entsprechend äußerst aufwendig.
 Auch das Lernverfahren zum Erstellen des Netzes selbst war sehr aufwendig und hat über 3.5 Stunden gedauert.
 Trotz dieser komplexen Struktur des Netzes wurde keine zu starke Anpassung an den Trainingsdatensatz betrieben, denn der erreiche \textit{MAPE} auf Trainings- und Testdaten ist mit etwa 24\% gleich. Andere Fälle, wie \textit{NN-Tupel1FK} auf SEQ, oder \textit{NN-Tupel2} auf SEQ und RND weisen ein ähnliches Verhalten auf; die berechneten Netze sind sehr komplex, der Fehler auf Trainings- und Testdaten aber gleichauf.\\
 Daraus kann entweder geschlussfolgert werden, dass es bei einigen Modellierungen sehr aufwendig ist, aus den gegebenen Informationen gute Vorhersagen für die Laufzeiten zu berechnen, oder aber, dass sich Trainings- und Testdatensätze zu ähnlich sind, sodass ein eigentlich überangepasstes Netz gute Ergebnisse erzielt. Es ist gut möglich, dass eine Kombination beider Gründe der Wahrheit am nächsten kommt.\\
-Da die Trainingsdaten 1000 Messungen zu jeder gemessenen Zugriffsgröße enthalten und dies scheinbar der wichtigste Indikator für die Laufzeit der Messungen ist, könnte die Überanpassung an die Trainingsdaten durchaus ein Problem sein.
-	\item Ob die Strukturen der neuronalen Netze zu gleichmäßiger Konvergenz geführt haben, kann an den Werten für \textit{Avg-MAPE} abgelesen werden.\\
+Da die Trainingsdaten 1000 Messungen zu jeder gemessenen Zugriffsgröße enthalten und dies scheinbar der wichtigste Indikator für die Laufzeit der Messungen ist, könnte die Überanpassung an die Trainingsdaten durchaus ein Problem sein.\medskip
+
+Ob die Strukturen der neuronalen Netze zu gleichmäßiger Konvergenz geführt haben, kann an den Werten für \textit{Avg-MAPE} abgelesen werden.\\
 Die meisten Strukturen erreichen konstant gute Ergebnisse über die 12 trainierten Netze.
 Bei der Suche nach guten Parametern für die NN-Modelle ist aber immer wieder aufgefallen, dass einige Strukturen höchst instabil sind.
 Ein solcher Fall ist mit \textit{NN-Tupel1FK} auf RND auch unter den Netzen mit besten \textit{MSPE}-Wert gelandet.
 Während der \textit{MAPE} des erfolgreichen Netzes nur 24\% beträgt, beträgt der durchschnittliche \textit{MAPE} über die 12 Netze 3782678\%.
 Die Ergebnisse einiger Strukturen von neuronalen Netzen hängen also sehr stark von der Initialisierung der Kantengewichte ab.\\
 Aus dieser Beobachtung wird klar, für reproduzierbare und verlässliche Ergebnisse in den neuronalen Netzen, sollte in Betracht gezogen werden, nicht nur nach einem Netz mit den besten Ergebnissen zu suchen, sondern auch die gemittelten Ergebnisse über eine Mehrzahl Netze mit unterschiedlicher Initialisierung zu berücksichtigen.
-	\item Wie in \ref{back_nn} geschrieben wurde, können künstliche neuronale Netze nicht-lineare Zusammenhänge modellieren.
-Außer \textit{NN-Tupel2} auf SEQ gelingt es allen NN-Modellen bessere Ergebnisse, als \textit{LinReg G} zu erzielen. Dies bestätigt die zuvor gewonnene Einsicht, dass lineare Zusammenhänge unzureichend für die Beschreibung der E/A-Leistung der Messungen sind.
-Die nicht-linearen Abhängigkeiten können von den NN-Modellen für bessere Leistungsvorhersagen ausgenutzt werden.
-	\item Die 0.1 und 0.9 Quantile der Laufzeiten zu den Attribut-Tupeln vorherzusagen gelingt, außer bei \textit{NN-Tupel2}, recht gut und mit wesentlich kleineren Fehlerwerten, als die Vorhersage der tatsächlichen Laufzeiten.
-	Dies macht auch Sinn, denn für die Quantile gibt es nur jeweils einen Wert pro Attribut-Tupel, die sich die neuronalen Netze \glqq merken \grqq{}müssen.\\
-	Für eine korrekte Ausreißervorhersage müssen die Modelle zwei Dinge erfüllen, zum einen müssen die Quantile richtig approximiert werden und zum anderen müssen zu den Ausreißern auch sehr hohe (bzw. niedrige) Laufzeiten vorhergesagt werden.\\
-	So erreicht \textit{NN-Tupel1} zwar eine gute Näherung der Quantile, macht aber sehr konservative Vorhersagen, wie auch am \textit{In-Range}-Wert in Tabelle \ref{tab:results}a von 100\% erkannt werden kann. Daher sagt \textit{NN-Tupel1} keinen einzigen Ausreißer korrekt oder falsch voraus.\\
-	Die beiden Modelle \textit{NN-Tupel2} und \textit{NN-EMA} mit zeitabhängigen Attributen haben im Gegensatz zu \textit{NN-Tupel1} eine Grundlage für die Vorhersage von Ausreißern, da sie mit diesen Informationen innerhalb der Messungen zu einem Attribut-Tupel unterscheiden können.
-	Tatsächlich sagen sie jeweils einige Ausreißer vorher und liegen mit diesen Vorhersagen einige Male richtig, aber sehr oft auch falsch (11.12\% richtig Positiv und 8.43\% falsch Positiv klassierte Ausreißer von \textit{NN-Tupel2}; 4.59\% richtig Positive und 3.41\% falsch Postive von \textit{NN-EMA}). Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, werden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt werden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{Max} der beiden Modelle.\\
-	Wie zu erwarten war, können die beiden Modelle \textit{NN-LinRegFK} und \textit{NN-Tupel1FK} mit Hilfe der Fehlerklassen am erfolgreichsten Ausreißer vorhersagen. (12 * 20 = 240 vs 2 * 80 = 160)
 
-\end{itemize}
+\subsubsection{Betrachtung der linearen Abhängigkeit}
+Wie in \ref{back_nn} geschrieben wurde, können künstliche neuronale Netze nicht-lineare Zusammenhänge modellieren.
+Außer \textit{NN-Tupel2} auf SEQ gelingt es allen NN-Modellen bessere Ergebnisse, als \textit{LinReg G} zu erzielen. Dies bestätigt die zuvor gewonnene Einsicht, dass lineare Zusammenhänge unzureichend für die Beschreibung der E/A-Leistung der Messungen sind.
+Die nicht-linearen Abhängigkeiten können von den NN-Modellen für bessere Leistungsvorhersagen ausgenutzt werden.\medskip
+
+\begin{figure}
+	\centering
+	\subfloat{
+		\includegraphics[width=.8\textwidth]{Bilder/aggregated_net.png}
+	}
+	\caption{Darstellung des neuronalen Netzes von \textit{NN-Tupel1 agg} auf RND}
+	\label{fig:agg_net}
+\end{figure} 
+
+Auffällig ist sind die vergleichsweise kleinen Netze von \textit{NN-Tupel1 agg}.
+Auf RND kommt das Modell mit einer einzigen verdeckten Schicht mit einem Neuron aus.
+Mit einer solchen Struktur kann das Netz nur lineare Zusammenhänge des Eingangsvektors mit der Laufzeit ausnutzen, denn jeder Wert des Vektors wird mit nur einem Kantengewicht verrechnet und dann in dem einen Neuron der verdeckten Schicht zusammengerechnet.
+Dieses neuronale Netz macht daher auch nichts anderes als eine lineare Regression, es gelingt im durch das aufwendige Lernverfahren allerdings eine wesentlich bessere Approximation der Laufzeiten zu erreichen als dies \textit{LinReg G} gelungen ist.\medskip
+
+Um dieses Verhalten näher zu untersuchen sind in Abbildung \ref{fig:lin_vergleich} die Graphen der Vorhersagen zu \textit{LinReg G} und \textit{NN-Tupel1 agg} dargestellt.
+Es ist gut zu erkennen, dass \textit{NN-Tupel1 agg} die Information über den Operationstypen sehr gut ausnutzen kann, um unterschiedliche Vorhersagen für lesende und schreibende Zugriffe zu machen.
+Dies war dem Modell \textit{LinReg G+D+O} zuvor nicht gelungen.
+RND kann also doch besser als zuvor gedacht in mit einem linearen Zusammenhang approximiert werden.
+Das Modell \textit{NN-Tupel1} kann dennoch mit einem aufwendigeren neuronalen Netz nicht-lineare Abhängigkeiten ausnutzen und so mit einem MAPE-Wert von 103\% gegenüber 270\% und einem \textit{RQ3}-Wert von 70\% gegenüber 170\% wesentlich bessere Ergebnisse erzielen.
+\begin{figure}
+	\centering
+	\subfloat[Vorhersage der Laufzeiten auf RND von \textit{LinReg G}]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_linreg_Size.png}
+	}
+	\hfill
+	\subfloat[Vorhersagen der Laufzeiten auf RND von \textit{NN-Tupel1 agg}]{
+		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_aggregated_Duration_rnd.png}
+	}
+	\caption{Vergleich der Modelle \textit{LinReg G} und \textit{NN-Tupel1 agg} auf RND}
+	\label{fig:lin_vergleich}
+\end{figure} 
+\clearpage
+\subsubsection{Analyse der Ausreißervorhersage}
+Es soll hier auf einige Beobachtungen aus der Tabelle \ref{tab:outlier} eingegangen werden.
+Die 0.1 und 0.9 Quantile der Laufzeiten zu den Attribut-Tupeln vorherzusagen gelingt, außer bei \textit{NN-Tupel2}, recht gut und mit wesentlich kleineren Fehlerwerten, als die Vorhersage der tatsächlichen Laufzeiten.
+Dies macht auch Sinn, denn für die Quantile gibt es nur jeweils einen Wert pro Attribut-Tupel, die sich die neuronalen Netze \glqq merken \grqq{}müssen.\\
+Für eine korrekte Ausreißervorhersage müssen die Modelle zwei Dinge erfüllen, zum einen müssen die Quantile richtig approximiert werden und zum anderen müssen zu den Ausreißern auch sehr hohe (bzw. niedrige) Laufzeiten vorhergesagt werden.\\
+So erreicht \textit{NN-Tupel1} zwar eine gute Näherung der Quantile, macht aber sehr konservative Vorhersagen, wie auch am \textit{In-Range}-Wert in Tabelle \ref{tab:results}a von 100\% erkannt werden kann. Daher sagt \textit{NN-Tupel1} keinen einzigen Ausreißer korrekt oder falsch voraus.\\
+Die beiden Modelle \textit{NN-Tupel2} und \textit{NN-EMA} mit zeitabhängigen Attributen haben im Gegensatz zu \textit{NN-Tupel1} eine Grundlage für die Vorhersage von Ausreißern, da sie mit diesen Informationen innerhalb der Messungen zu einem Attribut-Tupel unterscheiden können.
+Tatsächlich sagen sie jeweils einige Ausreißer vorher und liegen mit diesen Vorhersagen einige Male richtig, aber sehr oft auch falsch (11.12\% richtig Positiv und 8.43\% falsch Positiv klassierte Ausreißer von \textit{NN-Tupel2}; 4.59\% richtig Positive und 3.41\% falsch Postive von \textit{NN-EMA}). Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, werden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt werden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{Max} der beiden Modelle.\\
+Wie zu erwarten war, können die beiden Modelle \textit{NN-LinRegFK} und \textit{NN-Tupel1FK} mit Hilfe der Fehlerklassen am erfolgreichsten Ausreißer vorhersagen. 
+\textit{NN-LinRegFK} hat 26664 der 167175 (15.95\%) der Ausreißer korrekt identifiziert.
+Gleichzeitig wurden allerdings 36069 der 670425 (5.38\%) Nicht-Ausreißer fälschlicherweise als Ausreißer klassiert.
+Am besten hat \textit{NN-Tupel1FK} Ausreißer erkannt mit 20713 korrekt erkannten Ausreißern und nur 18772 falsch klassierten Nicht-Ausreißern, hat dieses Modell als einziges mehr Ausreißer korrekt als falsch vorhergesagt.\medskip
+
+Die erfolgreichere Ausreißervorhersage von \textit{NN-Tupel1FK} gegenüber \textit{NN-LinRegFK} kann durch zwei Interpretationen erklärt werden:
+\begin{enumerate}
+	\item Die aus \textit{NN-Tupel1} gewonnenen Fehlerklassen beschreiben die E/A-Pfade besser als die \textit{LinReg G}-Fehlerklassen und können somit auch bei der Approximation der Laufzeiten der schwierig vorherzusagenden Ausreißer helfen.
+	\item \textit{NN-Tupel1} und \textit{NN-Tupel1FK} beruhen auf einer sehr ähnlichen Modellierung.
+	Während Ersteres von dem Attribut-Tupel zu jeder Messung weiß, kennt Letzteres noch die \textit{NN-Tupel1}-Fehlerklassen.
+	\textit{NN-Tupel1FK} würde also idealerweise zunächst mit dem Attribut-Tupel intern die gleiche Vorhersage wie \textit{NN-Tupel1} machen, dann die Fehlerklassen in ihre mittleren Residuen übersetzen und zu dieser Vorhersage hinzurechnen.
+	Es ist recht wahrscheinlich, dass die \textit{NN-Tupel1FK}-Netze eine derartige Berechnung der Laufzeiten vornehmen. In dem Fall stellen die \textit{NN-Tupel1}-Fehlerklassen nicht unbedingt eine bessere Repräsentation der E/A-Pfade da, sondern sie können nur besser in die zugrundeliegenden Residuen entschlüsselt werden.
+\end{enumerate}
+Damit sich wirklich nur der Zusammenhang zwischen Fehlerklassen und E/A-Pfaden in den verbesserten Vorhersagen widerspiegelt, sollte in Betracht gezogen werden unterschiedliche Modellierungen zur Erstellung der Fehlerklassen und für die Nutzung dieser zu verwenden.
+
 \subsubsection{Betrachtung der zeitlichen Abhängigkeit der Laufzeiten}
 \textit{NN-EMA} und \textit{NN-Tupel2} sind die beiden Modelle, die zeitlich periodisches Verhalten in den Messreihen ausnutzen sollten.
 Die Ergebnisse dieser beiden Modelle soll hier analysiert werden.\medskip
@@ -1665,24 +1711,35 @@ Zudem sind die \textit{RG3}-Werte von \textit{NN-EMA} und \textit{NN-Tupel2} auf
 
 Es scheint also so sein, dass das in Kapitel \ref{eval:exploration} beobachtete periodische Verhalten im E/A-System von \textit{NN-Tupel2}, insbesondere aber von \textit{NN-EMA}, für bessere Laufzeit-Vorhersagen ausgenutzt werden kann.
 Bei einigen Messungen, bei denen ein zeitlich abhängiges Verhalten von den Modellen angenommen wird, wurde die Vorhersage durch diese Annahme negativ beeinflusst, sodass die Ergebnisse der beiden Modelle gemittelt über den gesamten Testdatensatz schlechter sind als die des Modells ohne Kenntnis der periodischen Zusammenhänge.
-\subsubsection{Detailbetrachtung: NN-Tupel1}
-Als erstes wird das Modell \textit{Tupel1} untersucht. 
-Das erfolgreichste neuronale Netz des Modells auf den sequentiellen Daten hat 12 verdeckte Schichten mit jeweils 8 Neuronen, es wurde über 24 Minuten in 1444 Iterationen entwickelt.
-Trotz der höheren Varianz der Messdaten auf RND kommt das Modell hier mit 4 verdeckten Schichten mit 5 Neuronen aus, zudem wurde es schneller berechnet. Da die Leistungswerte des Modells gleichzeitig schlechter sind, scheint die Modellierung für dieses Problems nicht so erfolgreich zu sein, sodass ein simples abstrakteres Netz einem Komplexeren überlegen ist, das versuchen würde, die Datenstruktur detailreicher abzubilden.
-Das Modell scheint stärker von der Tiefe der Schichten des neuronalen Netzes zu profitieren, als an der Anzahl Neuronen. 
 
-Zu den sequentiell durchgeführten Messungen kann das Modell gut zwischen den Zugriffsgrößen und Operationstypen differenzieren (\ref{fig:tupel1_on_seq}a ). Recht zuverlässlich werden die Laufzeit-Häufungen zu den verschiedenen Attribut-Tupels mit einem Wert innerhalb der Häufung approximiert.
-Innerhalb eines Attribut-Tupels kann das Modell jedoch keine weitere Differenzierung durchführen.
-Stattdessen wird für eine Häufung immer der selbe Wert vorhergesagt.
-Das zeigt sich auch am Wert für \textit{In-range}, der angibt wie viele Vorhersagen zwischen den Quantilen 0.1 und 0.9 der Laufzeit des Attribut-Tupels gelandet sind. Da das Modell nur eine Art Mittelwert vorhersagt, ist der Wert für \textit{In-range} folgerichtig bei 100\%.
-Dieses Verhalten entspricht dem des Basis-Modells \textit{Median}, tatsächlich ist der entsprechende Graph \ref{fig:zeit_baselines_rnd}c mit dem zu \textit{Tupel1} kaum zu unterscheiden.
-Auch die Leistungswerte sind vergleichbar. Während \textit{Tupel1} einen etwas besseren MSPE mit 22\% zu 24\% hat, hat \textit{Median} mit einem MAPE von 11.1\% gegenüber 14.1\% leicht die Nase vorn. 
-Dieses ähnliche Verhalten entspricht auch der Modellierung. \textit{Tupel1} stehen keine Informationen zur Unterscheidung der Attribut-Tupels zur Verfügung, sodass intern ein möglichst guter Mittelwert zur Laufzeit jedes Sets gebildet werden muss. Dies gelingt \textit{Tupel1} mit dem kleinen Trainingsdatensatz in etwa genauso gut, wie \textit{Median} mit Kenntnis sämtlicher Messungen.
-Der Modellierung entsprechend macht \textit{Tupel1} ungenaue Vorhersagen für Attribut-Tupels, mit
-großer Varianz in den Zugriffszeiten. 
-Dies lässt sich in \ref{fig:tupel1_seq}c an der Markierung der nach oben gestreuten Laufzeiten erkennen.
-Die besten Vorhersagen werden für Messungen gemacht, die möglichst der mittleren Dauer ihres Attribut-Tupels entsprechen.
-Das entwickelte neuronale Netz zeigt sich sehr zuverlässlich. Der \textit{MAPE} auf den Trainingsdatensatz und der durchschnittliche \textit{MAPE} über identische Netze ist sehr nah am \textit{MAPE} des betrachteten Netz.
+\subsubsection{Detailbetrachtung: NN-Tupel1}
+Das Modell \textit{NN-Tupel1} gehört auf beiden Datensätzen zu den besten Modellen, die keine Fehlerklassen nutzen, es soll nun im Detail untersucht werden.
+Das erfolgreichste neuronale Netz des Modells auf den sequentiellen Daten hat 12 verdeckte Schichten mit jeweils 8 Neuronen, es wurde über 24 Minuten in 1934 Iterationen entwickelt.
+Trotz der höheren Varianz der Messdaten auf RND kommt das Modell hier mit 4 verdeckten Schichten mit 5 Neuronen aus, zudem wurde es mit nur 1310 Iterationen über knapp 4 Minuten wesentlich schneller berechnet.
+Da die Leistungswerte des Modells auf RND schlechter sind, scheint die Modellierung für dieses Problems nicht so erfolgreich zu sein, sodass ein simples Netz, dass stärker von den Trainingsdaten abstrahiert, einem Komplexeren überlegen ist.
+Das Modell scheint stärker von der Tiefe der Schichten des neuronalen Netzes zu profitieren, als an der Anzahl Neuronen.\medskip
+
+Die Abbildungen \ref{fig:tupel1_on_seq} und \ref{fig:tupel1_on_rnd} visualisieren die Vorhersagen von \textit{NN-Tupel1} auf SEQ respektive RND.
+In den ersten beiden Graphen werden, wie zuvor bei der Analyse der Referenzmodelle, die Vorhersagen in blau gegenüber den tatsächlichen Laufzeiten in dunkelgrau für lesende und hellgrau für schreibende Zugriffe dargestellt.
+Abbildung \ref{fig:tupel1_on_seq}b zeigt die Vorhersagen des Modells zu den Quantilen für die Ausreißervorhersage.
+Die letzten beiden Diagramme heben die Messungen hervor dessen Laufzeiten zu den 1\% der Vorhersagen gehören, die mit den größten bzw. kleinsten Residuen vom Modell bestimmt wurden.\medskip
+
+Zunächst werden die Vorhersagen von \textit{NN-Tupel1} auf SEQ analysiert.
+In Abbildung \ref{fig:tupel1_on_seq}a ist gut zu erkennen, dass es dem Modell gut gelingt, zwischen den Zugriffsgrößen und Operationstypen zu differenzieren und dadurch recht zuverlässig einen guten Mittelwert zu den verschiedenen Attribut-Tupeln vorhersagt.
+Innerhalb eines Attribut-Tupels kann das Modell jedoch keine weitere Differenzierung durchführen, stattdessen wird für die selben Attribute immer der selbe Wert vorhergesagt.
+Das zeigt sich auch am Wert für \textit{In-range}, der angibt wie viele Vorhersagen zwischen den Quantilen 0.1 und 0.9 der Laufzeit des Attribut-Tupels gelandet sind.
+Da das Modell nur eine Art Mittelwert vorhersagt, ist der Wert für \textit{In-range} folgerichtig bei 100\%.
+Dieses Verhalten entspricht dem des Referenzmodells \textit{Median agg}, tatsächlich ist der entsprechende Graph \ref{fig:zeit_baselines_seq}c von dem zu \textit{NN-Tupel1} kaum unterscheidbar.
+Auch die Leistungswerte sind vergleichbar. Während \textit{NN-Tupel1} einen etwas besseren \textit{MSPE} mit 22\% zu 24\% hat, hat \textit{Median} mit einem MAPE von 11.1\% gegenüber 14.1\% leicht die Nase vorn. 
+Dieses ähnliche Verhalten  der beiden Modelle macht auch im Rahmen der Modellierung von \textit{NN-Tupel1} Sinn.
+Dem Modell stehen keine Informationen zur Unterscheidung der Attribut-Tupel zur Verfügung, sodass intern ein möglichst guter Mittelwert zur Laufzeit jedes Sets gebildet werden muss. Dies gelingt \textit{NN-Tupel1} mit seinem Trainingsdatensatz in etwa genauso gut, wie \textit{Median agg} unter Kenntnis sämtlicher Messungen. Das NN-Modell kann also sehr gut von seinem Auszug der Messdaten die Laufzeiten ungesehener Messungen interpolieren.\medskip
+
+Wie bereits in Tabelle \ref{tab:outlier} gesehen wurde, kann \textit{NN-Tupel1} die 0.1 und 0.9 Quantile der Laufzeiten sehr gut abschätzen.
+In Abbildung \ref{fig:tupel1_on_seq}b ist entsprechend eine gute Eingrenzung der Messungen durch die eingezeichneten roten und grünen Punkte zu sehen.\medskip
+
+Der Modellierung entsprechend macht \textit{NN-Tupel1} ungenaue Vorhersagen für Attribut-Tupel, mit großer Varianz in den Zugriffszeiten. 
+Dies lässt sich in \ref{fig:tupel1_seq}c an der Markierung der nach oben gestreuten Laufzeiten erkennen.\\
+Die besten Vorhersagen werden für Messungen gemacht, die möglichst genau der mittleren Dauer ihres Attribut-Tupels entsprechen.\medskip
 
 \begin{figure}
 	\centering
@@ -1690,114 +1747,47 @@ Das entwickelte neuronale Netz zeigt sich sehr zuverlässlich. Der \textit{MAPE}
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_Duration_seq.png}
 	}
 	\hfill
-	\subfloat[Vorhersagen der beiden Quantile 0.1 in grün und 0.9 in rot]{
+	\subfloat[Näherungen des Modells zu den Quantilen der Laufzeiten, Quantil 0.1 in grün und Quantil 0.9 in rot]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_tuple1_Duration_seq.png}
 	}\\
-	\subfloat[Laufzeiten die mit höchster relativer Modellabweichung vorhergesagt wurden in rot]{
+	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in grün markiert]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_Duration_seq.png}
 	}
 	\hfill
-	\subfloat[Laufzeiten geringster relativer Modellabweichung in grün]{
+	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_Duration_seq.png}
 	}
-	\caption{Modell \textit{Tupel1} auf SEQ}
+	\caption{Modell \textit{NN-Tupel1} angewendet auf SEQ}
 	\label{fig:tupel1_seq}
 \end{figure} 
 
-Bei der Leistungsvorhersage auf cached-off0-rnd setzt sich Tupel1 mit 45\% MAPE und 122\% MSPE nun wesentlich vom linearen Modell mit 5019.1\% und 13188\% ab. Hier war LinReg G nicht mehr in der Lage die Häufungspunkte korrekt zu differenzieren. Tupel1 hingegen modelliert alle Häufungen korrekt (\ref{fig:tupel1_on_rnd}). Dadurch dass die Häufungen bei den randomisierten Messungen nicht mehr alle dem selben Attribut-Tupel angehören, sondern sich durch die Zugriffsort in der Datei unterscheiden, hat Tupel1 Informationen, um innerhalb einer Häufung verschiedene Vorhersagen zu treffen. Die Abhängigkeit der Laufzeit von Delta-Abstand ist jedoch sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten. Die Stärken und Schwächen des Modells liegen
-in den selben Bereichen, wie bei den sequentiellen Messungen.\\
-Das Unvermögen innerhalb eines Attribut-Tupels zu unterscheiden spiegelt sich auch darin wieder, dass 100\% der Vorhersagen von Tupel1 auf cached-off0-seq zwischen den tatsächlichen 0.1 und 0.9 Quantil des Sets liegt, idealerweise wenn alle Ausreißer richtig erkannt werden würden, wäre dieser Wert bei 80\%. Entsprechend sagt das Modell keine Ausreißer voraus, sodass TP und FP bei 0\% liegen. Auf cached-off0-rnd sind diese Werte nicht sehr Ausdrucksstark, denn zu jedem Attribut-Tupel gibt es jeweils nur ein bis drei Messungen, sodass die Quantile recht willkürlich sind.
-Wie erwartet fällt die Vorhersage der Quantile auf cached-off0-seq leicht. Dort gibt es bloß 76 verschiedene Attribut-Tupels, das Netz muss die entsprechenden Werte bloß \glqq merken\grqq{} und richtig zuordnen. Dies gelingt dem Netz mit wenigen Prozent Abweichung. 
-Auf cached-off0-rnd dagegen gibt es 260 000 unterschiedliche Attribut-Tupels, sodass das Netz mit seinem Trainingsdatenausschnitt von 40 000 Messungen nicht alle Sets gesehen hat und interpolieren muss. Die Fehlerwerte sind entsprechend ein vielfaches größer.\\
-Insgesamt zeigt das Modell trotz seiner Einfachheit bereits eine gute Leistung bei der Vorhersage der Laufzeiten der E/A-Aufrufe. Es kann, ähnlich wie die Modelle mit linearer Regression, nicht innerhalb eines Attribut-Tupels differenzieren, ist diesem aber durch die Modellierung nicht-linearer Zusammenhänge und durch ein besseres \glqq Erinnerungsvermögen\grqq{} überlegen. 
+Nun werden die Vorhersagen von \textit{NN-Tupel1} auf RND genauer betrachtet.
+
+Im Vergleich mit \textit{NN-Tupel1 agg} (Abbildung \ref{fig:lin_vergleich}b ) kann in Abbildung \ref{fig:tupel1_on_rnd}a gut erkannt werden, wie das neuronale Netz ausnutzt, dass es nicht an lineare Zusammenhänge gebunden ist.
+Die Laufzeiten der lesenden Zugriffe machen ab einer gewissen Zugriffsgröße einen Sprung nach oben. \textit{NN-Tupel1} kann diesen Sprung wesentlich besser in seine Vorhersagen mit einbeziehen, als das Netz zu \textit{NN-Tupel1 agg} mit nur einer verdeckten Schicht mit einem Neuron.
+Die schreibenden Zugriffe weisen keinen solchen Sprung in den Laufzeiten auf und werden scheinbar mit einer linearen Gerade von \textit{NN-Tupel1} approximiert.\\
+Dadurch dass die Messungen mit gleichen Zugriffsgrößen und Operationstypen bei den randomisierten Zugriffen nicht mehr alle dem selben Attribut-Tupel angehören, sondern sich durch das Delta-Offset unterscheiden, stehen \textit{NN-Tupel1} Informationen zu Verfügung, um innerhalb einer Messreihe unter den Messungen zu unterscheiden.
+Die Abhängigkeit der Laufzeit von Delta-Abstand scheint jedoch weiterhin sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen halten.
+Es ist aber durchaus zu erkennen, dass sich die gezeichneten Punkte einer Messreihe nicht mehr alle exakt horizontal zueinander sind, sondern teilweise (insbesondere bei den kleinsten lesenden Zugriffen) eine Streuung aufweisen.\medskip
+
+Die Stärken und Schwächen des Modells liegen
+in den selben Bereichen, wie bei den sequentiellen Messungen.
 
 \begin{figure}
 	\centering
 	\subfloat[Vorhersage der Laufzeiten]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_Duration_rnd.png}
 	}\\
-	\subfloat[Laufzeiten die mit höchster relativer Modellabweichung vorhergesagt wurden in rot]{
+	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in grün markiert]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_Duration_rnd.png}
 	}
 	\hfill
-	\subfloat[Laufzeiten geringster relativer Modellabweichung in grün]{
+	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_Duration_rnd.png}
 	}
-	\caption{Modell \textit{Tupel1} auf RND}
+	\caption{Modell \textit{NN-Tupel1} angewendet auf RND}
 	\label{fig:tupel1_rnd}
 \end{figure} 
-
-\begin{figure}
-	\centering
-	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_aggregated_Duration_seq.png}
-	}
-	\subfloat[Vorhersagen der beiden Quantile 0.1 in grün und 0.9 in rot]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_aggregated_Duration_seq.png}
-	}\\
-	\subfloat[Laufzeiten die mit geringster Modellabweichung vorhergesagt wurden]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_aggregated_Duration_seq.png}
-	}
-	\subfloat[Laufzeiten mit höchster Modellabweichung]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_aggregated_Duration_seq.png}
-	}
-	\caption{Modell \textit{Tupel1 Aggregiert} auf SEQ}
-	\label{fig:aggregated_seq}
-\end{figure} 
-
-\begin{figure}
-	\centering
-	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_aggregated_Duration_rnd.png}
-	}
-	\subfloat[Vorhersagen der beiden Quantile 0.1 in grün und 0.9 in rot]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_DurationToPredSorted_onlyPred_aggregated_Duration_rnd.png}
-	}\\
-	\subfloat[Laufzeiten die mit geringster Modellabweichung vorhergesagt wurden]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_aggregated_Duration_rnd.png}
-	}
-	\subfloat[Laufzeiten mit höchster Modellabweichung]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_aggregated_Duration_rnd.png}
-	}
-	\caption{Modell \textit{Tupel1 Aggregiert} auf RND}
-	\label{fig:aggregated_rnd}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_throughput_ema_Duration_seq.png}
-	}
-	\subfloat[Vorhersagen der beiden Quantile 0.1 in grün und 0.9 in rot]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_throughput_ema_Duration_seq.png}
-	}\\
-	\subfloat[Laufzeiten die mit geringster Modellabweichung vorhergesagt wurden]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_throughput_ema_Duration_seq.png}
-	}
-	\subfloat[Laufzeiten mit höchster Modellabweichung]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_throughput_ema_Duration_seq.png}
-	}
-	\caption{Modell \textit{Tupel1 EMA Durchsatz} auf SEQ}
-	\label{fig:ema_seq}
-\end{figure} 
-
-\begin{figure}
-	\centering
-	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_aggregated_Duration_rnd.png}
-	}
-	\subfloat[Vorhersagen der beiden Quantile 0.1 in grün und 0.9 in rot]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_aggregated_Duration_rnd.png}
-	}\\
-	\subfloat[Laufzeiten die mit geringster Modellabweichung vorhergesagt wurden]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_aggregated_Duration_rnd.png}
-	}
-	\subfloat[Laufzeiten mit höchster Modellabweichung]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_aggregated_Duration_rnd.png}
-	}
-	\caption{Modell \textit{Tupel1 EMA Durchsatz} auf RND}
-	\label{fig:ema_rnd}
-\end{figure}
 
 \paragraph{Zusammenfassung:}
 \textit{
