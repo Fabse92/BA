@@ -334,6 +334,7 @@ Ein einzelnes Perzeptron kann alle linear separierbaren logischen Funktionen exa
 Zwei Punktmengen A und B in einem n-dimensionalen Raum sind linear separierbar, wenn $n + 1$ reelle Zahlen $w_1,...,w_{n+1}$ existieren, sodass für jeden Punkt $(x_1,x_2,...,x_n) \in A$ die Ungleichung $\sum_{i=1}^{n} w_ix_i \ge w_{n+1}$ gilt und für jeden Punkt $(x_1,x_2,...,x_n) \in B$ $\sum_{i=1}^{n} w_ix_i < w_{n+1}$
 
 \begin{figure}
+	\centering
 	\subfloat[Zwei voneinander nicht linear separierbare Relationen in $ \mathbb{R}^2$.]{
 		\includegraphics[width=.3\textwidth]{Bilder/2000px-Separability_NO.png}
 	}
@@ -666,7 +667,7 @@ Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Mod
 
 \section{Untersuchte Modelle}
 \label{analyse:modelle}
-Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die Messdaten exploriert (siehe \ref{exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
+Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die Messdaten exploriert (siehe \ref{eval:exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
 Wenn es darum geht, gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden.
 Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den linearen Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keinen linearen Zusammenhang zur Anderen hat.
 Bei einer Korrelation von 1 dagegen, kann eine lineare Funktion angegeben werden, aus der sich der Wert der einen Variablen direkt der Wert der Anderen berechnen lässt. Somit ist eine hohe Korrelation zwischen einem Attribut eines E/A-Aufrufs und dessen Laufzeit ein Hinweis darauf, dass dieses Attribut zur Vorhersage der Laufzeit verwendet werden könnte. 
@@ -949,6 +950,7 @@ Die mittlere Zugriffsdauer für 16MiB liegt im sequentiellen Fall für lesende Z
 Für die Zugriffsgröße von einem 4KiB ergibt sich mit einer Zugriffszeit von 0.0154 Millisekunden beim Lesen gegenüber 0.0139 Millisekunden für das Schreiben eine etwa 10\% längere Laufzeit beim Lesen.
 
 \begin{table}
+	\centering
 	\scriptsize
 	\makebox[\textwidth][c]{
 		\subfloat{
@@ -1008,6 +1010,7 @@ Die Gruppen verschiedener Zugriffsgrößen können teilweise zu einem E/A-Pfad z
 Die Laufzeit ist für die horizontal nebeneinanderliegenden Gruppen nicht vorwiegend von der Zugriffsgröße abhängig, sondern in unserer Interpretation von dem Pfad, den die entsprechenden Aufrufe im System genommen haben. 
 
 \begin{figure}
+	\centering
 	\subfloat[Messungen sortiert nach Laufzeit für SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_DurationSorted_read_seq.png}
 	}
@@ -1033,6 +1036,7 @@ Die Ausreißervorhersage wird dementsprechend im Folgenden nur auf dem sequentie
 In Abbildung \ref{fig:ausreisser} sind die Ausreißer rot markiert, sie befinden sich gerade an den oberen und unteren Enden einer Stufe.
 
 \begin{figure}
+	\centering
 	\subfloat[Ausreißer auf SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_outlier_read_seq.png}
 	}
@@ -1058,6 +1062,7 @@ Zu Beginn jeder Messreihe werden die ersten E/A-Zugriffe zuverlässig sehr schne
 Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt bis der Platz nicht mehr ausreicht und aufwendigere Speicherverwaltungen Platz für die neuen Daten im Speicher schaffen müssen.
 
 \begin{figure}
+	\centering
 	\subfloat[Messungen mit Zugriffsgröße 1B auf SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size1_read_seq.png}
 	}
@@ -1076,6 +1081,7 @@ Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt bis 
 	\label{fig:groesse1}
 \end{figure}
 \begin{figure}
+	\centering
 	\subfloat[Messungen mit Zugriffsgröße 16KiB auf SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size16384_read_seq.png}
 	}
@@ -1095,6 +1101,7 @@ Möglicherweise wird in diesem Fall solange der Arbeitsspeicher aufgefüllt bis 
 	\label{fig:groesse16384}
 \end{figure}
 \begin{figure}
+	\centering
 	\subfloat[Messungen mit Zugriffsgröße 2MiB auf SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_Size2097152_read_seq.png}
 	}
@@ -1126,6 +1133,7 @@ Einzelne sehr starke Ausreißer wie bei SEQ-R sind vermutlich durch außergewöh
 Regelmäßigere Ausreißer sind ein Zeichen für systematisch anders behandelte E/A-Zugriffe, die sich vielleicht durch verschiedene E/A-Pfade unterscheiden.
 
 \begin{figure}
+	\centering
 	\subfloat[Die ersten 250 Messungen in SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_First250_read_seq.png}
 	}
@@ -1162,6 +1170,7 @@ Doch die Annahme einer gewissen Periodizität in der Leistung des E/A-Systems sc
 Ein Modell, das versucht diese auszunutzen muss dabei eine komplexere Methode als schlichtes Übertragen vorheriger Leistungswerte ausnutzen, ansonsten kann es wohl nur in äußerst eingeschränktem Maße korrekte Leistung vorhersagen.
 
 \begin{figure}
+	\centering
 	\subfloat[Messungen 100001 bis 100250 in SEQ-R]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/exploration/plot_From100001to100250_read_seq.png}
 	}
@@ -1265,6 +1274,7 @@ Für die Vorhersage der vielen Messungen mit Residuen um den Nullpunkt herum hat
 
 \subsubsection{Detailbetrachtung der Fehlerklassen}
 \begin{table}
+	\centering
 	\scriptsize
 	\subfloat[Fehlerklassen aus \textit{LinReg G} auf SEQ]{
 		\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
@@ -1379,7 +1389,7 @@ Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren.
 Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND allerdings scheinbar sehr schlecht vorhergesagt werden, sodass \textit{Max} und \textit{MSPE} höher als bei sequentiellen Datensatz sind.\medskip
 
 Insgesamt sind die Ergebnisse der Referenzmodelle auf SEQ bereits überraschend gut.
-Die Modelle \textit{Median Agg} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.6-0.8 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen.\\
+Die Modelle \textit{Median Agg} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.06-0.08 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen.\\
 Auf RND erreichen nur die \textit{Median agg}-Modelle gute Werte für die Fehlermetriken.
 Da die Aggregate der Attribut-Tupel auf RND allerdings nur wenige Messungen enthalten, ist es in diesem Fall fast so, als wenn die \textit{Median-Agg}-Modelle alle Messdaten bereits kennen würden. Die guten Ergebnisse dieser Modelle auf RND war also zu erwarten.\\
 Die \textit{LinReg}-Modelle erreichen auf RND teilweise kaum bessere Ergebnisse als das \textit{Durschnitts}-Modells.
@@ -1445,6 +1455,7 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 	Das passt zu dem Bild, das wir von der Struktur der Fehlerklassen gewonnen haben, nachdem alle schnellen Messungen in der selben Klasse landen und nur die Langsameren in verschiedene Klassen aufgeteilt werden.
 \end{itemize}
 \begin{figure}
+	\centering
 	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
 	}
@@ -1464,6 +1475,7 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 \end{figure} 
 
 \begin{figure}
+	\centering
 	\subfloat[Modell \textit{Durchschnitt}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
 	}
@@ -1482,6 +1494,7 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 	\label{fig:zeit_baselines_rnd}
 \end{figure} 
 \begin{figure}
+	\centering
 	\subfloat[Modell \textit{Median agg}]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_aggregated.png}
 	}
@@ -1551,6 +1564,7 @@ Informationen über die Struktur der gefundenen Netze und den Aufwand des Traini
 Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen auf den Testergebnissen geschildert, dann werden im Detail die Ergebnisse von den Modellen \textit{NN-Tupel1} und \textit{NN-LinRegFK} betrachtet.
 
 \begin{table}
+	\centering
 	\scriptsize
 	\subfloat[NN-Modelle auf SEQ]{
 		\begin{tabular}{|r|r|r|r|r|}\hline%
@@ -1573,6 +1587,7 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 \end{table}
 
 \begin{table}
+	\centering
 	\scriptsize
 	\makebox[\textwidth][c]{
 		\subfloat[Fehlermetriken auf SEQ]{
@@ -1599,6 +1614,7 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 \end{table}
 
 \begin{table}
+	\centering
 	\scriptsize
 	\subfloat{
 	\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
@@ -1858,11 +1874,33 @@ Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig
 	}
 \chapter{Fazit}
 \label{Fazit}
-Welche Modelle sind für welchen Fall erfolgsversprechend?\\
-Eignen sich Neuronale Netze zum Vorhersagen von E/A-Leistung im HPC?\\
-Was ist die Bedeutung der Ergebnisse aus den Fehlerklassen?\\
-Wo könnten die Ergebnisse eingesetzt werden?\\
-Was müsste als nächstes getan werden?\\
+In dieser Bachelorarbeit wurde das Ein-/Ausgabe-System eines Hochleistungsrechners analysiert.
+Mit dem Einsatz künstlicher neuronaler Netze wurden verschiedene Ansätze zur Modellierung der E/A-Leistung entwickelt und getestet.
+Die Trainings- und Testdaten der neuronalen Netze wurden aus einer Vielzahl Messreihen gewonnen. Bei der Analyse dieser Messdaten wurde ein starker Zusammenhang zwischen E/A-Pfad und der Zugriffszeit festgestellt, zudem wurden periodische Verhaltensmuster innerhalb der Messreihen entdeckt und eine starke Korrelation zwischen Zugriffsgröße und Zugriffszeit festgestellt.
+Bei der Entwicklung der Modelle zur Beschreibung der E/A-Leistung wurden die entdeckten Zusammenhänge mit der Laufzeit berücksichtigt, sodass je nach Modell lineare und periodische Abhängigkeiten oder aber nur die Zusammenhänge zwischen den Parametern des E/A-Aufrufs und der Laufzeit beachtet wurden.
+Durch den Vergleich mit Referenzmodellen konnte die Qualität der Vorhersagen der neuronalen Netze eingeordnet und verglichen werden.
+Zusätzlich wurde evaluiert, ob Kenntnisse über die verwendeten E/A-Pfade eines Zugriffs anhand des Residuums der entwickelten Modelle gegenüber den wirklichen Laufzeiten gewonnen werden können.
+Dazu wurden weitere Modelle entwickelt, die die auf diese Weise erhaltenen Fehlerklassen ausnutzen.\medskip
+
+Trotz der starken linearen Korrelation zwischen Zugriffsgröße und Laufzeit sind die neuronalen Netze mit aufwendigeren Aufbau, aufgrund ihrer Fähigkeit nicht-lineare Zusammenhänge zu approximieren, den linearen Modellen überlegen.\\
+Es konnte festgestellt werden, dass E/A-Aufrufe trotz identischer Parameter zu sehr unterschiedlichen Laufzeiten führen können, um eine wirklich präzise Vorhersage machen zu können, muss ein Modell also auf irgendeine Weise innerhalb von Zugriffen mit gleichen Parametern differenzieren können.
+Der beste mittlere Fehler, der von Modellen ohne diese Unterscheidung erreicht wurde, hängt stark von dem Anwendungsfall ab.
+Bei Messungen mit sequentiellen Dateizugriffen kann eine kleiner mittlere Modellabweichung von 0.06 Millisekunden erreicht werden, Messungen mit zufälligem Dateizugriff sind wesentlich schwieriger vorherzusagen, dort liegt der die mittlere Modellabweichung bei etwa 3 Millisekunden.\medskip
+
+Die Differenzierung von E/A-Zugriffen mit gleichen Parametern konnte durch die zwei recht einfachen Ansätze, die die periodischen Abhängigkeiten des Systems ausnutzen sollten, nicht hinreichend gewährleistet werden.\\
+Modellen, die Fehlerklassen nutzen und somit Kenntnis über den E/A-Pfad des Zugriffs haben, gelingt diese Differenzierung hingegen teilweise.
+Diese Modelle können die mittleren Modellabweichungen gegenüber den anderen Modellen mit 0.02 respektive 0.9 Millisekunden in etwa dritteln.\medskip
+
+Bei der Analyse der erhaltenen Fehlerklassen konnte die Einsicht gewonnen werden, dass diese für eine wirklichkeitsgetreue Repräsentation der E/A-Pfade weiter optimiert werden müssen. 
+So führte vermutlich die direkte Verwendung des absoluten Fehlers zur Bestimmung der Fehlerklassen dazu, dass diese nur den langsameren E/A-Zugriffe verschiedene Klassen zuordneten.\\
+Zukünftige Arbeiten könnten auch probieren die zumindest teilweise auftretende Periodizität in der E/A-Leistung besser auszunutzen. 
+So haben Crume und Maltzahn in ihrem Ansatz mit der Fourier-Analyse dieser periodischen Zusammenhänge auf einzelnen Festplatten Erfolge aufzeigen können \cite{Crume:2013:FML:2538542.2538561}.
+Ob solche Ansätze in dem komplexen E/A-System eines Hochleistungsrechners funktionieren können, müsste dabei untersucht werden.\medskip
+
+Letztendlich hat sich gezeigt, dass der Einsatz künstlicher neuronaler Netze zur Vorhersage von E/A-Leistung durchaus geeignet ist.
+Sie erzielen wesentlich bessere Ergebnisse als lineare Modelle und konvergieren bei geeigneter Parameter-Wahl zuverlässig zu einem passenden Prädiktor.
+Gerade diese Parametrisierung kann sich jedoch als aufwendig erweisen.
+So kann man sich zu keinem Zeitpunkt vollkommen sicher sein, ob eine Modellierung ungeeignet ist oder nur ungünstige Parameter verwendet wurden.
 
 \bibliographystyle{alpha}
 \bibliography{literatur}
