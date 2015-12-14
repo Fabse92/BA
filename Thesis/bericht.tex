@@ -97,6 +97,11 @@
 \end{titlepage}
 
 \chapter*{Abstract}
+Die Vorhersage der Laufzeit von Dateizugriffen im Hochleistungsrechner ist wichtig für die Entwicklung von Analysewerkzeugen, die Wissenschaftler bei der effizienten Nutzung der gegebenen Ressourcen unterstützen können.
+Mit Hilfe künstlicher neuronaler Netze kann die Ein-/Ausgabe-Leistung untersucht werden und mit einer geeigneten Modellierung approximiert werden.
+Es stellt sich heraus das der entscheidende Faktor für eine gute Modellierung des Ein-/Ausgabe-Systems darin liegt, ähnliche oder gleichartige Dateizugriffe voneinander zu unterscheiden.
+Dies gelingt einfachen künstlichen neuronalen Netzen bereits besser als linearen Modellen, für eine tatsächliche Differenzierung von Dateizugriffen mit gleichen Parametern müssten allerdings periodische Verhaltensmuster des Systems ausgenutzt werden, dies erweist sich als schwierige Aufgabe.
+Es zeigt sich, dass die Laufzeit eines Dateizugriffs wesentlich vom Verarbeitungspfad im System abhängt. Mit der Kenntnis dieses Pfades kann eine gute Vorhersage geleistet werden.
 
 \thispagestyle{empty}
 
@@ -111,7 +116,6 @@
 %\bigskip
 
 \section{Motivation}
-
 Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Bedeutung; viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können in einer effizienten Weise nur durch eine abstrakte Modellierung des Problems mit anschließender Computersimulation gelöst werden. Der hohe Rechenaufwand solcher Modellberechnungen erfordert, dass Wissenschaftler für ihre Simulationsprogramme die Dienste eines Hochleistungsrechenzentrums in Anspruch nehmen. 
 Die Entwicklung der Computer-Hardware in den vergangen Jahrzehnten drängte die Hochleistungsrechenzentren dazu, für den gewünschten Rechenleistungszuwachs in massiv parallelisierte Systeme zu investieren. Sodass, statt einzelner sehr schneller Prozessoren, heutzutage viele Tausend Prozessoren vernetzt arbeiten. Diese horizontale Leistungssteigerung am Hochleistungsrechner umgeht die technischen Flaschenhälse, welche die Leistung eines einzelnen Prozessors beschränken.
 Die zur Verfügung stehende Leistung wird dadurch allerdings schwieriger nutzbar. 
