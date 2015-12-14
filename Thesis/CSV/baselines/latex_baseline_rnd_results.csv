@@ -1,6 +1,6 @@
 Modell,MAF,RMAF,RMQA,Q3,Max,Typ
-Tupel1-FK Median agg,0.00026,    8.4,   43,   9.4,   4527,Agg
-LinReg-FK Median agg,0.00029,   11.8,   74,   9.6,   4527,Agg
+Tupel1FK Median agg,0.00026,    8.4,   43,   9.4,   4527,Agg
+LinRegFK Median agg,0.00029,   11.8,   74,   9.6,   4527,Agg
 Median agg                  ,0.00167,   79.3, 9008,  15.0,7719764,Agg
 LinReg G                   ,0.00436, 4569.0,11632, 932.6,  38497,Agg
 LinReg G                   ,0.00476, 5578.4,14185,1158.1,  46941,Ind

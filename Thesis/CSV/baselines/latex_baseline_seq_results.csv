@@ -1,6 +1,6 @@
 Modell,MAF,RMAF,RMQA,Q3,Max,Typ
-LinReg-FK Median agg ,1.9e-05,   6.6,  13,   7.1,  96,Agg
-Tupel1-FK Median agg,1.9e-05,   6.7,  13,   7.3,  96,Agg
+LinRegFK Median agg ,1.9e-05,   6.6,  13,   7.1,  96,Agg
+Tupel1FK Median agg,1.9e-05,   6.7,  13,   7.3,  96,Agg
 Median agg                   ,6.2e-05,  11.1,  24,  10.0, 283,Agg
 LinReg G                   ,7.6e-05,  50.8,  59,  73.7, 326,Ind
 LinReg G+D                  ,7.6e-05,  50.8,  59,  73.7,326,Ind
