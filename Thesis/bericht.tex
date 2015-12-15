@@ -1,4 +1,5 @@
 \documentclass[
+	twoside,
 	12pt,
 	a4paper,
 	BCOR10mm,
@@ -39,6 +40,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{mwe}    % loads »blindtext« and »graphicx«
 \usepackage{subfig}
+\usepackage[hmarginratio=1:1]{geometry}
 
 \restylefloat{table}
 
@@ -61,6 +63,8 @@
 \renewcommand*{\appendixpagename}{Anhänge}
 
 \begin{document}
+	
+\pagenumbering{Roman}
 
 \begin{titlepage}
 	\begin{center}
@@ -96,6 +100,8 @@
 	\end{tabular}\par}
 \end{titlepage}
 
+\cleardoublepage
+
 \chapter*{Abstract}
 Die Vorhersage der Laufzeit von Dateizugriffen im Hochleistungsrechner ist wichtig für die Entwicklung von Analysewerkzeugen, die Wissenschaftler bei der effizienten Nutzung der gegebenen Ressourcen unterstützen können.
 Mit Hilfe künstlicher neuronaler Netze kann die Ein-/Ausgabe-Leistung untersucht werden und mit einer geeigneten Modellierung approximiert werden.
@@ -114,6 +120,8 @@ Es zeigt sich, dass die Laufzeit eines Dateizugriffs wesentlich vom Verarbeitung
 %Im folgenden wird zunächst kurz dargelegt mit welcher Problemstellung sich diese %Thesis befasst, welches Ziel verfolgt wird, und wie sie im Weiteren aufgebaut %sein wird.
 %}
 %\bigskip
+
+\pagenumbering{arabic}
 
 \section{Motivation}
 Hochleistungsrechnen ist in der Wissenschaft ein Thema mit zunehmender Bedeutung; viele komplexere Fragestellungen, insbesondere in den Naturwissenschaften und der Informatik, können in einer effizienten Weise nur durch eine abstrakte Modellierung des Problems mit anschließender Computersimulation gelöst werden. Der hohe Rechenaufwand solcher Modellberechnungen erfordert, dass Wissenschaftler für ihre Simulationsprogramme die Dienste eines Hochleistungsrechenzentrums in Anspruch nehmen. 
@@ -428,30 +436,30 @@ Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelo
 
 \chapter{Gestaltung der Analyse}
 \textit{	
-In diesem Kapitel wird darauf eingegangen wie das E/A-System untersucht werden soll und welche Ansätze dabei verfolgt werden.
-Zunächst wird in Abschnitt \ref{analyse:mess+att} beschrieben, welche Informationen über E/A-Zugriffe im System bekannt sind. Unterkapitel \ref{analyse:ea_modell} beschreibt wie die Verarbeitung eines E/A-Zugriffs modelliert werden kann.
+In diesem Kapitel wird die Methodik der Analyse des E/A-Systems beschrieben und erläutert welche Ansätze dabei verfolgt werden.
+Zunächst wird in Abschnitt \ref{analyse:mess+att} beschrieben, welche Informationen über E/A-Zugriffe im System bekannt sind. Unterkapitel \ref{analyse:ea_modell} beschreibt den E/A-Pfad und wie die Verarbeitung eines E/A-Zugriffs im  System grundsätzlich modelliert werden kann.
 Danach folgt in Unterkapitel \ref{analyse:valid} ein Vorgriff darauf, wie die Modelle der E/A-Verarbeitung untersucht werden. Die Modelle werden zunächst in Unterkapitel \ref{analyse:modellklassen} in Gruppen eingeordnet und dann in Unterkapitel \ref{analyse:modelle} im Detail betrachtet.
 }
 \bigskip
 
 \section{Messdaten und Attribute des E/A-Aufrufs}
 \label{analyse:mess+att}
-Um das E/A-System des zu untersuchenden Hochleistungsrechners zu analysieren werden zunächst eine Reihe E/A-Aufrufe ausgeführt und deren Laufzeiten gemessen. Die Messreihen werden mit einer Systematik durchgeführt, damit mehr Wissen über die erhaltenen Daten bekannt ist, sodass bessere Schlussfolgerungen aus der Analyse gezogen werden können.
+Um das E/A-System des zu untersuchenden Hochleistungsrechners besser zu verstehen und zu analysieren werden zunächst eine Reihe E/A-Aufrufe ausgeführt und deren Laufzeiten gemessen. Die Messreihen werden mit einer Systematik durchgeführt, damit mehr Wissen über die erhaltenen Daten bekannt ist, sodass bessere Schlussfolgerungen aus der Analyse gezogen werden können.
 Eine Messreihe wird daher mit einem immer gleichen Zugriffsmuster auf einer Datei durchgeführt.
 Der Benchmark-Test, in dem die Messreihen generiert wurden, wird im Evaluierungskapitel erläutert.
 Zu jedem E/A-Zugriff sind bestimmte Attribute bekannt, diese können mit der gemessenen Laufzeit als eine Messung gespeichert werden.
 Die bekannten Attribute sind:
 \begin{itemize}
-	\item Die Datei ID, mit dieser kann die aufgerufene Datei identifiziert werden.
-	\item Die Zugriffsgröße des E/A-Aufrufs, sie entspricht der Anzahl Bytes, die gelesen oder geschrieben werden sollen. 
-	\item Der Offset, das ist der Abstand vom Dateibeginn zu dem Bereich auf den zugegriffen wird. Wenn nicht direkt vom ersten Byte der Datei gelesen oder geschrieben werden soll, muss zusätzlich zur Zugriffsgröße der Offset definiert werden, um den Bereich auf den zugegriffen wird zu spezifizieren.
-	Der Delta-Offset zur Messung i berechnet sich als $Offset[i] - (Offset[i-1] + Zugriffsgrö\text{ß}e[i-1])$. Er gibt also an, wie groß der Abstand von der End-Position des Dateizeigers nach dem letzten E/A-Aufruf zu der Start-Position des aktuellen Aufrufs ist.
-	\item Der OpTyp gibt die Art des E/A-Aufrufs an. Der OpTyp-Wert ist 1 für lesende und 2 für schreibende Zugriffe.
+	\item Die \textbf{Datei ID}, mit dieser kann die aufgerufene Datei identifiziert werden.
+	\item Die \textbf{Zugriffsgröße} des E/A-Aufrufs, sie entspricht der Anzahl Bytes, die gelesen oder geschrieben werden sollen. 
+	\item Der \textbf{Offset}, das ist der Abstand vom Dateibeginn zu dem Bereich auf den zugegriffen wird. Wenn nicht direkt vom ersten Byte der Datei gelesen oder geschrieben werden soll, muss zusätzlich zur Zugriffsgröße der Offset definiert werden, um den Bereich auf den zugegriffen wird zu spezifizieren.
+	\item Der \textbf{Delta-Offset} zur Messung i berechnet sich als $\mbox{Offset}[i] - (\mbox{Offset}[i-1] + \mbox{Zugriffsgröße}[i-1])$. Er gibt also an, wie groß der Abstand von der End-Position des Dateizeigers nach dem letzten E/A-Aufruf zu der Start-Position des aktuellen Aufrufs ist.
+	\item Der \textbf{OpTyp} gibt die Art des E/A-Aufrufs an. Der OpTyp-Wert ist 1 für lesende und 2 für schreibende Zugriffe.
 \end{itemize}
-Es sind keine Informationen über den internen Systemzustand bekannt. Es ist daher nicht direkt ablesbar, ob angefragte Daten bereits gecached sind oder nicht, wie stark das E/A-System zum Zeitpunkt der Anfrage ausgelastet ist.
-Diese Informationen könnten höchstens aus vergangenen Messungen deduziert werden. Eine solche Betrachtung bezeichne ich im folgenden als \textbf{Zeitreihenbetrachtung}.
+Es sind keine Informationen über den internen Systemzustand bekannt. Es ist daher nicht direkt ablesbar, ob angefragte Daten bereits gecached sind oder nicht, oder wie stark das E/A-System zum Zeitpunkt der Anfrage ausgelastet ist.
+Diese Informationen könnten höchstens aus vergangenen Messungen deduziert werden. Eine solche Betrachtung von aufeinander folgenden Messungen bezeichne ich im folgenden als \textbf{Zeitreihenbetrachtung}.
 
-Das Tripel $(Zugriffsgrö\text{ß}e,OpTyp,Delta\text{-}Offset)$ bezeichne ich als Attribut-Tupel, es charakterisiert einen E/A-Aufruf.
+Das Tripel $(\mbox{Zugriffsgröße},\mbox{OpTyp},\mbox{Delta-Offset})$ bezeichne ich als Attribut-Tupel, es charakterisiert einen E/A-Aufruf.
 
 \section{Modell des Ein-/Ausgabe-Pfads}
 \label{analyse:ea_modell}
@@ -467,10 +475,10 @@ Wie in Kapitel \ref{back_E/A} beschrieben hängt die Zugriffszeit für lesende E
 Für die Zugriffszeit kann im wesentlichen unterschieden werden, ob sich die angefragten Daten bereits innerhalb des anfragenden Rechnerknoten befinden oder diese von einer Festplatte über das Netzwerk geholt werden müssen.
 
 \begin{enumerate}
-\item Falls die Daten sich nicht im Speicher des Rechnerknotens befinden, muss als erstes eine Anfrage an das angebundene E/A-System gestellt werden.
+\item Falls die Daten sich nicht im Speicher des Rechnerknotens befinden, muss als erstes eine Anfrage an das angebundene parallele Dateisystem gestellt werden.
 Dort ist der reine Verwaltungsaufwand der Anfrage im wesentlichen für alle Aufrufe konstant, denn sie sieht strukturell für Anfragen vieler Daten nicht anders aus, als die Anfrage mit kleiner Zugriffsgröße.
-\item Daraufhin muss das E/A-System die Festplatten ansprechen (evt. auch mehrere), auf der die relevante Datei liegt. Der zeitliche Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei von der Struktur des Netzwerkes abhängig.
-\item Die Festplatte liest die Daten aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt werden.
+\item Daraufhin muss das parallele Dateisystem die Festplatten ansprechen (evt. auch mehrere), auf der die relevante Datei liegt. Der zeitliche Aufwand für den Aufbau der Verbindung zum Speicherort der Datei ist dabei von der Struktur des Netzwerkes abhängig.
+\item Die im RAID-Verbund angeordneten Festplatten lesen die Daten aus und schickt sie über das Netzwerk an den Rechnerknoten auf dem sie benötigt werden.
 \item Nun müssen die angefragten Daten aus dem Arbeitsspeicher des Knotens über die Cache-Ebenen in den Prozessor geladen werden. 
 \end{enumerate}
 Falls die Daten bereits im Arbeitsspeicher oder einem der Caches liegen, werden entsprechend Schritte übersprungen.
@@ -479,7 +487,7 @@ Falls die Daten bereits im Arbeitsspeicher oder einem der Caches liegen, werden 
 	\begin{center}
 		\includegraphics[width=.43\textwidth]{Bilder/rechnerknoten_ea_pfad.png}
 	\end{center}
-	\caption{E/A-Pfad im System; der rot gekennzeichnete Prozessor macht einen E/A-Zugriff , der Pfad führt entlang der roten Markierung}
+	\caption{E/A-Pfad im System; der rot gekennzeichnete Prozessor macht einen E/A-Zugriff, der Pfad führt entlang der roten Markierung}
 	\label{fig:ea_pfad}
 \end{figure}
 
@@ -1935,7 +1943,7 @@ Wenn es in einer Anwendung darum geht ein Modell für die Vorhersage von E/A-Zug
 Sollen dagegen die E/A-Pfade von Dateizugriffen genauer untersucht werden, kann entweder das Referenzmodell \textit{LinReg G} oder das NN-Modell \textit{NN-Tupel1} zur Erstellung der Fehlerklassen genutzt werden.
 Da sich die lineare Regression als stark abhängig vom Anwendungsfall gezeigt hat, sollte hier das NN-Modell bevorzugt werden.
 
-\subsubsection{zukünftige Arbeit}
+\subsubsection{Zukünftige Arbeit}
 Zukünftige Arbeiten könnten auch probieren die zumindest teilweise auftretende Periodizität in der E/A-Leistung besser auszunutzen. 
 So haben Crume und Maltzahn in ihrem Ansatz mit der Fourier-Analyse dieser periodischen Zusammenhänge auf einzelnen Festplatten Erfolge aufzeigen können \cite{Crume:2013:FML:2538542.2538561}.
 Ob solche Ansätze in dem komplexen E/A-System eines Hochleistungsrechners funktionieren können, müsste dabei untersucht werden.\medskip
@@ -1943,6 +1951,7 @@ Ob solche Ansätze in dem komplexen E/A-System eines Hochleistungsrechners funkt
 Das Konzept E/A-Pfade aus den hier vorgeschlagenen Fehlerklassen zu gewinnen müsste auch weiter im Detail untersucht werden.
 Zum einen könnten andere Modelle zum Erstellen der Fehlerklassen untersucht werden und zum anderen müsste der Zusammenhang zwischen E/A-Pfad und Fehlerklassen analysiert werden. So könnte man versuchen die Laufzeiten der Zugriffe in einer Fehlerklasse mit 
 ihrer hauptsächlichen Ursache zu korrelieren.
+
 
 \bibliographystyle{alpha}
 \bibliography{literatur}
