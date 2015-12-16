@@ -377,6 +377,7 @@ Für MLPs hat Cybenko \cite{cybenko:mcss} bewiesen, dass sie beliebige kontinuie
 }
 
 \chapter{Verwandte Arbeiten}
+\label{verwandte_arbeiten}
 \textit{%
 	In diesem Kapitel werden wissenschaftliche Veröffentlichungen vorgestellt, die dieser Arbeit gegenüber relevante Themen behandeln. Es werden drei Teilgebiete des Problems der Leistungsvorhersage von E/A-Aufrufen im Hochleistungsrechnen behandelt.\\
 	Als Erstes gehe ich in Abschnitt \ref{rel_ea-vorhersage} auf einige Arbeiten ein, die allgemeine E/A-Leistungsvorhersage behandeln. Dabei führe ich zunächst zwei Begriffe für Kategorien von Lösungsansätzen ein. Danach gehe ich in Unterkapitel \ref{rel_vorhersage-mit-nn} auf Arbeiten ein, die sich mit der Verwendung von neuronalen Netzen zur Leistungsvorhersage beschäftigen.
@@ -435,6 +436,7 @@ Hier findet sich ein potenzielles Anwendungsgebiet der Ergebnisse dieser Bachelo
 }
 
 \chapter{Gestaltung der Analyse}
+\label{gestaltung_der_analyse}
 \textit{	
 In diesem Kapitel wird die Methodik der Analyse des E/A-Systems beschrieben und erläutert welche Ansätze dabei verfolgt werden.
 Zunächst wird in Abschnitt \ref{analyse:mess+att} beschrieben, welche Informationen über E/A-Zugriffe im System bekannt sind. Unterkapitel \ref{analyse:ea_modell} beschreibt den E/A-Pfad und wie die Verarbeitung eines E/A-Zugriffs im  System grundsätzlich modelliert werden kann.
@@ -510,9 +512,9 @@ Für beide Zugriffsarten ergeben sich die drei beschriebenen Zeitfaktoren tMem, 
 	Eigentlich handelt es sich bei tMem um die Zusammensetzung der Zeitanteile von dem Arbeitsspeicher und den Caches. tMem wird im Modell jedoch vom langsamsten Speicher, der angesprochen werden muss, dominiert.
 	\item Die Festplatte ist ähnlich komplex wie das Netzwerk. Wie beim Netzwerk ist die Zugriffszeit zum Einen von dem genauen Speicherort der angefragten Datenblöcke und zum Anderen vom Durchsatz der Festplatte abhängig.
 	Die Zugriffszeit ist von der zu überwindenden Strecke, vom vorherigen Aufenthaltsort zum Zielort, des Lese-/Schreibkopfes abhängig.
-	Diese Strecke hängt dabei mit dem $Delta\text{-}Offset$ zusammen.
+	Diese erwartete Strecke hängt dabei mit dem $\mbox{Delta-Offset}$ zusammen, weil Dateisysteme versuchen Dateien möglichst zusammenhängend abzulegen.
 	Ein großer Abstand der Zugriffsorte in der Datei sollte auch in einem größeren Abstand auf der Magnetscheibe der Festplatte resultieren.
-	Der zeitliche Aufwand zum Überwinden des $Delta\text{-}Offsets$ ist von den Hardwarecharakteristika der Festplatte abhängig. Ansonsten ist die Zugriffszeit linear von dem Durchsatz der Festplatte und der Größe des angefragten Abschnittes abhängig.
+	Der zeitliche Aufwand zum Überwinden des $\mbox{Delta-Offset}$ ist von den Hardwarecharakteristika der Festplatte abhängig. Ansonsten ist die Zugriffszeit linear von dem Durchsatz der Festplatte und der Größe des angefragten Abschnittes abhängig.
 \end{itemize}
 
 tMem müsste nach diesem Modell vollständig durch ein lineares Modell dargestellt werden können. Dagegen ist dies für tNetzwerk und tHDD nur bedingt der Fall.
@@ -521,13 +523,13 @@ Die Durchsätze von tMem sowie tHDD sind hardwarebedingt von der Art des Zugriff
 Dies geschieht über den Operationstyp (OpTyp).
 
 Das Modell für die Ein-/Ausgabe in dieser Arbeit entspricht letztendlich:
-
+\vspace*{-0.15cm}
 \begin{align*}
-tGesamt &= tHDD + tNetzwerk + tMem\\
+\mbox{tGesamt} &= \mbox{tHDD} + \mbox{tNetzwerk} + \mbox{tMem}\\
 \text{mit}\\
-tHDD &= \frac{Zugriffsgrö\text{ß}e}{Festplattendurchsatz(OpTyp)} + Festplattenlatenz(Delta\text{-}Offset) \\
-tNetzwerk &= \frac{Zugriffsgrö\text{ß}e}{Netzwerkdurchsatz} + Netzwerklatenz\\
-tMem &= \frac{Zugriffsgrö\text{ß}e}{Speicherdurchsatz(OpTyp)} + Speicherlatenz
+\mbox{tHDD} &= \frac{\mbox{Zugriffsgröße}}{\mbox{Festplattendurchsatz(OpTyp)}} + \mbox{Festplattenlatenz(Delta-Offset)} \\
+\mbox{tNetzwerk} &= \frac{\mbox{Zugriffsgröße}}{\mbox{Netzwerkdurchsatz}} + \mbox{Netzwerklatenz}\\
+\mbox{tMem} &= \frac{\mbox{Zugriffsgröße}}{\mbox{Speicherdurchsatz(OpTyp)}} + \mbox{Speicherlatenz}
 \end{align*}
 
 Alle Messungen zu Speicheraufrufen mit dem selben Attribut-Tupel hätten nach diesem Modell idealerweise die selbe Laufzeit.
@@ -535,8 +537,8 @@ Alle Messungen zu Speicheraufrufen mit dem selben Attribut-Tupel hätten nach di
 \subsection{E/A-Pfad zur Leistungsvorhersage}
 \label{analyse:ea_pfad_zurvorhersage}
 Anhand eines kurzen Vorgriffs auf die Messdaten-Exploration kann die Auswirkung des E/A-Pfades auf die Laufzeit der Messungen gezeigt werden.
-In Abbildung \ref{fig:pfad_for_vorhersage} ist die Zugriffszeit für E/A-Zugriffe einer Messreihe gezeichnet. Alle Messungen derselben Farbe gehören zum selben Attribut-Tupel, ihre Aufrufparameter sind also gleich.
-\begin{figure}
+In Abbildung \ref{fig:pfad_for_vorhersage} ist die Zugriffszeit für E/A-Zugriffe einer Messreihe gezeichnet. Alle Messungen derselben Farbe gehören zum selben Attribut-Tupel, ihre Aufrufparameter sind also gleich.\\
+\begin{figure}[!bH]
 	\begin{center}
 		\subfloat{
 			\includegraphics[width=.5\textwidth]{Bilder/Plots/exploration/plot_SizeSorted_log_read_seq.png}
@@ -551,16 +553,18 @@ Die Zugriffszeit eines Pfades wird von der langsamsten Komponente auf dem Weg do
 Dadurch kann ein Sprung in der Laufzeit entstehen sobald sich der Pfad verlängert. Der Pfad verlängert sich, wenn auf eine tiefere Schicht der Speicherhierachie zugegriffen werden muss. Da die tieferen Schichten auch zunehmend langsamer werden, entsteht jedes mal ein Sprung in der Laufzeit.\medskip
 
 In der Abbildung wird auch direkt klar, dass die Annahme fallengelassen werden muss, dass Messungen mit gleichem Attribut-Tupel dieselbe Laufzeit haben. Die Laufzeiten innerhalb von Messreihen zu gleichen Attributen unterscheiden sich teilweise deutlich.
-Das ermöglicht allerdings gerade die Abhängigkeit der Laufzeiten vom E/A-Pfad zu sehen.
+Anhand dieser Verteilung kann die Abhängigkeit der Laufzeiten vom E/A-Pfad zu erkannt werden.
 Wäre die Laufzeit im Wesentlichen nur vom Attribut-Tupel und dem \glqq zufälligen\grqq{} momentanen Systemzustand abhängig, dann sollten die Messungen zum selben Tupel in einer gleichmäßig verteilten Wolke aufzufinden sein.
 Die Laufzeiten eines Attribut-Tupels weisen allerdings ein sprunghaftes Verhalten auf. Die dunkelgrünen Punkte sind beispielsweise in drei Gruppen aufgeteilt.
 Die roten und violetten Messungen, links neben den dunkelgrünen, weisen ein ähnliches Muster auf, bei den violetten fehlt die mittlere Gruppe.
 Die Zugriffsgröße der dunkelgrünen Messungen ist dabei vier mal höher (4KiB zu 16KiB).
 Wie lange die Verarbeitung des E/A-Aufrufs dauert, scheint aber im Wesentlichen für die drei Attribut-Tupel gleich zu sein und vor Allem davon abzuhängen, in welcher Stufe sich der zugehörige Punkt der Messung befindet.\medskip
 
-Die zuvor aufgestellte Modellierung kann die Abhängigkeit zwischen E/A-Pfad und Laufzeit nicht wiedergeben. Möglicherweise könnte eine Zeitreihenbetrachtung Hinweise über die Zugehörigkeit einer Messung zu einem Pfad geben. 
+Die zuvor aufgestellte Modellierung kann die Abhängigkeit zwischen E/A-Pfad und Laufzeit nicht wiedergeben.
+Jede Ebene der Speicherhierachie könnte hingegen modelliert werden, falls der E/A-Pfad also bereits bekannt wäre, könnte aus einer Komposition von Modellen für alle Pfade das korrekte ausgewählt werden.
+Möglicherweise könnte eine Zeitreihenbetrachtung Hinweise über die Zugehörigkeit einer Messung zu einem Pfad geben. 
 
-Ein perfektes Modell sollte unter Kenntnis des Pfades, den ein E/A-Aufruf nehmen wird, und dem Attribut-Tupel die Dauer des Zugriffs sehr gut vorhersagen können. Wenn das Modell nicht vorhersagen kann welcher Pfad genommen wird, kann es nicht zwischen den Gruppierungen innerhalb der Messungen eines Attribut-Tupels unterscheiden. Die Vorhersagekraft ist damit begrenzt.
+Ein perfektes Modell sollte unter Kenntnis des Pfades, den ein E/A-Aufruf nehmen wird, und dem Attribut-Tupel die Dauer des Zugriffs sehr gut vorhersagen können. Wenn das Modell nicht die Informationen über die E/A-Pfade erhält bzw. es nicht möglich ist  diese Kenntnisse aus anderen Attributen abzuleiten, kann es nicht zwischen den Gruppierungen innerhalb der Messungen eines Attribut-Tupels unterscheiden. Die Qualität der Vorhersagen ist damit begrenzt, die beste Näherung wäre dann die typische Laufzeit (bspw. das arithmetische Mittel) für alle Messungen eines Attribut-Tupels als Approximation der individuellen Laufzeit einer Messung zu nutzen.
 
 \section{Validierung und Metriken}
 \label{analyse:valid}
@@ -569,16 +573,18 @@ Jedes Modell trifft bestimmte Annahmen über das E/A-System und zur Entwicklung 
 Diese benötigten Daten können aus den Messdaten über das System abgeleitet werden.
 Ein Teil der Daten wird als Trainingsdatensatz zum Lernen genutzt, die restlichen Daten sind dem Modell unbekannt und bilden den Testdatensatz. Die Vorhersagen der Modelle zum Testdatensatz können dann mit den tatsächlichen Werten verglichen werden. Dies ist die \textbf{Leistungsvorhersage} vom Modell zum System. \medskip
 
-Neben der Vorhersage der Leistung wird in den komplexeren Modellen selbst auch versucht die Quantile 0.1 und 0.9 der Laufzeit vorherzusagen. Der Wert des 0.1 Quantil gibt an, dass 10\% der Laufzeiten die zu einem Attribut-Tupel gemessen wurden langsamer als dieser Wert waren, entsprechend gibt das 0.9 Quantil an, dass nur 10\% der Messungen zu diesem Attribut-Tupel schneller abgearbeitet wurden.
+Neben der Vorhersage der Leistung wird in den komplexeren Modellen auch versucht die Quantile 0.1 und 0.9 der Laufzeit pro Attribut-Tupel vorherzusagen. Der Wert des 0.1 Quantil gibt an, dass zu 10\% der Messungen zu einem Attribut-Tupel Laufzeiten gemessen wurden, die langsamer als dieser Wert waren, entsprechend gibt das 0.9 Quantil an, dass nur 10\% der Messungen zu diesem Attribut-Tupel schneller abgearbeitet wurden.\\
+Die Modelle sagen also voraus, dass Messungen zu einem spezifischen Attribut-Tupel mit 80\%iger Wahrscheinlichkeit zwischen den von ihnen bestimmten 0.1 und 0.9 Quantil liegen.\medskip
+
 Wenn die schnellsten und langsamsten $10\%$ der Messungen eines Attribut-Tupels als Ausreißer bezeichnet werden, können die Modelle mit Hilfe der Vorhersage dieser Quantile eine Klassierung in Ausreißer und Nicht-Ausreißer machen. Diese Zuordnung wird als \textbf{Ausreißervorhersage} bezeichnet.
 Bei den Ausreißern handelt es sich in diesem Kontext nicht um ungültige Messungen, die durch einen fehlerhaften Versuchsaufbau oder durch Fehlkalibrierung von Messinstrumenten entstanden sind. Stattdessen kann es beispielsweise sein, dass das System punktuell sehr ausgelastet war und die Latenzen dadurch ungewöhnlich hoch waren. 
-Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, erfordert allerdings eine sehr gute Einsicht ins System.
+Bei der Ausreißervorhersage wird geprüft, ob das Modell korrekt voraussagen kann, dass die Laufzeit einer E/A-Anfrage zu den Ausreißern gehört. Da es sich bei den Ausreißern nicht um Messfehler handelt ist eine solche Vorhersage prinzipiell möglich, wenn E/A-Pfad und Systemzustand bekannt sind.
 Man könnte die Ausreißervorhersage auch als Test auf den schwierigsten Daten ansehen. 
 
 Es würde für die Qualität eines Modells sprechen, wenn es sowohl eine gute Leistungsvorhersage, auch eine gute Ausreißervorhersage macht.
 
 \subsubsection{Metriken zur Leistungsvorhersage}
-Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
+Zur Analyse der Leistungsvorhersage nutze ich folgende Fehlermetriken:
 \begin{itemize}
 	\item Der \textit{\textbf{MAE}} (vom englischen \textit{mean absolute error}) ist der arithmetische absolute Fehler gemittelt über alle Vorhersagen.
 	\item Der \textit{\textbf{MAPE}} (vom englischen \textit{mean absolute percentage error}) ist der relative \textit{MAE}, also der \textit{MAE} auf dem relativen Fehler der Vorhersage gegenüber der tatsächlichen Laufzeit.\\
@@ -587,34 +593,39 @@ Zur Analyse der Leistungsvorhersage führe ich sechs Fehlermetriken ein.
 \begin{itemize}
 	\item Um ein Verständnis für die Streuung der Modellabweichungen zu bekommen ist der quadratische relative Fehler gemittelt über alle Vorhersagen \textit{\textbf{MSPE}} (vom englischen \textit{mean square percentage error}) nützlich.
 \end{itemize}
-	Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht teilweise gut und für andere Messungen schlecht agiert. Für den selben Zweck sind \textit{Q3} und \textit{Max} nützlich.
+	Eine geringe quadratische Abweichung lässt darauf schließen, dass das Modell zuverlässig ist und nicht auf einem Teil der Messungen genau und für andere Messungen ungenau vorhersagt.\\
+	Für den selben Zweck sind \textit{RQ3} und \textit{RMax} nützlich.
 \begin{itemize}
-	\item \textit{\textbf{Q3}} gibt das obere Quartil des relativen Fehlers über alle Vorhersagen an.
-	\item \textit{\textbf{Max}} entspricht dem größten relativen Fehler der vom Modell gemacht wurde.
+	\item \textit{\textbf{RQ3}} gibt das obere Quartil des relativen Fehlers über alle Vorhersagen an.
+	\item \textit{\textbf{RMax}} entspricht dem größten relativen Fehler der vom Modell gemacht wurde.
+\end{itemize}
+Wenn überprüft werden soll, ob die Vorhersagen eines Modells zumindest für die jeweiligen Attribut-Tupel sinnvoll oder vielleicht doch eher konservativ waren, kann der \textit{In-range} betrachtet werden.
+\begin{itemize}
 	\item Der Wert von \textit{\textbf{In-range}} gibt an, wie viele der gemachten Vorhersagen zwischen dem 0.1 und 0.9 Quantil der Laufzeiten aller Messungen eines Attribut-Tupels lagen.
-	Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre \textit{In-range} also bei 80\%. An \textit{In-range} lässt sich erkennen, ob ein Modell sehr konservativ vorhersagt, sodass 100\% der prognostizierten Werte zwischen den Quantilen liegen und ob überhaupt sinnvolle Vorhersagen gemacht werden.
+	Wenn alle Laufzeiten exakt vorhergesagt werden würden, wäre \textit{In-range} also bei 80\%. Wenn ein Modell konservativ vorhersagt, beträgt der \textit{In-range} 100\%, also liegen alle prognostizierten Werte zwischen den Quantilen, dass Modell \glqq versucht\grqq{} nicht Ausreißer vorherzusagen, sondern approximiert mit einer Art typischen Laufzeit. 
+	Wenn der \textit{In-range} sehr klein oder gar 0 beträgt, macht das Modell keine sinnvollen Vorhersagen, denn die meisten vorhergesagten Laufzeiten lagen außerhalb der typischen Zugriffszeit der Attribut-Tupel.
 \end{itemize}
 Zwei zusätzliche Fehlermetriken enthalten weitere nützliche Informationen über die Netze, sodass die Leistung besser eingeordnet werden kann.
 
 \begin{itemize}
-	\item \textit{\textbf{Avg-MAPE}} (Avg für \textit{average}) gibt den durchschnittlichen \textit{MAPE}-Wert für 12 Netze an. 
+	\item \textit{\textbf{Avg-MAPE}} (\textit{average} \textit{MAPE}) gibt den durchschnittlichen \textit{MAPE}-Wert für 12 Netze an. 
 	Aufgrund der zufälligen Initialisierung und der lokalen Konvergenz durch das verwendete Gradientenverfahren sind die neuronalen Netze nicht deterministisch bestimmt.
-	Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter, um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
+	Je nachdem mit welchen Gewichten das Netz startet, ist das Ergebnis des Lernalgorithmus besser oder schlechter. Um falsche Schlussfolgerungen über die Qualität der Parameter zu verhindern, werden daher jeweils 12 Instanzen mit den gleichen Parametern und Trainingsdaten, aber mit unterschiedlicher Initialisierung, berechnet.
 	Anhand des \textit{Avg-MAPE} kann die Auswirkung der lokalen Konvergenz für die jeweiligen Netzstrukturen betrachtet werden.
 	\item Zusätzlich wird \textit{\textbf{Train-MAPE}} angegeben. Dies ist der erreichte \textit{MAPE}-Wert des Netzes auf den eigenen Trainingsdaten. Dieser Wert sollte immer besser als der normale \textit{MAPE} sein. Anhand der Differenz zu \textit{MAPE} kann beurteilt werden, wie gut die Trainingsdaten die Testdaten repräsentiert haben.
 \end{itemize}
 
 \subsubsection{Metriken zur Ausreißervorhersage}
-Zur Evaluierung der Ausreißervorhersage werden weitere Fehlermetriken eingeführt.\medskip
+Zur Evaluierung der Ausreißervorhersage werden weitere Fehlermetriken genutzt.\medskip
 
-Die ersten Fehlermetriken beziehen sich auf die Vorhersagen der Laufzeit-Quantile. Idealerweise sollte das Modell jeweils einen einheitlichen Wert für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt.
+Die ersten Fehlermetriken beziehen sich auf die Vorhersagen der Laufzeit-Quantile. Idealerweise sollte das Modell jeweils die gleichen Werte für die Quantile zu jedem Attribut-Tupel vorhersagen, der möglichst nah am tatsächlichen Wert liegt, denn die Quantile beziehen sich auf jeweils alle Messungen zu einem Attribut-Tupel.
 \begin{itemize}
 	\item Die arithmetischen Mittelwerte über den relativen Fehlern (\textit{\textbf{Q0.1-MAPE}} und \textit{\textbf{Q0.9-MAPE}}).
 	\item Die mittleren quadratischen Abweichungen über die relativen Fehler (\textit{\textbf{Q0.1-MSPE}} und \textit{\textbf{Q0.9-MSPE}}).
 \end{itemize}
 Zudem werden zwei Metriken einbezogen, die gemeinsam die Klassierung der Messungen in Ausreißer und Nicht-Ausreißer bewerten können.
 \begin{itemize}
-	\item \textit{\textbf{TP}} misst den Anteil der korrekt vorhergesagten Ausreißer, dies sind die richtig positiven Zuordnungen (engl. \textit{true positives}). Dieser Wert sollte möglichst hoch sein.
+	\item \textit{\textbf{TP}} gibt den Anteil der korrekt vorhergesagten Ausreißer an, dies sind die richtig positiven Zuordnungen (engl. \textit{true positives}). Dieser Wert sollte möglichst hoch sein.
 	\item \textit{\textbf{FP}} gibt dagegen die Anzahl Messungen an, die fälschlicherweise als Ausreißer eingestuft wurden (engl. false positives). Dieser Wert sollte gering gehalten werden.
 \end{itemize}
 Es ist wichtig, sowohl \textit{TP} als auch \textit{FP} zu betrachten. Ein Netz, das einfach alle Messungen als Ausreißer deklariert, würde einen perfekten \textit{TP}-Wert von 100\% erreichen, obwohl mit der Ausreißer-Bestimmung nichts anzufangen ist.
@@ -625,18 +636,18 @@ Modelle unterscheiden sich einerseits anhand der Informationen, die ihnen über 
 Da es sich bei der E/A-Leistungsvorhersage um ein komplexes Problem handelt, steht nicht a priori fest, wie eine passende Modellierung auszusehen hat. 
 In dieser Arbeit wurden daher verschiedene Ansätze getestet.
 
-Jedes Modell kann einer Teilmenge von Klassen zugeordnet werden. Jede Klasse entspricht einem bestimmten Ansatz, also einer bestimmten Herangehensweise ans Problem.
+Aufgrund der Vielzahl verschiedener Modelle wird eine Einteilung in Modellklassen vorgenommen. Jede Klasse entspricht einem Ansatz, also einer bestimmten Herangehensweise ans Problem.
 Die verschiedenen Modellklassen werden in den folgenden Kapiteln näher erläutert.
 
 \subsection{Referenzmodelle}
 Referenzmodelle werden auf einfache Weise mit klassischen mathematischen Methoden mit relativ geringem Rechenaufwand berechnet.
 Das Ziel bei den Referenzmodellen ist nicht hauptsächlich die Qualität der Vorhersagen zu untersuchen, sondern verschiedene Ansätze zu erkunden und Vergleichswerte für komplexere Modelle zu liefern.
-Einige Referenzmodelle stellen eine untere Schranke für die Vorhersagequalität der aufwendigeren Modelle dar. Andere zeigen auf, was maximal mit einem Ansatz erreichbar ist.
+Einige Referenzmodelle stellen eine untere Schranke für die Vorhersagequalität der aufwendigeren Modelle dar. Andere zeigen auf, was bestenfalls mit einem Ansatz erreichbar ist.
 Beispielsweise kann an den Ergebnissen eines Modells, das bloß lineare Zusammenhänge beschreiben kann, untersucht werden, ob die Daten in linearer Weise beschrieben werden können.\medskip
 
 Bei Referenzmodellen wird nicht zwischen Trainings- und Testdaten unterschieden, sie werden immer über die gesamten Messdaten trainiert und ausgewertet.
 Eine Separation der Datensätze ist für beide Verwendungszwecke der Referenzmodelle nicht sinnvoll. 
-Wenn untersucht werden soll, ob ein lineares Modell die Messdaten beschreiben kann, sollte der gewählte Trainingssatz nicht eingeschränkt werden, ebenso wenn gezeigt werden soll, wie gut ein Konzept maximal sein kann.
+Wenn untersucht werden soll, ob ein lineares Modell die Messdaten beschreiben kann, sollte der gewählte Trainingssatz nicht eingeschränkt werden, ebenso wenn gezeigt werden soll, wie gut ein Konzept bestmöglich sein kann.
 
 \subsection{NN-Modelle}
 Das Hauptaugenmerk der Arbeit liegt auf der Anwendung von künstlichen neuronalen Netzen zur Leistungsvorhersage der E/A-Zugriffe. Die Modelle, die auf neuronalen Netzen basieren, werden als NN-Modelle bezeichnet.
@@ -659,21 +670,20 @@ Ein größerer negativer oder positiver Fehler würde darauf hinweisen, dass bei
 Die Schätzung ist, dass das System pro Anwendungsfall etwa 10 verschiedene E/A-Pfade nutzt, daher werden die Messungen in 10 Gruppen aufgeteilt.\medskip
 
 Es muss beachtet werden, dass Modelle, die Fehlerklassen ausnutzen, keine verwendbaren Prädiktoren zur Leistungsvorhersage ergeben.
-Die Fehlerklassen müssen ebenso auf den Trainingsdaten wie auch auf den Testdaten berechnet werden, damit die Modelle daraus auf die Laufzeit schließen können.
-Für die Zuordnung in Fehlerklassen werden jedoch die Modellabweichungen eines anderen Modells benötigt. Die tatsächlichen Laufzeiten der Testdaten müssen für Modelle mit Fehlerklassen also bekannt sein.\medskip
+Dies liegt daran, dass die tatsächlichen Laufzeiten der Messungen im Testdatensatz für Modelle mit Fehlerklassen bekannt sein müssen. 
+Mit Hilfe der tatsächlichen Laufzeiten können die Modellabweichungen zu einem anderen Modell berechnet werden, die für die Zuordnung in Fehlerklassen benötigt werden.\medskip
 
-Die Modelle, die zusätzlich zu den Attribut-Tupeln der Messungen die jeweiligen Fehlerklassen kennen, werden untersucht, um die Aussagekraft von E/A-Pfaden zu analysieren.
+Die Fehlerklassen-Modelle werden stattdessen untersucht, um die Aussagekraft von E/A-Pfaden zu analysieren.
 Wenn E/A-Pfade charakteristisch für die Zugriffszeiten sind, dann sollten diese Modelle eine wesentlich geringere Modellabweichung aufzeigen als Modelle ohne Fehlerklassen.
 
 Sowohl Referenzmodelle als auch NN-Modelle werden im Folgenden entwickelt und untersucht.
 \subsection{Aufbereitung der Trainingsdaten}
-
 Die Eingabedaten der Modelle können auf zwei grundsätzlich verschiedene Weisen aufbereitet werden.
-Entweder werden Informationen zu jeder einzelnen Messung eingegeben oder sie werden zunächst als Aggregate zusammengefasst.\medskip
+Entweder werden einem Modell Informationen zu einzelnen Messungen nach und nach gegeben oder jeweils eine Teilmenge der Trainingsdaten werden als Aggregate zusammengefasst.\medskip
 
-Das Problem ist, dass zu verschiedenen Messungen eines Attribut-Tupels \glqq widersprüchliche\grqq{} Angaben zur Laufzeit gemacht werden. 
+Das Problem bei Einzelmessungen ist, dass \glqq widersprüchliche\grqq{} Angaben zur Laufzeit von Messungen mit gleichen Parametern gemacht werden. Es kann sehr viele Messungen mit gleichen Parametern geben, solange nur die Attribute Zugriffsgröße, Delta-Offset und OpTyp genutzt werden . 
 Für die Aggregate werden bestimmte Attribute definiert und alle Messungen mit identischen Werten zu allen diesen Attributen werden zusammengefasst.
-Der Wert für die Laufzeit eines Aggregats ergibt sich in dieser Arbeit immer als arithmetischer Mittelwert über alle zugehörigen Messungen.
+Der Wert für die Laufzeit eines Aggregats ergibt sich dann beispielsweise als arithmetischen Mittelwert oder Median über alle zugehörigen Messungen.
 Die Modelle, die nur aggregierte Eingabedaten nutzen, vereinfachen das Problem entsprechend sehr stark. Sie verfolgen den Ansatz, dass es mit den gegebenen Informationen nicht möglich ist, innerhalb eines Attribut-Tupels zu differenzieren, sodass verschiedene Messungen eines mit den selben Attributen alle dieselbe Vorhersage zugewiesen bekommen.
 
 Modelle, die Einzelmessungen als Eingabe bekommen, müssen anders mit den \glqq widersprüchlichen\grqq{} Informationen umgehen.
@@ -685,36 +695,17 @@ Wenn ein solches Verhalten erkannt wird, könnte die Vorhersage durch so ein Mod
 
 \section{Untersuchte Modelle}
 \label{analyse:modelle}
-Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die Messdaten exploriert (siehe \ref{eval:exploration}), um zu verstehen, welche Attribute zu den Messungen interessant sind.
+Bevor die Modelle entwickelt wurden, die in dieser Arbeit untersucht werden sollen, wurden die Messdaten exploriert, um zu verstehen, welche Attribute zu den Messungen interessant sind.
 Wenn es darum geht, gute Attribute für die Modelle zu finden, kann die Korrelation des Attributs zu den Laufzeiten der Messungen betrachtet werden.
 Die Korrelation ist ein Wert zwischen 0 und 1, und ist ein Maß für den linearen Zusammenhang zweier Variablen. Eine Korrelation von 0 besagt, dass die Information über eine der Variablen keinen linearen Zusammenhang zur Anderen hat.
 Bei einer Korrelation von 1 dagegen, kann eine lineare Funktion angegeben werden, aus der sich der Wert der einen Variablen direkt der Wert der Anderen berechnen lässt. Somit ist eine hohe Korrelation zwischen einem Attribut eines E/A-Aufrufs und dessen Laufzeit ein Hinweis darauf, dass dieses Attribut zur Vorhersage der Laufzeit verwendet werden könnte. 
 Allerdings wird bei der Korrelation bloß die lineare Abhängigkeit betrachtet, ein komplexerer Zusammenhang zweier Variablen wird dadurch schlecht oder gar nicht repräsentiert.
 Abgesehen von der Korrelation war Expertenwissen ausschlaggebend für die Wahl der verwendeten Attribute für jedes Modell.
 
-Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die Referenzmodelle durch, dann die NN-Modelle.
+Ich stelle nun kurz alle Modelle vor, die untersucht wurden. Zunächst gehe ich die Referenzmodelle durch, dann die NN-Modelle.\\
+Eine Kurzbeschreibung der Modelle ist für die Referenzmodelle in Tabelle \ref{tab:zusammenfasssung_referenz} und für NN-Modelle in Tabelle \ref{tab:zusammenfasssung_nn} gegeben.
 
 \subsection{Referenzmodelle}
-
-\begin{itemize}
-	\item Das einfachste Modell ist \textit{\textbf{Durchschnitt}} das Modell approximiert alle Laufzeiten mit dem globalen arithmetischen Mittelwert der Laufzeiten.
-Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle Modelle, die dies tun, bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt und dennoch schlechtere Leistungen erzielt, könnte unterstellt werden, im Wesentlichen zufällige Vorhersagen zu machen.
-\textit{Durchschnitt} ist als untere Schranke für alle NN-Modelle gedacht.
-	\item Eine ähnliche Methode wie \textit{Durchschnitt} verwendet das Modell \textit{\textbf{Median agg}}. Es berechnet für jedes Attribut-Tupel den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen zu diesem Attribut-Tupel.
-Dieses Modell ist eine Referenz dazu, wie gut die Modellierung eines Modells, das nicht nicht zwischen verschiedenen Messungen zum selben Attribut-Tupel unterscheiden kann, maximal sein kann.
-	\item Lineare Regression ist ein einfaches numerisches Verfahren, das eine lineare Funktion berechnet, die den quadratischen Fehler zu den bekannten Messpunkten minimiert (Methode der kleinsten Quadrate).
-Die Funktion ist eine Gerade der Form $f(x) = a + b \cdot x$, mit der Verschiebung $a$ und Steigung $b$. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
-Ich probiere drei verschiedene lineare Modelle aus.
-\textit{\textbf{LinReg G}} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
-\textit{\textbf{LinReg G+D}} enthält auch die Werte zu Delta-Offset und \textit{\textbf{LinReg G+D+O}} berücksichtigt zudem den Operationstyp der Messungen.
-Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Tupels unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
-\textit{LinReg G} wird einmal mit Einzelmessungen als Eingabe berechnet und einmal mit aggregierten Eingabedaten, dabei wird über alle Attribute des Attribut-Tupels (Zugriffsgröße, Delta-Offset und OpTyp) aggregiert. 
-Da die quadratische Abweichung des berechneten linearen Modells zu allen Eingabedaten minimiert wird, findet bei der Einzelmessungs-Eingabe eine Gewichtung nach Häufigkeit des Auftretens eines Attribut-Tupels statt.
-	\item Zuletzt gibt es noch zwei Fehlerklassen-Modelle. Die Eingabedaten sind aggregiert nach dem Attribut-Tupel und den Fehlerklassen. 
-Sie funktionieren also genauso wie \textit{Median agg}, nur dass die Messungen zusätzlich noch durch ihre Fehlerklasse unterschieden werden. Es wird also der Median für alle Messungen eines Attribut-Tupels berechnet, die zur selben Fehlerklasse gehören.
-\textit{\textbf{LinRegFK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen wurden, und \textit{\textbf{Tupel1FK Median agg}} modelliert mit Hilfe der Klassen, die aus den Modellabweichungen der besten Instanz von \textit{Tupel1} berechnet wurden.
-\end{itemize}
-
 \begin{table}
 	\centering
 	\scriptsize
@@ -727,8 +718,26 @@ Sie funktionieren also genauso wie \textit{Median agg}, nur dass die Messungen z
 		\end{tabular}
 	}
 	\label{tab:zusammenfasssung_referenz}
-	\caption{Kurzbeschreibungen der der Referenzmodelle}
+	\caption{Kurzbeschreibungen der Referenzmodelle}
 \end{table}
+\begin{itemize}
+	\item Das einfachste Modell ist \textit{\textbf{Durchschnitt}} das Modell approximiert alle Laufzeiten mit dem globalen arithmetischen Mittelwert der Laufzeiten.
+Da das Modell überhaupt nicht auf die Attribute der betrachteten Messungen eingeht, sollten alle Modelle, die dies tun, bessere Leistungen erbringen. Einem Modell, das diese Informationen ausnutzt und dennoch schlechtere Leistungen erzielt, könnte unterstellt werden, im Wesentlichen zufällige Vorhersagen zu machen.
+\textit{Durchschnitt} ist als untere Schranke für alle NN-Modelle gedacht.
+	\item Eine ähnliche Methode wie \textit{Durchschnitt} verwendet das Modell \textit{\textbf{Median agg}}. Es berechnet für jedes Attribut-Tupel den Median der Laufzeiten, dieser Wert entspricht dann der Vorhersage des Modells für Messungen zu diesem Attribut-Tupel.
+Dieses Modell ist eine Referenz dazu, wie gut die Modellierung eines Modells, das nicht nicht zwischen verschiedenen Messungen zum selben Attribut-Tupel unterscheiden kann, bestmöglich sein kann.
+	\item Lineare Regression ist ein einfaches numerisches Verfahren, das eine lineare Funktion berechnet, die den quadratischen Fehler zu den bekannten Messpunkten minimiert (Methode der kleinsten Quadrate).
+Die Funktion ist eine Gerade der Form $f(x) = a + b \cdot x$, mit der Verschiebung $a$ und Steigung $b$. Wird die Regression über mehrere Variablen gemacht erhält man Verschiebungen und Steigungen, die sich aus den Komponenten zu jeder Variable zusammensetzen.
+Ich probiere drei verschiedene lineare Modelle aus.
+\textit{\textbf{LinReg G}} wird nur aus dem Zusammenhang von Zugriffsgröße und Laufzeit berechnet.
+\textit{\textbf{LinReg G+D}} enthält auch die Werte zu Delta-Offset und \textit{\textbf{LinReg G+D+O}} berücksichtigt zudem den Operationstyp der Messungen.
+Die Modelle können wegen der linearen Form nicht innerhalb eines Attribut-Tupels unterscheiden. Sollte das vermessene E/A-System bereits durch lineare Zusammenhänge in den gemessenen Informationen beschreibbar sein, so sollten diese Modelle gute Ergebnisse zeigen.
+\textit{LinReg G} wird einmal mit Einzelmessungen als Eingabe berechnet und einmal mit aggregierten Eingabedaten, dabei wird über alle Attribute des Attribut-Tupels (Zugriffsgröße, Delta-Offset und OpTyp) aggregiert. 
+Da die quadratische Abweichung des berechneten linearen Modells zu allen Eingabedaten minimiert wird, findet bei der Einzelmessungs-Eingabe eine Gewichtung nach Häufigkeit des Auftretens eines Attribut-Tupels statt.
+	\item Zuletzt gibt es noch zwei Fehlerklassen-Modelle. Die Eingabedaten sind aggregiert nach dem Attribut-Tupel und den Fehlerklassen. 
+Sie funktionieren also genauso wie \textit{Median agg}, nur dass die Messungen zusätzlich noch durch ihre Fehlerklasse unterschieden werden. Es wird also der Median für alle Messungen eines Attribut-Tupels berechnet, die zur selben Fehlerklasse gehören.
+\textit{\textbf{LinRegFK Median agg}} kennt die Fehlerklassen, die aus der Clusteranalyse der Fehler von \textit{LinReg G} gewonnen wurden, und \textit{\textbf{Tupel1FK Median agg}} modelliert mit Hilfe der Klassen, die aus den Modellabweichungen der besten Instanz von \textit{NN-Tupel1} (wird im Folgenden Abschnitt über die NN-Modelle erklärt) berechnet wurden.
+\end{itemize}
 
 \subsection{NN-Modelle}
 Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze, die sich anhand der Eingabeattribute unterscheiden.
@@ -737,8 +746,8 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	\item Das Modell \textit{\textbf{NN-Tupel1 agg}} ist das Analogon der NN-Modelle zu \textit{Median agg}. Das Modell kennt allerdings, so wie alle NN-Modelle, nur einen Ausschnitt der Messdaten.
 	Im Gegensatz zum zuvor betrachteten Idealfall muss das Modell die Laufzeiten unbekannter Messattribute interpolieren.
 	Der Eingabevektor, den das neuronale Netz zu jedem Aggregat erhält, beinhaltet die Werte zu allen Attributen des Attribut-Tupels, nach welchen die Trainingsdaten auch aggregiert wurden.
-	Das Netz versucht dann also das Tripel $(Zugriffsgrö\text{ß}e, Delta\text{-}Offset, Operationstyp)$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
-	Das Modell muss sich nicht bloß die Mediane der Laufzeiten zu den Attribut-Tupeln \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Tupels sinnvoll vorhersagen zu können.
+	Das Netz versucht dann also das Tripel $(\mbox{Zugriffsgröße}, \mbox{Delta-Offset}, \mbox{Operationstyp})$ in Relation zum zugehörigen Median der Laufzeiten zu bringen.
+	Das Modell muss sich nicht nur die Mediane der Laufzeiten zu den Attribut-Tupeln \textit{merken}, sondern möglichst gut die Zusammenhänge zwischen den Attribut-Werten und den zugehörigen Laufzeit-Mediane bestimmen, um unbekannte Attribut-Tupels sinnvoll vorhersagen zu können.
 	\item Ganz ähnlich wie \textit{NN-Tupel1 agg} ist das Modell \textit{\textbf{NN-Tupel1}} aufgebaut. Die Eingabedaten werden allerdings nicht aggregiert.
 	Es versucht also direkt, das beschriebene Tripel auf die zugehörigen Laufzeiten abzubilden. Es erhält sonst keine weiteren Informationen, sodass es ebenso wenig wie das aggregierende Modell zwischen Messungen mit gleichen Attributen unterscheiden kann.
 	Es muss dann selbständig einen Mittelwert zu jedem Attribut-Tupel bilden und mit diesem assoziieren.
@@ -762,7 +771,7 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 	Mit dessen Funktionswert kann ein Einblick in den generellen Trend der Zeitreihe gewährt werden, da temporäre Spitzen geglättet werden.
 	Die Idee dieses Verfahrens ist, dass der kommende Zeitreihenwert im Wesentlichen von den direkten Vorgängern beeinflusst wird; in einem geringeren Maße jedoch auch von weiter zurückliegenden Messungen.
 	In dem hier betrachteten Fall könnte das beispielsweise bedeuten, dass ein E/A-Aufruf gemacht wurde, der Speicherblöcke angefragt hat, die über das Netzwerk zum Rechnerknoten geholt werden müssen. Da das Netzwerk jedoch gerade durch andere Zugriffe ausgelastet ist, hat der Aufruf ungewöhnlich lange gedauert. Nun werden ein paar Aufrufe innerhalb des eigenen Arbeitsspeichers gemacht, die eine normale Laufzeit aufweisen. Über den aktuellen Wert der exponentiellen Glättung besteht noch eine Erinnerung an das langsame Verhalten vor einigen E/A-Aufrufen, sodass die Vorhersage zu einem erneuten Zugriff über das weiterhin ausgelastete Netzwerk präziser gemacht werden könnte.
-	Um die Auslastung des E/A-Systems sinnvoll wiederzugeben, wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz berechnet sich als $Durchsatz =  \frac{Zugriffsgrö\text{ß}e}{Laufzeit}$.
+	Um die Auslastung des E/A-Systems sinnvoll wiederzugeben, wird der Durchsatz der Messungen für die exponentielle Glättung genutzt. Der Durchsatz berechnet sich als $\mbox{Durchsatz} =  \frac{\mbox{Zugriffsgröße}}{\mbox{Laufzeit}}$.
 	
 	Karardzic definiert den EMA rekursiv \cite{kantardzic2011data} (S. 40):
 	\begin{align*}
@@ -810,18 +819,17 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 
 \section{Parametrisierung von NN-Modellen}
 \label{parametrisierung}
-Für die Referenzmodelle ist die Berechnung eindeutig definiert.
+Für die Referenzmodelle ist das Training durch einfache Berechnungen eindeutig definiert.
 Bei den NN-Modellen hingegen müssen zunächst die Parameter der verwendeten neuronalen Netze festgelegt werden. 
-Während manche Parameter durch Heuristiken oder nach einigen Testdurchläufen schnell ermittelt werden können, sind andere stark abhängig von den tatsächlichen Trainingsdaten, der Anzahl Datenpunkte und den verwendeten Attributen. 
-
-Als Funktion zur Fehlerrückführung wird in allen Netzen eine resilente Backpropagation genutzt. Verwendet wurde der \textit{Rprop+} (\textit{resilent backpropagation with weightbacktracking}) Algorithmus.  (vgl. \cite{gunther2010neuralnet} S. 32).
+Während manche Parameter durch Heuristiken oder nach einigen Testdurchläufen schnell ermittelt werden können, sind andere stark abhängig von den tatsächlichen Trainingsdaten, der Anzahl Datenpunkte und den verwendeten Attributen. Für das Lernverfahren eines neuronalen Netzes müssen eine Fehlerfunktion, eine Aktivierungsfunktion und eine Fehlerrückführungsfunktion bestimmt werden: 
+\begin{itemize}
+\item Als Fehlerfunktion bietet sich die mittlere quadratische Abweichung der Ausgabe des Netzes zur idealen Ausgabe an.
+\item Für die Aktivierungsfunktion wird die logistische Funktion verwendet. Sie kennzeichnet sich durch einen, im Vergleich zur Stufenfunktion, weichen Übergang zwischen minimalen und maximalen Wert, sodass ein Neuron nicht ganz oder gar nicht feuert, sondern auch etwas dazwischen möglich ist. Bei der logistischen Funktion handelt es sich um eine Sigmoidfunktion; sie hat daher eine wohldefinierte Ableitung, die für die Fehlerrückführung benötigt wird. 
+\item Als Funktion zur Fehlerrückführung wird in allen Netzen eine resilente Backpropagation genutzt. Verwendet wurde der \textit{Rprop+} (\textit{resilent backpropagation with weightbacktracking}) Algorithmus.  (vgl. \cite{gunther2010neuralnet} S. 32).
 Im Unterschied zur normalen Backpropagation wird jedes Gewicht mit einer individuellen Lernrate verändert. Die Anpassung der Gewichte zu den Verbindungen geschieht bei diesem Algorithmus nicht über die Größe des Gradienten in der Fehlerfunktion, sondern bloß über das Vorzeichen des Gradienten zusammen mit der Lernrate.
 Durch das Merken der Gewichte der vergangenen Iteration kann der letzte Aktualisierungsschritt rückgängig gemacht werden (der englische Fachausdruck dafür ist weightbacktracking). Dies wird genutzt, falls das Minimum der Fehlerfunktion überschritten wurde, dann wird stattdessen ein kleinerer Schritt durchgeführt (vgl. \cite{gunther2010neuralnet} S. 32).
-
-Als Fehlerfunktion bietet sich die mittlere quadratische Abweichung der Ausgabe des Netzes zur idealen Ausgabe an.
-Für die Aktivierungsfunktion wird die logistische Funktion verwendet. Sie kennzeichnet sich durch einen, im Vergleich zur Stufenfunktion, weichen Übergang zwischen minimalen und maximalen Wert, sodass ein Neuron nicht ganz oder gar nicht feuert, sondern auch etwas dazwischen möglich ist. Bei der logistischen Funktion handelt es sich um eine Sigmoidfunktion; sie hat daher eine wohldefinierte Ableitung, die für die Fehlerrückführung benötigt wird. 
-
-Die Werte der übrigen Parameter müssen durch systematisches Durchsuchen des Parameterraums für jedes Modell herausgefunden werden. Dabei handelt es sich um die Anzahl verdeckter Schichten, die Anzahl Neuronen pro Schicht und den Schwellenwert für die partiellen Ableitungen des Fehlergradienten, der als Haltekriterium für den Lernalgorithmus verwendet wird.
+\end{itemize}
+Die Werte der übrigen Parameter zur Struktur der Netze und zum Lernverfahren müssen durch systematisches Durchsuchen des Parameterraums für jedes Modell herausgefunden werden. Dabei handelt es sich um die Anzahl verdeckter Schichten, die Anzahl Neuronen pro Schicht und den Schwellenwert für die partiellen Ableitungen des Fehlergradienten, der als Haltekriterium für den Lernalgorithmus verwendet wird.
 Dabei werden zunächst Netze in einer großen Spannweite der Parameterwerte berechnet, um die Parameter dann immer weiter einzugrenzen, wenn sich ein Trend für besonders gute Ergebnisse in einem Wertebereich ergibt.
 
 \paragraph{Zusammenfassung:}
@@ -831,7 +839,6 @@ Zunächst wurde erläutert, welche Informationen über das E/A-System bekannt si
 Weiterhin wurden die verschiedenen Modelle vorgestellt, die bei der Evaluierung untersucht werden sollen, und die für die Evaluierung entscheidede Validierung und Berechnung dieser Modelle wurde ebenfalls beschrieben.
 Nachdem im nächsten Kapitel die Implementierung der Analyse angerissen wird, werden in Kapitel \ref{eval} die hier vorgestellten Modelle anhand von Messdaten evaluiert.
 }
-
 
 \chapter{Implementierung}
 \textit{%
@@ -849,15 +856,15 @@ Die \textit{EMA}-Werte für \textit{NN-EMA} werden mit dem Paket \textit{TTR} be
 
 \subsubsection{Implementationsdetails}
 Um die neuronalen Netze am effektivsten zu nutzen, sollten die Eingabewerte normiert werden. Ansonsten würde einem Attribut mit hoher Werte-Domäne eine größere Bedeutung vom Gradientenverfahren beigemessen, als einem Attribut mit niederwertiger Domäne. 
-Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1.\medskip
+Ich normiere daher alle Eingabeattribute auf den Wertebereich 0 bis 1, der Wert 0 entspricht dann dem minimalen und 1 dem maximalen Attribut-Wert unter den Messdaten.\medskip
 
 Bei der Exploration der Daten wurde festgestellt, dass es viele Messungen mit sehr kleiner Laufzeit gibt.
 Bei der Fehlerminimierung des Lernalgorithmus besteht daher die Gefahr, dass der Fehler für die wenigen langen Laufzeiten bevorzugt verringert wird, da hier das größte Optimierungspotential liegt. Gleiches gilt für die Zugriffsgrößen.
 Deswegen werden Laufzeit und Größe zunächst logarithmiert bevor sie normiert werden.
 Die Ergebnisse der neuronalen Netze müssen dann mit passenden Umkehrfunktionen zu ihrer Vorverarbeitung wieder in die ursprünglichen Wertebereiche zurückgeführt werden, um die Fehlermetriken zu bestimmen.\medskip
 
-Da der Algorithmus der die neuronalen Netze berechnet nur ein Haltekriterium hat, das von der Konvergenz der Gewichte abhängt, kann es beliebig lange bis zur Termination dauern.
-Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst groß gewählt, wenn sich aber zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
+Da der Algorithmus, der die neuronalen Netze berechnet, nur ein Haltekriterium hat, das von der Konvergenz der Gewichte abhängt, kann es beliebig lange bis zur Termination dauern.
+Um nicht viel Zeit mit der Berechnung von Netzen mit ungeeigneten Parametern zu verbringen, wird daher eine maximale Grenze für die Iterationen des Lernalgorithmus gesetzt. Diese ist zunächst großzügig gewählt, wenn sich aber zeigt, dass die besten Netze eines Modells bereits mit weniger Iterationen auskommen, kann eine geringere Grenze gesetzt werden.
 
 \paragraph{Zusammenfassung:}
 \textit{
@@ -924,7 +931,7 @@ und SEQ-W bzw. RND-R und RND-W betrachtet werden, da der Operationstyp auf den e
 	\scriptsize
 	\subfloat[Übersichtsinformationen zu SEQ-R]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & RMax. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
 			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
@@ -932,7 +939,7 @@ und SEQ-W bzw. RND-R und RND-W betrachtet werden, da der Operationstyp auf den e
 	}\\
 	\subfloat[Übersichtsinformationen zu SEQ-W]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & RMax. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_seq.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
 			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
@@ -940,7 +947,7 @@ und SEQ-W bzw. RND-R und RND-W betrachtet werden, da der Operationstyp auf den e
 	}\\
 	\subfloat[Übersichtsinformationen zu RND-R]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & RMax. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_read_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
 			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
@@ -948,7 +955,7 @@ und SEQ-W bzw. RND-R und RND-W betrachtet werden, da der Operationstyp auf den e
 	}\\
 	\subfloat[Übersichtsinformationen zu RND-W]{
 		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & Max. \\\hline\hline
+			Attribut & Min.  & 1. Quartil & Median & Arith. Mittel & 3. Quartil & RMax. \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 			{CSV/exploration/data_summary_write_rnd.csv}{Attribut=\Attribut,Min=\Min,Quartil1=\L, Median = \Median, Mittel = \Mittel,Quartil3 = \Q, Max = \Max, Korrelation = \Korrelation}%
 			{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
@@ -1364,12 +1371,12 @@ Eine Skizze zu diesem Ablauf ist in Abbildung \ref{fig:switched_classificators} 
 		\subfloat{
 			\includegraphics[width=.93\textwidth]{Dot/switched.png}
 		}
-		\caption{Anwendung der auf SEQ mit \textit{LinReg G} erstellten Fehlerklassen zur Klassierung der Messungen in RND}
+		\caption{Anwendung der auf SEQ mit \textit{LinReg G} erstellten Fehlerklassen zur Zuordnung der Messungen in RND}
 		\label{fig:switched_classificators}
 	\end{center}
 \end{figure} 
 
-Die Neuzuordnung wurde ebenso gemacht, wie die Klassierung vom k-means-Algorithmus durchgeführt wird.
+Die Neuzuordnung wurde ebenso gemacht, wie sie vom k-means-Algorithmus durchgeführt wird.
 Für alle Klassen wurden die mittleren Residuen nach Zuordnung der Punkte auf dem ursprünglichen Datensatz berechnet und dann wurde jeder Datenpunkt im anderen Datensatz der Klasse zugeordnet, die am nächsten an seinem eigenen Residuum liegt.\medskip
 
 Die Ergebnisse sind einerseits in Abbildung \ref{fig:error_classes_switched} dargestellt und andererseits in den letzten Spalten in den Tabellen \ref{tab:error_classes_switched}a und \ref{tab:error_classes_switched}b beziffert.\\
@@ -1425,7 +1432,7 @@ Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Me
 Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median agg} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen \textit{MSPE}-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
 Wie bereits vermutet sind die Vorhersagen auf dem Datensatz mit randomisierten Zugriffen schwieriger zu machen, sodass die Modellabweichungen wesentlich höher sind.
 Dies gilt insbesondere für die Modelle, die auf linearer Regression basieren.
-Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND allerdings scheinbar sehr schlecht vorhergesagt werden, sodass \textit{Max} und \textit{MSPE} höher als bei sequentiellen Datensatz sind.\medskip
+Eine Ausnahme bilden die Fehlerklassen-Modelle, die Modelle können weiterhin sehr gute mittlere Vorhersagen treffen, einige Messungen können auf RND allerdings scheinbar sehr schlecht vorhergesagt werden, sodass \textit{RMax} und \textit{MSPE} höher als bei sequentiellen Datensatz sind.\medskip
 
 Insgesamt sind die Ergebnisse der Referenzmodelle auf SEQ bereits überraschend gut.
 Die Modelle \textit{Median Agg} und \textit{LinReg G} haben eine durchschnittliche Modellabweichung von 0.06-0.08 Millisekunden gegenüber den sequentiell durchgeführten Zugriffen.\\
@@ -1631,7 +1638,7 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 	\makebox[\textwidth][c]{
 		\subfloat[Fehlermetriken auf SEQ]{
 			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAE (s) & Avg-MAPE (\%) & Train-MAPE (\%) &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & Max (\%) & In-range (\%) \\\hline\hline
+				Modell & MAE (s) & Avg-MAPE (\%) & Train-MAPE (\%) &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
@@ -1641,7 +1648,7 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 	\makebox[\textwidth][c]{
 		\subfloat[Fehlermetriken auf RND]{
 			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAE (s) & Avg-MAPE (\%) &  Train-MAPE (\%) & MAPE (\%) & MSPE (\%) & RQ3 (\%) & Max (\%) & In-range (\%) \\\hline\hline
+				Modell & MAE (s) & Avg-MAPE (\%) &  Train-MAPE (\%) & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
@@ -1737,7 +1744,7 @@ Die \textit{In-range} Fehlermetrik gibt an wie viele Vorhersagen zwischen den Qu
  Daher sagt \textit{NN-Tupel1} keinen einzigen Ausreißer korrekt oder falsch voraus.\\
 Die beiden Modelle \textit{NN-Tupel2} und \textit{NN-EMA} mit zeitabhängigen Attributen haben im Gegensatz zu \textit{NN-Tupel1} eine Grundlage für die Vorhersage von Ausreißern, da sie mit diesen Informationen innerhalb der Messungen zu einem Attribut-Tupel unterscheiden können.
 Tatsächlich sagen sie jeweils einige Ausreißer vorher und liegen mit diesen Vorhersagen einige Male richtig, aber sehr oft auch falsch (11.12\% richtig Positiv und 8.43\% falsch Positiv klassierte Ausreißer von \textit{NN-Tupel2}, sowie 4.59\% richtig Positive und 3.41\% falsch Postive von \textit{NN-EMA}).
-Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, wurden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt wurden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{Max} der beiden Modelle.\\
+Da die Anzahl Nicht-Ausreißer vier mal größer ist, als die Anzahl Ausreißer, wurden wesentlich mehr Nicht-Ausreißer als Ausreißer deklariert, als Ausreißer auch als solche erkannt wurden. Dies korrespondiert mit den hohen Werten für \textit{MSPE} und \textit{RMax} der beiden Modelle.\\
 Wie zu erwarten war, können die beiden Modelle \textit{NN-LinRegFK} und \textit{NN-Tupel1FK} mit Hilfe der Fehlerklassen am erfolgreichsten Ausreißer vorhersagen. 
 \textit{NN-LinRegFK} hat 26664 der 167175 (15.95\%) der Ausreißer korrekt identifiziert.
 Gleichzeitig wurden allerdings 36069 der 670425 (5.38\%) Nicht-Ausreißer fälschlicherweise als Ausreißer klassiert.
@@ -1760,7 +1767,7 @@ Die Ergebnisse dieser beiden Modelle soll hier analysiert werden.\medskip
 
 Die Modellierung von \textit{NN-Tupel2} scheint nicht ganz aufzugehen, auf SEQ erreicht das Modell einen schlechteren \textit{MSPE}-Wert als die lineare Regression auf RND beträgt er über 2000\%.
 Tatsächlich sind die meisten Vorhersagen von \textit{NN-Tupel2} allerdings recht passabel.
-Wie der sehr hohe \textit{Max}-Wert von 132820\% und der \textit{MSPE} mit 2124\% gegenüber dem \textit{MAPE} mit 234\% andeuten, scheint das Modell einige Messungen äußerst schlecht vorhersagen zu können.
+Wie der sehr hohe \textit{RMax}-Wert von 132820\% und der \textit{MSPE} mit 2124\% gegenüber dem \textit{MAPE} mit 234\% andeuten, scheint das Modell einige Messungen äußerst schlecht vorhersagen zu können.
 Es werden allerdings 75\% der Laufzeiten auf SEQ mit kleinerem relativen Fehler als 17\% und auf RND mit kleinerem Fehler als 56\% vorhergesagt. Dies sind verhältnismäßig gute Werte für \textit{RQ3}.\\
 Alle neuronalen Netze müssen allerdings dem Verlgeich mit \textit{NN-Tupel1} (bzw. \textit{NN-Tupel1 agg}) standhalten, denn alle anderen Modelle arbeiten mit mehr Informationen über die Messungen.
 Wenn ein Modell schlechtere Ergebnisse als \textit{NN-Tupel1} und \textit{NN-Tupel1 agg} erzielt, war die aufwendigere Modellierung kontraproduktiv.\\
@@ -1768,7 +1775,7 @@ Wenn dieser Vergleich an \textit{NN-Tupel2} gemacht wird, so wird offensichtlich
 Ganz ähnliche Beobachtungen können zu \textit{NN-EMA} gemacht werden.
 Auch diesem Modell gelingt es nicht, sich trotz zusätzlicher Informationen signifikant von \textit{NN-Tupel1} abzusetzen.\medskip
 
-Die Zusatzinformationen des \textit{exponential moving averages} für \textit{NN-EMA} bzw. die Kenntnis über den vorherigen E/A-Aufruf in \textit{NN-Tupel2} scheinen dazu zu führen, dass einige Laufzeiten sehr schlecht vorhergesagt werden können, daher die hohen Werte zu \textit{MSPE} und \textit{Max} bei diesen Modellen.
+Die Zusatzinformationen des \textit{exponential moving averages} für \textit{NN-EMA} bzw. die Kenntnis über den vorherigen E/A-Aufruf in \textit{NN-Tupel2} scheinen dazu zu führen, dass einige Laufzeiten sehr schlecht vorhergesagt werden können, daher die hohen Werte zu \textit{MSPE} und \textit{RMax} bei diesen Modellen.
 Teilweise können die beiden Modelle diese Informationen allerdings für bessere Vorhersagen nutzen. So erreicht \textit{NN-EMA} auf SEQ mit 13.7\% einen besseren \textit{MAPE}-Wert als \textit{NN-Tupel1} und \textit{NN-Tupel1 agg} mit 14.1\% respektive 14.3\%, 
 Auch auf RND erreicht \textit{NN-EMA} ein besseres \textit{MAPE}-Ergebnis mit 86\% zu 103\% bzw. 270\% von \textit{NN-Tupel1} und \textit{NN-Tupel1 agg}.
 Zudem sind die \textit{RG3}-Werte von \textit{NN-EMA} und \textit{NN-Tupel2} auf RND besser.\medskip
@@ -1915,43 +1922,44 @@ Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig
 	}
 \chapter{Fazit}
 \label{Fazit}
-In dieser Bachelorarbeit wurde das Ein-/Ausgabe-System eines Hochleistungsrechners analysiert.
-Mit dem Einsatz künstlicher neuronaler Netze wurden verschiedene Ansätze zur Modellierung der E/A-Leistung entwickelt und getestet.
-Die Trainings- und Testdaten der neuronalen Netze wurden aus einer Vielzahl Messreihen gewonnen. Bei der Analyse dieser Messdaten wurde ein starker Zusammenhang zwischen E/A-Pfad und der Zugriffszeit festgestellt, zudem wurden periodische Verhaltensmuster innerhalb der Messreihen entdeckt und eine starke Korrelation zwischen Zugriffsgröße und Zugriffszeit festgestellt.
-Bei der Entwicklung der Modelle zur Beschreibung der E/A-Leistung wurden die entdeckten Zusammenhänge mit der Laufzeit berücksichtigt, sodass je nach Modell lineare und periodische Abhängigkeiten oder aber nur die Zusammenhänge zwischen den Parametern des E/A-Aufrufs und der Laufzeit beachtet wurden.
-Durch den Vergleich mit Referenzmodellen konnte die Qualität der Vorhersagen der neuronalen Netze eingeordnet und verglichen werden.
-Zusätzlich wurde evaluiert, ob Kenntnisse über die verwendeten E/A-Pfade eines Zugriffs anhand des Residuums der entwickelten Modelle gegenüber den wirklichen Laufzeiten gewonnen werden können.
-Dazu wurden weitere Modelle entwickelt, die die auf diese Weise erhaltenen Fehlerklassen ausnutzen.\medskip
+In dieser Bachelorarbeit wurde das parallele Dateisystem eines Hochleistungsrechners analysiert.
+Mit dem Einsatz künstlicher neuronaler Netze wurden verschiedene Ansätze zur Modellierung der E/A-Leistung entwickelt und getestet, dadurch konnten Aussagen über die Abhängigkeit der Laufzeiten von Dateizugriffen zu den Aufrufparametern des Zugriffs, zu periodischen Systemzuständen und zu ihrer Verarbeitung im System (dem E/A-Pfad) gemacht werden.\medskip
 
-Trotz der starken linearen Korrelation zwischen Zugriffsgröße und Laufzeit sind die neuronalen Netze mit aufwendigeren Aufbau, aufgrund ihrer Fähigkeit nicht-lineare Zusammenhänge zu approximieren, den linearen Modellen überlegen.\\
-Es konnte festgestellt werden, dass E/A-Aufrufe trotz identischer Parameter zu sehr unterschiedlichen Laufzeiten führen können, um eine wirklich präzise Vorhersage machen zu können, muss ein Modell also auf irgendeine Weise innerhalb von Zugriffen mit gleichen Parametern differenzieren können.
-Der beste mittlere Fehler, der von Modellen ohne diese Unterscheidung erreicht wurde, hängt stark von dem Anwendungsfall ab.
-Bei Messungen mit sequentiellen Dateizugriffen kann eine kleiner mittlere Modellabweichung von 0.06 Millisekunden erreicht werden, Messungen mit zufälligem Dateizugriff sind wesentlich schwieriger vorherzusagen, dort liegt der die mittlere Modellabweichung bei etwa 3 Millisekunden.\medskip
+Zunächst wurde im Hintergrund-Kapitel (Kapitel \ref{Hintergrund}) erläutert, was Ein-/Ausgabe ist und wie sie grundlegend funktioniert, es wurde aufgezeigt, was einen Hochleistungsrechner auszeichnet und weshalb Leistungsvorhersage zu einem solchen System besondere Schwierigkeiten mit sich bringt, und zuletzt wurde die Funktionsweise von neuronalen Netzen im Kontext des maschinellen Lernens dargelegt.\\
+Im folgenden Kapitel \ref{verwandte_arbeiten} über verwandte Arbeiten wurden zunächst die zwei verschiedenen Ansätze bei der E/A-Leistungsvorhersage eingeführt. So muss zwischen White-Box-Modellierung, bei der Hardware-Details beachtet werden, und der Black-Box-Modellierung, bei der ein abstraktes Modell aus einer Regressionsanalyse erstellt wird, unterschieden werden. Desweiteren wurden Veröffentlichungen zur Leistungsvorhersage im Kontext von neuronalen Netzen und Hochleistungsrechnen präsentiert.\\
+Bei der Gestaltung der Analyse in Kapitel \ref{gestaltung_der_analyse} wurde das Konzept des E/A-Pfades eingeführt und ein Modell dazu aufgestellt. Es konnte, durch Untersuchung von Messdaten, gezeigt werden, dass das Wissen über den E/A-Pfad essentiell für die genaue Vorhersage von Zugriffszeiten ist, denn E/A-Aufrufe erreichen trotz identischer Parameter sehr unterschiedliche Laufzeiten.
+Da der E/A-Pfad eines Dateizugriffs nicht aus den zu ihm messbaren Attributen ableitbar ist, erweist sich die Vorhersage der Zugriffszeiten als äußerst schwierige Aufgabe. Die einzigen Informationen, die zur Bestimmung des E/A-Pfades eines Zugriffs mit unbekannter Laufzeit zur Verfügung stehen, sind die zuvor durchgeführten Messungen.
+Nachdem darauf eingegangen wurde, wie Modelle des E/A-Systems in dieser Arbeit validiert werden, wurden die verschiedenen Modellklassen und anschließend die untersuchten Modelle selbst vorgestellt. Unterschieden wird zwischen Referenzmodellen, bei denen es sich hauptsächlich um Kontrollmodelle handelt, NN-Modellen, die neuronale Netze nutzen, und Fehlerklassenmodellen, mit denen die Auswirkung der Kenntnis von E/A-Pfaden auf die Laufzeitvorhersagen überprüft werden kann.
+Für letzteres wurde das Konzept der Fehlerklassen eingeführt. Da die verwendeten E/A-Pfade von Zugriffen nicht direkt messbar sind, kann das hier vorgestellte Verfahren genutzt werden, um diese näherungsweise zu bestimmen. Dazu wird ein Modell, das bereits Vorhersagen von guter Qualität macht, auf die Messdaten angewendet und die daraus erhaltenen Residuen anschließend durch den k-Means-Algorithmus in Klassen gruppiert. Die Annahme ist nun, dass Messungen mit gleichen Aufrufparametern aber unterschiedlicher Fehlerklasse unterschiedlichen E/A-Pfaden zuzuordnen sind.\\
+Im Evaluierungskapitel (Kapitel \ref{eval}) wurden die vorgestellten Modelle und Konzepte überprüft.
+Zunächst wurden die durchgeführten Benchmark-Tests erläutert, diese bestehen aus einer Vielzahl Messreihen, die zwei Anwendungstypen darstellen. Zum einen den sequentiellen Zugriff auf hintereinanderliegenden Daten und zum anderen Zugriffe an unvorhersehbaren Stellen der Datei. Diese Messdaten werden für die NN-Modelle in Trainings- und Testdaten aufgeteilt.
+Bei der Analyse dieser Messdaten ist die starke lineare Korrelation zwischen Zugriffsgröße und Laufzeit entdeckt wurden, zusätzlich konnte gezeigt werden, dass tatsächlich periodisches Verhalten in den Zugriffszeiten auftritt, die entsprechend zur Bestimmung der E/A-Pfade genutzt werden könnten.
+Bei der Analyse der berechneten Fehlerklassen konnten Hinweise auf den Zusammenhang von diesen mit dem E/A-Pfad gesammelt werden. Für eine wirklichkeitsgetreue Repräsentation der E/A-Pfade müsste das vorgestellte Verfahren jedoch weiter optimiert werden. 
+So führte vermutlich die direkte Verwendung des absoluten Fehlers zur Bestimmung der Fehlerklassen dazu, dass diese nur den langsameren E/A-Zugriffe verschiedene Klassen zuordneten.\\
+Abschließend wurden die verschiedenen Referenz- und NN-Modelle auf den Messdaten angewendet und untersucht. Dabei wurden weitere Erkenntnisse erlangt:\\
+Trotz der starken linearen Korrelation zwischen Zugriffsgröße und Laufzeit sind die neuronalen Netze mit aufwendigeren Aufbau, aufgrund ihrer Fähigkeit nicht-lineare Zusammenhänge zu approximieren, den linearen Modellen überlegen. So liegt die mittlere Modellabweichung des besten linearen Modells zu den sequentiellen Dateizugriffen bei 0.076 Millisekunden, während neuronale Netze (ohne Fehlerklassen) 0.057 Millisekunden erreichen, gegenüber den zufälligen Dateizugriffen liegen die erreichten Werte bei 4 Millisekunden, zu einem linearen Modell, zu 3.1 Millisekunden, zu einem neuronalen Netz.
+Die Zugriffszeiten hängen also nicht rein linear von den Parametern des Aufrufs ab. \\
+Die Differenzierung von E/A-Zugriffen mit gleichen Parametern konnte durch die zwei recht einfachen Ansätze, die die periodischen Abhängigkeiten des Systems ausnutzen sollten, nicht hinreichend gewährleistet werden. Ihre Modellabweichungen sind gemittelt über alle Vorhersagen schlechter, als die von Modellen mit weniger Informationen über die Zugriffe. Einige Zugriffe konnten allerdings durchaus genauer vorhergesagt werden.\\
+Mit Hilfe der Fehlerklassen können die mittleren Fehler (ansonsten vergleichbarer Modelle) hingegen auf 0.02 Millisekunden zu den Messungen mit sequentiellen Zugriff und etwa 0.1 Millisekunden zu den Messungen mit zufälligen Dateizugriff gebracht werden.
+Dieses Ergebnis bedeutet, dass Fehlerklassen, und somit E/A-Pfade, essentielle Informationen über die Laufzeiten eines E/A-Zugriffs enthalten.\medskip
 
-Die Differenzierung von E/A-Zugriffen mit gleichen Parametern konnte durch die zwei recht einfachen Ansätze, die die periodischen Abhängigkeiten des Systems ausnutzen sollten, nicht hinreichend gewährleistet werden.\\
-Modellen, die Fehlerklassen nutzen und somit Kenntnis über den E/A-Pfad des Zugriffs haben, gelingt diese Differenzierung hingegen teilweise.
-Diese Modelle können die mittleren Modellabweichungen gegenüber den anderen Modellen mit 0.02 respektive 0.9 Millisekunden in etwa dritteln.\medskip
-
-Bei der Analyse der erhaltenen Fehlerklassen konnte die Einsicht gewonnen werden, dass diese für eine wirklichkeitsgetreue Repräsentation der E/A-Pfade weiter optimiert werden müssen. 
-So führte vermutlich die direkte Verwendung des absoluten Fehlers zur Bestimmung der Fehlerklassen dazu, dass diese nur den langsameren E/A-Zugriffe verschiedene Klassen zuordneten.\medskip
-
-Letztendlich hat sich gezeigt, dass der Einsatz künstlicher neuronaler Netze zur Vorhersage von E/A-Leistung durchaus geeignet ist.
+Letztendlich hat sich gezeigt, dass künstliche neuronale Netze als Black-Box-Modell eines parallelen Dateisystems zur Vorhersage von E/A-Leistung durchaus geeignet sind.
 Sie erzielen wesentlich bessere Ergebnisse als lineare Modelle und konvergieren bei geeigneter Parameter-Wahl zuverlässig zu einem passenden Prädiktor.
 Gerade diese Parametrisierung kann sich jedoch als aufwendig erweisen.
 So kann man sich zu keinem Zeitpunkt vollkommen sicher sein, ob eine Modellierung ungeeignet ist oder nur ungünstige Parameter verwendet wurden.\\
-Wenn es in einer Anwendung darum geht ein Modell für die Vorhersage von E/A-Zugriffen zu finden, würde mit dem derzeitigen Kenntnisstand das \textit{NN-Tupel1}-Modell empfehlen. Dies ist ein sehr simples Modell, für das keine aufwendige Aufbereitung der Trainingsdaten vorgenommen werden muss, es zeigt Robust bei der Konvergenz zu einem guten Prädiktor, ist nicht so stark von der Parametrisierung abhängig und zeigt dennoch gute Ergebnisse auf in beiden untersuchten Anwendungsfällen.\\
-Sollen dagegen die E/A-Pfade von Dateizugriffen genauer untersucht werden, kann entweder das Referenzmodell \textit{LinReg G} oder das NN-Modell \textit{NN-Tupel1} zur Erstellung der Fehlerklassen genutzt werden.
-Da sich die lineare Regression als stark abhängig vom Anwendungsfall gezeigt hat, sollte hier das NN-Modell bevorzugt werden.
+Wenn es in einer Anwendung darum geht ein Modell für die Vorhersage von E/A-Zugriffen zu finden, würde mit dem derzeitigen Kenntnisstand das \textit{NN-Tupel1}-Modell zu empfehlen sein. Dies ist ein sehr simples Modell, für das keine aufwendige Aufbereitung der Trainingsdaten vorgenommen werden muss, es zeigt sich robust bei der Konvergenz zu einem guten Prädiktor, ist nicht so stark von der Parametrisierung abhängig und zeigt dennoch gute Ergebnisse auf beiden untersuchten Anwendungsfällen.\\
+Sollen dagegen die E/A-Pfade von Dateizugriffen genauer untersucht werden, kann das vorgestellte Verfahren ein erster Ansatz sein. Dabei kann entweder das Referenzmodell \textit{LinReg G} oder das NN-Modell \textit{NN-Tupel1} zur Erstellung der Fehlerklassen genutzt werden.
+Da sich die lineare Regression als besonders stark abhängig vom Anwendungsfall gezeigt hat, sollte hier das NN-Modell bevorzugt werden.
 
 \subsubsection{Zukünftige Arbeit}
-Zukünftige Arbeiten könnten auch probieren die zumindest teilweise auftretende Periodizität in der E/A-Leistung besser auszunutzen. 
-So haben Crume und Maltzahn in ihrem Ansatz mit der Fourier-Analyse dieser periodischen Zusammenhänge auf einzelnen Festplatten Erfolge aufzeigen können \cite{Crume:2013:FML:2538542.2538561}.
-Ob solche Ansätze in dem komplexen E/A-System eines Hochleistungsrechners funktionieren können, müsste dabei untersucht werden.\medskip
+Zukünftige Arbeiten könnten versuchen die zumindest teilweise auftretende Periodizität in der E/A-Leistung besser auszunutzen, um den E/A-Pfad ohne Kenntnis der Laufzeit vorhersagen zu können, sodass damit bessere Laufzeit-Prädiktoren entwickelt werden können. 
+Crume und Maltzahn haben mit ihrem Ansatz Fourier-Analyse zur Untersuchung dieser periodischen Zusammenhänge auf einzelnen Festplatten zu nutzen Erfolge aufzeigen können \cite{Crume:2013:FML:2538542.2538561}.
+Ob dieser Ansatz in dem komplexen E/A-System eines Hochleistungsrechners funktionieren kann, müsste entsprechend untersucht werden.\medskip
 
 Das Konzept E/A-Pfade aus den hier vorgeschlagenen Fehlerklassen zu gewinnen müsste auch weiter im Detail untersucht werden.
-Zum einen könnten andere Modelle zum Erstellen der Fehlerklassen untersucht werden und zum anderen müsste der Zusammenhang zwischen E/A-Pfad und Fehlerklassen analysiert werden. So könnte man versuchen die Laufzeiten der Zugriffe in einer Fehlerklasse mit 
+Zum einen könnten andere Modelle zum Erstellen der Fehlerklassen untersucht werden und zum anderen müsste der Zusammenhang zwischen E/A-Pfad und Fehlerklassen genauer analysiert werden. So könnte man versuchen die Laufzeiten der Zugriffe in einer Fehlerklasse mit 
 ihrer hauptsächlichen Ursache zu korrelieren.
-
+Eine weitere Verbesserung der Fehlerklassen könnte erreicht werden, wenn nicht das reine Residuum eines Modells zur Cluster-Analyse genutzt wird, sondern ein Wert, der die Modellabweichung ausdrückt und dabei nicht die Abweichungen zu den schnelleren Aufrufen vernachlässigt.
 
 \bibliographystyle{alpha}
 \bibliography{literatur}
@@ -1959,18 +1967,6 @@ ihrer hauptsächlichen Ursache zu korrelieren.
 \listoffigures
 
 \listoftables
-
-\lstlistoflistings
-
-\begin{appendices}
-
-\chapter{Anhangskapitel}
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-At vero eos et accusam et justo duo dolores et ea rebum.
-Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-\end{appendices}
 
 \newpage
 
@@ -1992,7 +1988,7 @@ Speichermedium entspricht.
 
 \smallskip
 
-\textbf{Optional:} Ich bin mit der Einstellung der Bachelor-Arbeit in den Bestand der Bibliothek des Fachbereichs Informatik einverstanden.
+Ich bin mit der Einstellung der Bachelor-Arbeit in den Bestand der Bibliothek des Fachbereichs Informatik einverstanden.
 
 \bigskip
 \bigskip
