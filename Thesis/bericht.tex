@@ -806,10 +806,10 @@ Die weiteren Modelle sind NN-Modelle, es handelt sich hierbei um neuronale Netze
 \end{figure}
 
 \begin{table}
-	\centering
 	\scriptsize
 	\subfloat{
-		\begin{tabular}{|r|p{4.6cm}|p{4.4cm}|p{3.2cm}|}\hline%
+		\hspace*{-0.9cm}
+		\begin{tabular}{|r|p{4.6cm}|p{4.0cm}|p{3.2cm}|}\hline%
 			\textbf{Modell} & \textbf{Beschreibung}  & \textbf{Art der Trainingsdaten} & \textbf{Attribute des Eingabevektors}\\\hline\hline
 			\csvreader[late after line=\\\hline, separator=semicolon]%
 			{CSV/zusammenfassung_der_NN_modelle.csv}{Modell=\Modell, Beschreibung=\Beschreibung, Art=\Art, Attribute = \Attribute}%
@@ -984,7 +984,7 @@ Für die Zugriffsgröße von einem 4\,KiB ergibt sich mit einer Zugriffszeit von
 	\makebox[\textwidth][c]{
 		\subfloat{
 			\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-				Attribut & cached-off0-seq-R  & cached-off0-seq-W & cached-off0-rnd-R & cached-off0-rnd-W & cached-off0-seq & cached-off0-rnd\\\hline\hline
+				Attribut & SEQ-R  & SEQ-W & RND-R & RND-W & SEQ & RND\\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/exploration/data_summary_korrelationen.csv}{Attribut=\Attribut,seqr=\seqr,seqw=\seqw, rndr = \rndr, rndw = \rndw,seq = \seq, rnd = \rnd}%
 				{\Attribut & \seqr & \seqw & \rndr & \rndw & \seq &\rnd}%
@@ -1237,10 +1237,10 @@ Zunächst werden zu einer Zugriffsgröße alle Messreihen mit lesenden Aufrufen 
 Die in \ref{fk-modelle} eingeführten Fehlerklassen untersuche ich anhand der Ergebnisse, die aus der Clusteranalyse der Residuen von \textit{LinReg G} entstanden sind.\medskip
 
 Die Laufzeit-Vorhersagen von \textit{LinReg G} werden in \ref{eval:analyse_referenz} genauer betrachtet.
-Um den Prozess der Generierung der Fehlerklassen besser zu verstehen werden die entsprechenden Graphen schon einmal vorgezogen, die Vorhersagen des Modells für beide Datensätze sind in Abbildung \ref{fig:vorgriff_linreg} zu sehen.
+Um den Prozess der Generierung der Fehlerklassen besser zu verstehen, werden die entsprechenden Graphen schon einmal vorgezogen, die Vorhersagen des Modells für beide Datensätze sind in Abbildung \ref{fig:vorgriff_linreg} zu sehen.
 Für die Bestimmung der Fehlerklassen werden die Residuen des Modells verwendet, diese ergeben sich aus dem Abstand der vorhergesagten Laufzeiten (in blau) zu den tatsächlichen Laufzeiten (in grau). 
 
-\begin{figure}[b]
+\begin{figure}[!b]
 	\centering
 	\subfloat[Modell \textit{LinReg G}; Obacht: verschobene Y-Achse]{
 		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_linreg_Size.png}
@@ -1259,7 +1259,7 @@ Die absolute Abweichung wächst bei sequentiellem Zugriff mit der Größe der E/
 Ein Grund für höhere Abweichungen bei Messungen mit längeren Zugriffszeiten ist, dass ein bestimmter relativer Fehler zu entsprechend höheren absoluten Fehlern führt.
 Für den plötzlichen und sehr starken Anstieg der Residuen auf höheren Zugriffsgrößen kann dies aber vermutlich nicht die einzige Erklärung sein.
 
-\begin{figure}
+\begin{figure}[t!]
 	\centering
 	\subfloat[Residuen von \textit{LinReg G} auf SEQ]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_seq_all.png}
@@ -1267,17 +1267,17 @@ Für den plötzlichen und sehr starken Anstieg der Residuen auf höheren Zugriff
 	\subfloat[Farblich markierte Fehlerklassen]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_seq_all.png}
 	}\\
-	\subfloat[Residuen sortiert nach Modellabweichung]{
+	\subfloat[sortierte Residuen]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_seq.png}
 	}\hfill
-	\subfloat[Dichte der drei Klassen um den Nullpunkt]{
+	\subfloat[Dichte der Klassen um den Nullpunkt]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/density_of_fk_seq.png}
 	}
 	\vspace*{-0.3cm}
-	\caption{Fehlerklassen, die aus den Residuen von \textit{LinReg G} auf SEQ durch Clustering erstellt wurden}
+	\caption{Fehlerklassen, die aus den Residuen von \textit{LinReg G} auf SEQ durch eine Cluster-Analyse erstellt wurden}
 	\label{fig:error_class_clustering_seq}
 \end{figure} 
-\begin{figure}
+\begin{figure}[b!]
 	\centering
 	\subfloat[Residuen von \textit{LinReg G} auf RND]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_rnd_all.png}
@@ -1285,14 +1285,14 @@ Für den plötzlichen und sehr starken Anstieg der Residuen auf höheren Zugriff
 	\subfloat[Farblich markierte Fehlerklassen]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_clustering_rnd_all.png}
 	}\\
-	\subfloat[Residuen sortiert nach Modellabweichung]{
+	\subfloat[sortierte Residuen]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/linreg_error_sorted_clustering_rnd.png}
 	}\hfill
-	\subfloat[Dichte der drei Klassen um den Nullpunkt]{
+	\subfloat[Dichte der Klassen um den Nullpunkt]{
 		\includegraphics[width=.40\textwidth]{Bilder/Plots/error_class/exploration/density_of_fk_rnd.png}
 	}
 	\vspace*{-0.3cm}
-	\caption{Fehlerklassen, die aus den Residuen von \textit{LinReg G} auf RND durch Clustering erstellt wurden}
+	\caption{Fehlerklassen, die aus den Residuen von \textit{LinReg G} auf RND durch eine Cluster-Analyse erstellt wurden}
 	\label{fig:error_class_clustering_rnd}
 \end{figure} \medskip
 
@@ -1306,11 +1306,11 @@ In beiden Fällen enthält eine Klasse den Großteil der Punkte.
 Die Klassen, die Bereiche mit ähnlich großen Residuen abdecken, enthalten noch einen größeren Anteil der Messdaten. Den weiteren Fehlerklassen werden nur sehr wenige Messungen zugeordnet.
 Es gibt recht wenig Messungen mit sehr hohen und niedrigen Residuen, die werden allerdings durch mehrere Klassen abgedeckt. So werden die obersten 5\% der Modellabweichungen vom sequentiellen Datensatz in 5 Klassen aufgeteilt.\medskip
 
-Die beiden Abbildungen \ref{fig:error_class_clustering_seq}d und \ref{fig:error_class_clustering_rnd}d zeigen die Dichteverteilungen der Fehlerklasse, die den kleinsten Fehler abdeckt, sowie der nächst kleineren und größeren Fehlerklasse.\\
-Idealerweise sollte die Dichte einer Fehlerklasse nur eine Spitze enthalten. Die Klasse repräsentiert dann genau einen Fehlerbetrag, der dann einem E/A-Pfad entsprechen sollte.\\
+Die beiden Abbildungen \ref{fig:error_class_clustering_seq}d und \ref{fig:error_class_clustering_rnd}d zeigen die Dichteverteilungen der Fehlerklasse, die den kleinsten Fehler abdeckt, sowie der nächst kleineren und größeren Fehlerklasse.
+Idealerweise sollte die Dichte einer Fehlerklasse nur eine Spitze enthalten. Die Klasse repräsentiert dann genau einen Fehlerbetrag, der dann einem E/A-Pfad entsprechen sollte.
 Auf den sequentiellen Daten weisen die Dichten klar voneinander unterscheidbare Spitzen auf.
-Ebenso hat die Dichte der Fehlerklasse links vom Nullpunkt sowie die um den Nullpunkt auf RND klar definierte Spitzen. Die Verteilung der Dichte rechts vom Nullpunkt auf den randomisierten Daten weist allerdings keine Spitze auf. Diese Klasse stellt daher keinen E/A-Pfad dar.\\
-Die Fehlerklassen mit mehreren Spitzen hätten unter Umständen noch weiter unterteilt werden müssen, um die E/A-Pfade korrekt darzustellen.\\
+Ebenso hat die Dichte der Fehlerklasse links vom Nullpunkt sowie die um den Nullpunkt auf RND klar definierte Spitzen. Die Verteilung der Dichte rechts vom Nullpunkt auf den randomisierten Daten weist allerdings keine Spitze auf. Diese Klasse stellt daher keinen E/A-Pfad dar.
+Die Fehlerklassen mit mehreren Spitzen hätten unter Umständen noch weiter unterteilt werden müssen, um die E/A-Pfade korrekt darzustellen.
 Diese Beobachtungen könnten darauf hinweisen, dass auf den Messungen mit sequentiellem Zugriff eigentlich eine größere Anzahl Cluster-Gruppen benötigt worden wäre, um alle E/A-Pfade zu repräsentieren, während bei den Messungen mit zufälligen Dateizugriffen weniger genutzt werden müssten. \medskip
 
 Das Modell \textit{LinReg G} scheint generell schon recht gut zu sein, da die Fehler sich für die Klassen mit dem kleinsten durchschnittlichen Fehler sammeln.
@@ -1323,6 +1323,7 @@ Für die Vorhersage der vielen Messungen mit Residuen um den Nullpunkt herum hat
 \begin{table}
 	\centering
 	\scriptsize
+	\hspace*{-1.6cm}
 	\subfloat[Fehlerklassen aus \textit{LinReg G} auf SEQ]{
 		\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
 			 & \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{2}{r|}{zugeordnete Messungen} \\ \hline
@@ -1332,6 +1333,7 @@ Für die Vorhersage der vielen Messungen mit Residuen um den Nullpunkt herum hat
 			{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 		\end{tabular}
 	}\\
+	\hspace*{-1.6cm}
 	\subfloat[Fehlerklassen aus \textit{LinReg G} auf RND]{
 		\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
 			& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{2}{r|}{zugeordnete Messungen} \\ \hline
@@ -1432,6 +1434,29 @@ Die restlichen Daten werden als Testdatensatz zur Berechnung der Fehlermetriken 
 Die Ergebnisse der in Kapitel \ref{analyse:modelle} beschriebenen Referenzmodelle zu den Fehlermetriken sind in Tabelle \ref{tab:triv} zu sehen.
 Zusätzlich zu den Fehlermetriken \textit{MAE}, \textit{MAPE}, \textit{MSPE}, \textit{RQ3} und \textit{MAX}, gibt die Spalte \textit{Typ} an, ob das Modell auf aggregierten Daten (agg) oder auf individuellen Messungen (Ind) in Zeitreihe gelernt wurden.\medskip
 
+\begin{table}
+	\centering
+	\scriptsize
+	\subfloat[Anwendung der Referenzmodelle auf SEQ]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & Typ & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
+			{\Model & \Typ & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	} \\
+	\subfloat[Anwendung der Referenzmodelle auf RND]{
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & Typ & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
+			{\Model & \Typ & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+	}
+	\caption{Ergebnisse der Referenzmodelle zu den Fehlermetriken}
+	\label{tab:triv}
+\end{table}
+
 Eine positive Beobachtung in den Ergebnissen auf SEQ ist zunächst, dass alle Metriken einen ähnlichen Trend der  Modelle aufzeichnen, die Modelle verhalten sich insofern konsistent.
 Das gilt im Wesentlichen auch für RND, jedoch hat das Modell \textit{Median agg} einen sehr hohen maximalen Fehler. Dies führt entsprechend zu einem vergleichsweise hohen \textit{MSPE}-Wert, obwohl der relative arithmetische Fehler noch recht gering ist.
 Wie bereits vermutet, sind die Vorhersagen auf dem Datensatz mit randomisierten Zugriffen schwieriger zu machen, sodass die Modellabweichungen wesentlich höher sind.
@@ -1464,29 +1489,6 @@ Die Erkenntnisse, die aus den \textit{LinReg}-Modellen gezogen werden können, s
 Aufgrund des geringen Nutzens der Attribute Delta-Offset und OpTyp für die lineare Regression wird im Folgenden nur das Modell über die Zugriffsgröße betrachtet.
 Da \textit{LinReg G} auf SEQ wesentlich bessere Werte mit Eingabedaten als individuelle Messungen hat, und die Leistung für \textit{Agg} und \textit{Ind} auf RND in etwa gleichauf sind, wird nur \textit{LinReg G} mit Einzelmessungen berücksichtigt.\\
 
-\begin{table}
-	\centering
-	\scriptsize
-	\subfloat[Anwendung der Referenzmodelle auf SEQ]{
-		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Modell & Typ & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/baselines/latex_baseline_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
-			{\Model & \Typ & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
-		\end{tabular}
-	} \\
-	\subfloat[Anwendung der Referenzmodelle auf RND]{
-		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-			Modell & Typ & MAE (s)  & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-			{CSV/baselines/latex_baseline_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max, Typ = \Typ}%
-			{\Model & \Typ & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
-		\end{tabular}
-	}
-	\caption{Ergebnisse der Referenzmodelle zu den Fehlermetriken}
-	\label{tab:triv}
-\end{table}
-
 \subsubsection{Betrachtung der Vorhersagen von Referenzmodellen}
 Um genauer zu verstehen, wie die Referenzmodelle die Messdaten annähern, ist es notwendig, sich die vorhergesagten Werte gegenüber den tatsächlichen Werten anzuschauen.
 Wie zuvor sind die Messdaten nach Zugriffsgröße und Operationstyp sortiert.\medskip
@@ -1507,18 +1509,18 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 \begin{figure}
 	\centering
 	\subfloat[Modell \textit{Durchschnitt}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_seq_mean_performance.png}
 	}
 	\hfill
 	\subfloat[Modell \textit{LinReg G}; Obacht: verschobene Y-Achse]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_linreg_Size.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_seq_linreg_Size.png}
 	}\\
 	\subfloat[Modell \textit{Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_aggregated.png}
 	}
 	\hfill
 	\subfloat[Modell \textit{LinRegFK Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_with_linreg_error_class_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_seq_median_Duration_with_linreg_error_class_aggregated.png}
 	}
 	\caption{Referenzodelle auf SEQ angewendet. In blau sind die vom Modell vorhergesagten Werte, lesende Zugriffe sind in dunkelgrau und schreibende sind in hellgrau dargestellt}
 	\label{fig:zeit_baselines_seq}
@@ -1527,18 +1529,18 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 \begin{figure}
 	\centering
 	\subfloat[Modell \textit{Durchschnitt}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_mean_performance.png}
 	}
 	\hfill
 	\subfloat[Modell \textit{LinReg G}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_linreg_Size.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_linreg_Size.png}
 	}\\
 	\subfloat[Modell \textit{Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_aggregated.png}
 	}
 	\hfill
 	\subfloat[Modell \textit{LinRegFK Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_linreg_error_class_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_median_Duration_with_linreg_error_class_aggregated.png}
 	}
 	\caption{Referenzodelle auf RND angewendet. In blau sind die vom Modell vorhergesagten Werte, lesende Zugriffe sind in dunkelgrau und schreibende sind in hellgrau dargestellt}
 	\label{fig:zeit_baselines_rnd}
@@ -1546,11 +1548,11 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 \begin{figure}
 	\centering
 	\subfloat[Modell \textit{Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_aggregated.png}
 	}
 	\hfill
 	\subfloat[Modell \textit{LinRegFK Median agg}]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
+		\includegraphics[width=.45\textwidth]{Bilder/Plots/baselines/plot_rnd_DurationToPredSorted_median_Duration_with_linreg_error_class_aggregated.png}
 	}
 	\caption{Referenzodelle auf RND angewendet. Messungen sortiert nach Laufzeit, es wurde nur jeder 250te Punkt gezeichnet.}
 	\label{fig:zeit_baselines_sorted_rnd}
@@ -1559,20 +1561,20 @@ Die erreichte Qualität der Vorhersagen der Modelle lässt sich recht gut anhand
 \subsubsection{Detailbetrachtung der Vorhersagen von Referenzmodellen}
 Die Analyse kleinerer Ausschnitte der Modell-Prognosen kann weitere interessante Zusammenhänge zwischen Messdaten und Modellierung aufdecken.\\
 In Abbildung \ref{fig:densities_baselines_seq} ist eine Auswahl an Graphen gezeigt, in denen die Dichten der Laufzeiten für jeweils ein spezifisches Attribut-Tupel dargestellt wurden.
-Zusätzlich zur Verteilung der Laufzeiten zu den spezifischen Attributen wurde der mittlere vorhergesagte Wert der verschiedenen Modelle zu diesen Attributen in blau eingezeichnet.
-Die schwarze Linie markiert den tatsächlichen mittleren Wert der Laufzeiten, die grüne ist an der Stelle des 0.1 Quantils der Laufzeiten und die pinke Linie markiert das 0.9 Quantil der Laufzeiten.\\
-Zu jedem Graphen werden die Attribute der dargestellten Messungen und der relative arithmetische Fehler des Modells gegenüber diesen Messungen angegeben.\medskip
+Zusätzlich zur Verteilung der Laufzeiten der Messungen der spezifischen Attribute, wurde der vorhergesagte Wert der verschiedenen Modelle zu diesen Attributen in blau eingezeichnet.
+Die schwarze Linie markiert das arithmetische Mittel der Laufzeiten, die grüne ist an der Stelle des 0.1 Quantils der Laufzeiten und die pinke Linie markiert das 0.9 Quantil der Laufzeiten.\\
+Zu jedem Graphen werden die Attribute der dargestellten Messungen und der \textit{MAPE} (mean absolute percentage error) des Modells gegenüber diesen Messungen angegeben.\medskip
 
-In Abbildung \ref{fig:densities_baselines_seq}a ist die Vorhersage vom Modell \textit{Durchschnitt} zu dem Attribut-Tupel zu sehen, zu dem die Residuen der Vorhersagen zu den kleinsten gehören, die das Modell erreicht hat.
+In Abbildung \ref{fig:densities_baselines_seq}a ist die Vorhersage vom Modell \textit{Durchschnitt} zu einem Attribut-Tupel zu sehen, zu dem das Modell einen seiner geringsten \textit{MAPE}-Werte erreicht hat.
 Die Vorhersage ist dennoch nicht sehr genau, da der vom Modell geschätzte Wert wesentlich näher am 0.1 Quantil ist, als am tatsächlichen Mittelwert.
 Es ist zusehen, dass es eine typische Laufzeit zu diesen Attributen gibt, dort hat die Dichte seine Spitze. Für die Messungen mit dieser Laufzeit wurde vermutlich derselbe E/A-Pfad verwendet. Es gibt aber auch einige Laufzeiten mit größeren Werten.
 Anhand des lokalen Maximums bei $6\cdot 10^-4$ Sekunden kann wohl der am zweithäufigsten genommene E/A-Pfad erkannt werden.\medskip
 
-Das Attribut-Tupel zu dem \textit{LinReg G} die Vorhersagen mit seinem geringsten mittleren Fehler erreicht hat, ist in Abbildung \ref{fig:densities_baselines_seq}b zu sehen.
-Der vorhergesagte Wert befindet sich ziemlich genau am Maximum der Dichtefunktion. Entsprechend sagt dieses Modell für eine möglichst große Anzahl Messungen den richtigen Wert voraus. Dies führt allerdings nicht zum geringsten \textit{MAE}-Wert, dieser würde auf der schwarzen Linie erreicht werden.\medskip
+Das Attribut-Tupel zu dem \textit{LinReg G} die Vorhersagen mit seinem geringsten \textit{MAPE} erreicht hat, ist in Abbildung \ref{fig:densities_baselines_seq}b dargestellt.
+Der vorhergesagte Wert befindet sich ziemlich genau am Maximum der Dichtefunktion. Entsprechend sagt dieses Modell für eine möglichst große Anzahl Messungen den richtigen Wert voraus. Dies führt allerdings nicht zum kleinst möglichen \textit{MAPE}-Wert, dieser würde auf der schwarzen Linie erreicht werden.\medskip
  
-In Abbildung \ref{fig:densities_baselines_seq}c ist die mittlere vorhergesagten Laufzeit von \textit{LinRegFK Median agg} eingezeichnet.
-Die Vorhersage des Modells zu diesem Attribut-Tupel liegt ziemlich genau auf dem Wert des arithmetischen Mittels der Laufzeiten, sodass der arithmetische Fehler hier gerade minimal wird.\medskip
+In Abbildung \ref{fig:densities_baselines_seq}c ist die vorhergesagte Laufzeit von \textit{LinRegFK Median agg} eingezeichnet.
+Die Vorhersage des Modells zu diesem Attribut-Tupel liegt ziemlich genau auf dem Wert des arithmetischen Mittels der Laufzeiten, sodass der \textit{MAPE} hier gerade minimal wird.\medskip
 
 Als letztes Beispiel wird der Verlauf der Laufzeit-Dichte eines Attribut-Tupels gezeigt, zu dem das Modell \textit{Median agg} eine seiner größten Modellabweichungen erreicht hat.
 Interessanterweise sind die Residuen für dieses Attribut-Tupel sehr groß, dabei ist der vorhergesagte Wert des Modells in direkter Nähe des tatsächlichen arithmetischen Mittelwerts der Laufzeiten.
@@ -1586,19 +1588,20 @@ Alternativ kann ein Ansatz wie die Zuhilfenahme von Fehlerklassen zur besseren M
  
  \begin{figure}
  	\centering
- 	\subfloat[Modell \textit{Durchschnitt} angewendet auf SEQ. Mitt.-Fehler = 20.77\%, Zugriffsgröße = Delta-Abstand = 512\,KiB, OpTyp = W]{
+ 	\subfloat[Modell \textit{Durchschnitt} auf SEQ. \textit{MAPE} = 20.77\%, Zugriffsgröße = Delta-Offset = 512\,KiB, OpTyp = W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_mean_performance.png}
  	}\hfill
- 	\subfloat[Modell \textit{LinReg G} angewendet auf SEQ. Mitt.-Fehler = 6.74\%, Zugriffsgröße = Delta-Abstand: 64\,KiB, OpTyp: W]{
+ 	\subfloat[Modell \textit{LinReg G} auf SEQ. \textit{MAPE} = 6.74\%, Zugriffsgröße = Delta-Offset: 64\,KiB, OpTyp: W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_linreg_Size.png}
  	}\\
- 	\subfloat[Modell \textit{LinRegFK Median agg} angewendet auf SEQ. Mitt. - Fehler = 2.6\%, Zugriffsgröße = Delta-Abstand = 8\,MiB, OpTyp = W]{
+ 	\subfloat[Modell \textit{LinRegFK Median agg} auf SEQ. \textit{MAPE} = 2.6\%, Zugriffsgröße = Delta-Offset = 8\,MiB, OpTyp = W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_best_median_Duration_with_linreg_error_class_aggregated.png}
  	}\hfill
- 	\subfloat[Modell \textit{Median agg} angewendet auf SEQ. Mitt. - Fehler = 68.65\%, Zugriffsgröße = Delta-Abstand = 512\,KiB, OpTyp = W]{
+ 	\subfloat[Modell \textit{Median agg} auf SEQ. \textit{MAPE} = 68.65\%, Zugriffsgröße = Delta-Offset = 512\,KiB, OpTyp = W]{
  		\includegraphics[width=.43\textwidth]{Bilder/Plots/baselines/Dichten/plot_density_worst_median_Duration_aggregated.png}
  	} 
- 	\caption{Laufzeit-Dichte einiger Referenzodelle auf SEQ; 90\% der Werte sind größer als die grüne, 10\% sind größer als die pinke Linie, die mittlere Dauer entspricht der schwarzen Linie, die blaue Linie ist die mittlere Vorhersage des Modells zu diesen Attributen}
+ 	
+ 	\caption{Laufzeit-Dichte einiger Referenzodelle auf SEQ; 90\% der Werte sind größer als die grüne, 10\% sind größer als die pinke Linie, die mittlere Laufzeit entspricht der schwarzen Linie, die blaue Linie markiert die Vorhersage des Modells zu diesen Attributen}
  	\label{fig:densities_baselines_seq}
  \end{figure} 
 \clearpage
@@ -1639,43 +1642,31 @@ Im Folgenden werden zunächst einige Beobachtungen zu verschiedenen Bereichen au
 \begin{table}
 	\centering
 	\scriptsize
-	\makebox[\textwidth][c]{
+%	\makebox[\textwidth][c]{
+	\hspace*{-0.3cm}
 		\subfloat[Fehlermetriken auf SEQ]{
-			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAE (s) & Avg-MAPE (\%) & Train-MAPE (\%) &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
+			\begin{tabular}{|p{2cm}|r|p{1.4cm}|p{1.4cm}|r|r|r|r|r|}\hline%
+				Modell & MAE (s) & Avg- \mbox{MAPE (\%)} & Train- \mbox{MAPE (\%)} &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
 			\end{tabular}
-		}
+%		}
 	}\\
-	\makebox[\textwidth][c]{
+%	\makebox[\textwidth][c]{
+	\hspace*{-0.3cm}
 		\subfloat[Fehlermetriken auf RND]{
-			\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
-				Modell & MAE (s) & Avg-MAPE (\%) &  Train-MAPE (\%) & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
+			\begin{tabular}{|p{2cm}|r|p{1.4cm}|p{1.4cm}|r|r|r|r|r|}\hline%
+				Modell & MAE (s) & Avg- \mbox{MAPE (\%)} &  Train- \mbox{MAPE (\%)} & MAPE (\%) & MSPE (\%) & RQ3 (\%) & RMax (\%) & In-range (\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/models/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max & \Bereich}%
 			\end{tabular}
-		}
+%		}
 	}
+%	\vspace*{-0.3cm}
 	\caption{Ergebnisse der NN-Modelle und einiger Referenzmodelle}
 	\label{tab:results}
-\end{table}
-
-\begin{table}
-	\centering
-	\scriptsize
-	\subfloat{
-	\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
-		Modell & Q0.1-MAPE (\%) &Q0.1-MSPE (\%) & Q0.9-MAPE (\%) & Q0.9-MSPE (\%) & TP (\%) & FP (\%) \\\hline\hline
-		\csvreader[late after line=\\\hline]%
-		{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt, FalschPositiv = \FalschPositiv}%
-		{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt & \FalschPositiv}%
-	\end{tabular}
-	}
-	\caption{Informationen über die Ausreißervorhersage der NN-Modelle auf SEQ}
-	\label{tab:outlier}
 \end{table}
 
 \subsubsection{Strukturen der neuronalen Netze}
@@ -1737,9 +1728,26 @@ Das Modell \textit{NN-Tupel1} kann dennoch mit einem aufwendigeren neuronalen Ne
 	\caption{Vergleich der Modelle \textit{LinReg G} und \textit{NN-Tupel1 agg} auf RND}
 	\label{fig:lin_vergleich}
 \end{figure} 
-\clearpage
+
 \subsubsection{Analyse der Ausreißervorhersage}
 Es soll hier auf einige Beobachtungen aus der Tabelle \ref{tab:outlier} eingegangen werden.
+
+\begin{table}[b!]
+	\centering
+	\scriptsize
+	\subfloat{
+		\hspace*{-0.65cm}
+		\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
+			Modell & Q0.1-MAPE (\%) &Q0.1-MSPE (\%) & Q0.9-MAPE (\%) & Q0.9-MSPE (\%) & TP (\%) & FP (\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+			{CSV/models/latex_seq_outlier.csv}{Modell=\Model,QRMAF=\QRMAF,QRMQA=\QRMQA, LRMAF = \LRMAF, LRMQA = \LRMQA, Korrekt = \Korrekt, FalschPositiv = \FalschPositiv}%
+			{\Model & \QRMAF & \QRMQA & \LRMAF & \LRMQA & \Korrekt & \FalschPositiv}%
+		\end{tabular}
+	}
+	\caption{Informationen über die Ausreißervorhersage der NN-Modelle auf SEQ}
+	\label{tab:outlier}
+\end{table}
+
 Die 0.1 und 0.9 Quantile der Laufzeiten zu den Attribut-Tupeln vorherzusagen gelingt, außer bei \textit{NN-Tupel2}, recht gut und mit wesentlich kleineren Fehlerwerten als die Vorhersage der tatsächlichen Laufzeiten.
 Dies macht auch Sinn, denn für die Quantile gibt es nur jeweils einen Wert pro Attribut-Tupel, die sich die neuronalen Netze \glqq merken \grqq{}müssen.\\
 Für eine korrekte Ausreißervorhersage müssen die Modelle zwei Dinge erfüllen:\\
@@ -1841,7 +1849,7 @@ Im Vergleich mit \textit{NN-Tupel1 agg} (Abbildung \ref{fig:lin_vergleich}b ) ka
 Die Laufzeiten der lesenden Zugriffe machen ab einer gewissen Zugriffsgröße einen Sprung nach oben. \textit{NN-Tupel1} kann diesen Sprung wesentlich besser in seine Vorhersagen mit einbeziehen, als das Netz zu \textit{NN-Tupel1 agg} mit nur einer verdeckten Schicht mit einem Neuron.
 Die schreibenden Zugriffe weisen keinen solchen Sprung in den Laufzeiten auf und werden scheinbar mit einer linearen Gerade von \textit{NN-Tupel1} approximiert.\\
 Dadurch dass die Messungen mit gleichen Zugriffsgrößen und Operationstypen bei den randomisierten Zugriffen nicht mehr alle dem selben Attribut-Tupel angehören, sondern sich durch das Delta-Offset unterscheiden, stehen \textit{NN-Tupel1} Informationen zu Verfügung, um innerhalb einer Messreihe unter den Messungen zu unterscheiden.
-Die Abhängigkeit der Laufzeit von Delta-Abstand scheint jedoch weiterhin sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen hält.
+Die Abhängigkeit der Laufzeit von Delta-Offset scheint jedoch weiterhin sehr gering, sodass sich die Varianz der Vorhersagen in Grenzen hält.
 Es ist aber durchaus zu erkennen, dass die gezeichneten Punkte einer Messreihe nicht mehr alle exakt horizontal zueinander sind, sondern teilweise (insbesondere bei den kleinsten lesenden Zugriffen) eine Streuung aufweisen.\medskip
 
 Die Stärken und Schwächen des Modells liegen
@@ -1877,24 +1885,24 @@ Bei den Vorhersagen zu RND ist dagegen gut zu sehen, dass jede größere Anhäuf
 Der Sprung in den Laufzeiten der lesenden Zugriffe auf RND kann leicht von dem Modell berücksichtigt werden, die langsamen Leseaufrufe werden scheinbar hauptsächlich durch zwei Fehlerklassen abgedeckt.
 Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig über die Zugriffsgrößen hinweg eine Differenzierung der Messungen durch die Fehlerklassen vorgenommen.\medskip
 
-
-
 \begin{figure}
 	\centering
 	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}
 	}
 	\hfill
-	\subfloat[Näherungen des Modells zu den Quantilen der Laufzeiten, Quantil 0.1 in grün und Quantil 0.9 in rot]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_tuple1_with_error_class_from_linreg_Duration_seq.png}
+	\subfloat[Näherungen des Modells zu den Quantilen der Laufzeiten]{
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_tuple1_with_error_class_from_linreg_Duration_seq.png}
 	}\\
+	\vspace*{-0.31cm}
 	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in rot markiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
 	}
 	\hfill
 	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_seq.png}
 	}
+	\vspace*{-0.3cm}
 	\caption{Modell \textit{NN-LinRegFK} angewendet auf SEQ}
 	\label{fig:linregfk_seq}
 \end{figure} 
@@ -1902,20 +1910,21 @@ Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig
 \begin{figure}
 	\centering
 	\subfloat[Vorhersage der Laufzeiten]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
 	}\\
+	\vspace*{-0.21cm}
 	\subfloat[Die am schlechtesten vorhergesagten Laufzeiten sind in rot markiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_biggest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
 	}
 	\hfill
 	\subfloat[Die am besten vorhergesagten Laufzeiten sind in grün markiert]{
-		\includegraphics[width=.43\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		\includegraphics[width=.415\textwidth]{Bilder/Plots/models/plot_smallest1_errors_tuple1_with_error_class_from_linreg_Duration_rnd.png}
 	}
+	\vspace*{-0.3cm}
 	\caption{Modell \textit{NN-LinRegFK} angewendet auf RND}
 	\label{fig:linregfk_rnd}
 \end{figure} 
 
-\clearpage
 \paragraph{Zusammenfassung:}
 \textit{
 	In diesem Kapitel wurden zunächst das Testsystem und die Durchführung der Messreihen von E/A-Zugriffen auf diesem beschrieben.
@@ -1925,6 +1934,7 @@ Anders als bei den sequentiellen Dateizugriffen wird auf RND recht gleichmäßig
 	Abschließend konnten dann die verschiedenen Modelle der Referenzmodelle und NN-Modelle untersucht und untereinander verglichen werden.
 	Dabei wurde klar, dass lineare Ansätze nur unzureichende Modellierungen erreichen können, dass eine gewisse periodische Abhängigkeit der Laufzeiten besteht, diese aber schwierig genutzt werden kann, und dass die Fehlerklassen zwar bereits sehr gut dabei helfen das E/A-System zu beschreiben, aber noch verbessert werden müssten.
 	}
+\clearpage
 \chapter{Fazit}
 \label{Fazit}
 In dieser Bachelorarbeit wurde das parallele Dateisystem eines Hochleistungsrechners analysiert.
@@ -1988,7 +1998,7 @@ benutzt habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichung
 entnommen wurden, sind als solche kenntlich gemacht. Ich versichere weiterhin,
 dass ich die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht
 habe und die eingereichte schriftliche Fassung der auf dem elektronischen
-Speichermedium entspricht.
+Speichermedium entspricht.\medskip
 
 Ich bin mit der Einstellung der Bachelorarbeit in den Bestand der Bibliothek des Fachbereichs Informatik einverstanden.
 
