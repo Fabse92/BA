@@ -1,0 +1,12 @@
+digraph G{
+ 	node [fontname = "helvetica"];
+ 	edge [fontname = "helvetica"];	
+	rankdir=UD;
+	Messdaten -> "Trainingsdaten = Eingabevektoren" [label = "aufteilen"]
+	Messdaten -> Testdaten[label = "aufteilen"]
+	"Trainingsdaten = Eingabevektoren" -> Lernverfahren
+	NeuronalesNetz -> Lernverfahren [label = ""]
+	Lernverfahren -> Prädiktor[label = "erzeugt"]
+	Testdaten -> Residuen [label = ""]
+	Prädiktor -> Residuen [label = "berechnen der Modellabweichungen"]
+}

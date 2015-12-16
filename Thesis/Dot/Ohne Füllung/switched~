@@ -1,0 +1,17 @@
+digraph G{
+ 	node [fontname = "helvetica"];
+ 	edge [fontname = "helvetica"];	
+ 	node [fontname = "helvetica",style=filled];
+ 	edge [fontname = "helvetica"];
+	rankdir=UD;
+	splines=true;
+	SEQ -> "Residuen auf SEQ"
+	"LinReg G" -> "Residuen auf SEQ"
+	"Residuen auf SEQ" -> "SEQ-Fehlerklassen"[label ="clustering"]
+	RND -> "Residuen auf RND"
+	"LinReg G" -> "Residuen auf RND"
+	"Residuen auf RND" -> "Zuordnung von RND-Residuen zu SEQ-FK"
+	"SEQ-Fehlerklassen" -> "Zuordnung von RND-Residuen zu SEQ-FK"[label = "klassieren"]
+	RND -> "RND mit SEQ-Fehlerklassen"
+	
+}
