@@ -1,0 +1,8 @@
+kleine lesezugriffe durch deltaoffset genauer, ansonsten nicht so hilfreich
+
+unterschiedliche modelle für ausnutzen der fk und erstellen
+eventuell zu ähnliche trainings und testdaten
+auch durchschnittsperformance bei auswahl netze berücksichtigen
+
+problem mit dem verwenden des reinen fehlers, nur hohe laufzeiten berücksichtigt
+ -> throuput verwenden?
