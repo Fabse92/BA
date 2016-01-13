@@ -258,10 +258,10 @@ Universität Hamburg \\ % Your institution for the title page
 \end{columns}
 \end{frame}
 
-\subsection{Messdaten}
+\subsection{Benchmark-Tests}
 %welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
 \begin{frame}
-\frametitle{Gestaltung der Analyse: Messdaten}
+\frametitle{Gestaltung der Analyse: Benchmark-Tests}
 %System wird mit Messungen untersucht, beschränktes Wissen dabei:
 	\begin{itemize}
 		\item Messbare/bekannte Attribute des Systems:
@@ -282,9 +282,62 @@ Universität Hamburg \\ % Your institution for the title page
 	\end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Gestaltung der Analyse: Benchmark-Tests}
+%Messreihen und Testsystem
+\begin{itemize}
+	\item Messreihen und Testsystem
+	\item Zwei untersuchte Anwendungsfälle:
+	\begin{itemize}
+		\item \textbf{SEQ:} Sequentieller Zugriff auf hintereinanderliegende Daten
+		\item \textbf{RND:} Zufälliger Zugriffsort 
+	\end{itemize}
+	\item Jeweils lesende und schreibende Messreihen
+	%3 Messreihen pro Anwendungsfall und Zugriffsart
+	\item Testsystem: Mistral
+	\begin{itemize}
+		\item Über 1500 Knoten
+		\item Speichersystem Lustre
+		\item 30 Petabyte Speicherkapazität
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Exploration der Messdaten}
+\begin{frame}
+\frametitle{Gestaltung der Analyse: Exploration der Messdaten}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_seq.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_rnd.png}
+	\end{figure}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_seq.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_rnd.png}
+	\end{figure}
+	%jede Farbe eine Messgröße, im Seq Fall komplett gleiche Attribute
+	%1 B, 4 B, 16 B, 64 B, 256 B, 1 KiB, 4 KiB,8 KiB, 16 KiB, 64 KiB, 256 KiB,512 KiB, 1 MiB, 2 MiB, 4 MiB,8 MiB und 16 MiB
+	%Betrachtung in Zeitreihe
+	%3 Messreihen direkt hintereinader
+	%Starke Abhängigkeit von Zugriffsgröße erkennbar, aber muss mehr geben (RND-R)
+	%deutlich zu erkennen, dass Messungen mit gleichen Attributen zu sehr unterschiedlichen ergebnissen führen können
+	%Aufteilung der Messungen mit selben Attributen in über mehrere Zugriffsgrößen übergreifende Gruppen, keine gleichmäßige Verteilung wie zu erwarten wäre -> E/A-Pfad
+	%Zugriffszeit stärker vom E/A-Pfad als von Zugriffsgröße abhängig
+\end{columns}
+\end{frame}
+
 \section{Erste Ergebnisse}
 %lineare vs nn modelle, was sind die Modelle überhaupt?
+
 \section{E/A-Pfad zur Leistungsvorhersage}
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage}
+\begin{itemize}
+	\item 
+\end{itemize}
+\end{frame}
 \subsection{Fehlerklassen}
 %Verfahren zum Erstellen der FK
 %Analyse der FK
@@ -294,7 +347,7 @@ Universität Hamburg \\ % Your institution for the title page
 %------------------------------------------------
 
 \begin{frame}
-\Huge{\centerline{Fragen}}
+\Huge{\centerline{Ende der Präsentation}}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
