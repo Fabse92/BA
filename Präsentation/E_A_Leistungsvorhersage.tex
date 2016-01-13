@@ -176,7 +176,6 @@ Universität Hamburg \\ % Your institution for the title page
 \end{frame}
 
 \section{Künstliche neuronale Netze}
-
 \begin{frame}
 \frametitle{Künstliche neuronale Netze}
 \begin{columns}
@@ -200,11 +199,11 @@ Universität Hamburg \\ % Your institution for the title page
 
 \column{.45\textwidth}
 \begin{figure}
-\includegraphics[width=0.9\linewidth]{Bilder/netz.png}
+	\includegraphics[width=0.9\linewidth]{Bilder/netz.png}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=1\linewidth]{Bilder/ArtificialNeuronModel_deutsch.png}
+	\includegraphics[width=1\linewidth]{Bilder/ArtificialNeuronModel_deutsch.png}
 \end{figure}
 \end{columns}
 \end{frame}
@@ -221,20 +220,68 @@ Universität Hamburg \\ % Your institution for the title page
 
 \column{.45\textwidth}
 \begin{figure}
-\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}
+	\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}
 \end{figure}
 \begin{figure}
-\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_NO.png}
+	\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_NO.png}
 \end{figure}
-
 \end{columns}
 \end{frame}
 
 \section{Gestaltung der Analyse}
+\subsection{Modell des Ein-/Ausgabe-Pfads}
+%speicherhierachie, Zugriffszeit davon abhängig
+\begin{frame}
+\frametitle{Gestaltung der Analyse: Modell des Ein-/Ausgabe-Pfads}
+\begin{columns}
+\column{.45\textwidth}
+\begin{itemize}
+	\item<1-> Speicherhierachie
+	%System entspricht einer Hierachie von verschiedenen Speichermedien
+	\item<2-> Modell des E/A-Systems
+	%Unterscheidung von drei Anteilen des Zeitaufwandes zum Bearbeiten einer Anfrage: Festplatten, Netzwerk, Arbeitsspeicher+Caches
+	\item<3-> Verarbeitung entlang des E/A-Pfades
+	%Pfad abhängig davon wo Daten sich befinden
+	%Zeitanteil in den drei Bereichen hängt vom Durchsatz und Latenzen ab
+	\item<4-> Zugriffszeit wesentlich durch tiefe des Pfades bestimmt
+	%durch Speicherhirachie hängt Verarbeitungszeit von der langsamsten Komponente ab
+\end{itemize}
+
+\column{.45\textwidth}
+\begin{figure}
+	\includegraphics<1->[width=0.8\linewidth]{Bilder/hierachie.png}
+\end{figure}
+\begin{figure}
+	\includegraphics<2>[width=0.8\linewidth]{Bilder/rechnerknoten.png}
+	\includegraphics<3>[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}
+\end{figure}
+\end{columns}
+\end{frame}
+
 \subsection{Messdaten}
 %welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
-\subsection{E/A-Modell}
-%speicherhierachie, Zugriffszeit davon abhängig
+\begin{frame}
+\frametitle{Gestaltung der Analyse: Messdaten}
+%System wird mit Messungen untersucht, beschränktes Wissen dabei:
+	\begin{itemize}
+		\item Messbare/bekannte Attribute des Systems:
+		\begin{itemize}
+			\item Datei ID
+			%zur Identifikation der aufgerufenen Datei
+			\item Zugriffsgröße
+			%Anazahl Bytes die gelesen/geschrieben werden sollen
+			\item Offset
+			%Abstand vom Dateibeginn bis zum zugegriffenen Bereich
+			\item Delta-Offset = $\text{Offset}[i]-(\text{Offset}[i-1]+\text{Zugriffsgröße}[i-1])$
+			%Strecke die Dateizeiger zurücklegen muss			
+			\item Operationstyp 
+			%lesend oder schreibend
+		\end{itemize}
+		\item Keine Informationen über internen Zustand des Systems
+		%gecached oder nech?
+	\end{itemize}
+\end{frame}
+
 \section{Erste Ergebnisse}
 %lineare vs nn modelle, was sind die Modelle überhaupt?
 \section{E/A-Pfad zur Leistungsvorhersage}
