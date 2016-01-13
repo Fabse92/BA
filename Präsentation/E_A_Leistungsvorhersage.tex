@@ -73,24 +73,30 @@
 %\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
 %\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
 
-%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
 }
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{selinput}      % Halbautomatische Auswahl der Eingabecodierung
+\SelectInputMappings{      % mit Hilfe ausgewählter Glyphen
+  adieresis={ä},	   % siehe: http://partners.adobe.com/public/developer/en/opentype/glyphlist.txt
+  germandbls={ß},
+  Euro={€}
+}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Short title]{Full Title of the Talk} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[E/A-Leistungsvorhersage im HPC]{Vorhersage von E/A-Leistung im Hochleistungsrechnen unter der Verwendung von neuronalen Netzen} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{John Smith} % Your name
-\institute[UCLA] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+\author{Jan Fabian Schmid} % Your name
+\institute[UHH] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
-University of California \\ % Your institution for the title page
+Universität Hamburg \\ % Your institution for the title page
 \medskip
-\textit{john@smith.com} % Your email address
+\textit{2schmid@informatik.uni-hamburg.de} % Your email address
 }
 \date{\today} % Date, can be changed to a custom date
 
@@ -101,7 +107,7 @@ University of California \\ % Your institution for the title page
 \end{frame}
 
 \begin{frame}
-\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\frametitle{Übersicht} % Table of contents slide, comment this block out to remove it
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
@@ -109,149 +115,139 @@ University of California \\ % Your institution for the title page
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
-%------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
-%------------------------------------------------
-
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
-
+\section{Motivation}
 \begin{frame}
-\frametitle{Paragraphs of Text}
-Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.\\~\\
-
-Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio. Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis. Vestibulum ultrices tincidunt libero, quis commodo erat ullamcorper id.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Bullet Points}
+\frametitle{Motivation}
 \begin{itemize}
-\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-\item Nam cursus est eget velit posuere pellentesque
-\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
+	\item Hocheleistungsrechnen bekommt zunehmende Bedeutung in der Wissenschaft
+	%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
+	%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
+	\pause
+	\item Verwendung massiv paralleler Systeme
+	%Flaschenhals einzelner Hardwarekomponenten umgehen
+	%Aufwendige Programmierung
+	\pause	
+	\item Unterstützung der Wissenschaftler durch Werkzeuge
+	%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
+	%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
+	\pause
+	\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
+	%insbesondere die Vermeidung von Festplattenzugriffen
+	\begin{itemize}
+		\pause
+		\item Modellerstellung
+		%Modell erstellen, um E/A-System besser verstehen zu können
+		\pause		
+		\item Kategorisierung von E/A-Leistung
+		%Anteil an Festplattenzugriffen etc. abschätzen, dadurch Beurteilung der Effizienz möglich
+	\end{itemize}			
 \end{itemize}
 \end{frame}
 
-%------------------------------------------------
-
+\section{Verwandte Arbeiten}
+%black vs white-box
 \begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
-\end{block}
+\frametitle{Verwandte Arbeiten}
+\begin{itemize}
+	\item Betrachtung von Systemen mit einzelnen Festplatten
+	%keine Verbünde, sondern nur die E/A-Leistung einzelner Platten wird vorhergesagt
+	\item White-Box-Modellierung
+	\begin{itemize}
+		\item Modellbildung mit Kenntnis von Hardwaredetails
+		\item Nachbildung der internen Verarbeitung
+		%Latenzzeiten, Rotationsgeschw. von Platte, Geschw. des Lesekopfes
+		\item Sehr aufwendig zu konfigurieren
+		%praktisch nur für einzelne Festplatten möglich
+		\item Sehr präzise Vorhesagen
+		%Wenn korrekt und detailiert modelliert wurde	
+	\end{itemize}
+	\item Black-Box-Modellierung
+	\begin{itemize}
+		\item Modellbildung ohne Kenntnis von Hardwaredetails
+		%Nur Messwerte können verwendet werden
+		\item mathematische Beschreibung mittels Regressionsanalyse
+		%kein Nachbildung oder Wissen von internen Vorgängen
+		%verschiedene statistische Methoden (maschinelles Lernen) können verwendet werden
+		\item Einfach und flexibel einsetzbar
+		%Ein Modell für viele Systeme verwendbar
+		\item Nicht so präzise Vorhersagen
+	\end{itemize}
+\end{itemize}
 \end{frame}
 
-%------------------------------------------------
+\section{Künstliche neuronale Netze}
 
 \begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+\frametitle{Künstliche neuronale Netze}
+\begin{columns}
+\column{.45\textwidth}
+\begin{itemize}
+	\item Verfahren des maschinellen Lernens
+	\begin{itemize}
+		\item Überwachtes Lernen
+		%Vorgabe von Ausgabewerten als Lösungen
+		\item Trainingsdatensatz
+		%Beim Lernvorgang verwendete Daten
+		\item Testdatensatz
+		%ungesehene Daten zur Überprüfung der Abstraktionsfähigkeit des Modells
+	\end{itemize}
+	\item Zur Regressionsanalyse verwendet
+	%Bestimmung der Zusammenhänge der Attribute des Eingabevektors zu den Attributen des Ausgabevektors
+	%Bild einfaches feedforward-Netz, eingabevektor mit 2 attributen, ausgabevektor mit einem, und 2 verdeckten schichten
+	\item Trainieren durch Fehlerrückführung (engl. backpropagation)
+	%mittlere quadratische Fehler gegenüber idealer Ausgabe berechnen und mit Gradientenverfahren Gewichtsupdate berechnen
+\end{itemize}
 
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
+\column{.45\textwidth}
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{Bilder/netz.png}
+\end{figure}
 
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
+\begin{figure}
+\includegraphics[width=1\linewidth]{Bilder/ArtificialNeuronModel_deutsch.png}
+\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Künstliche neuronale Netze}
+\begin{columns}
+\column{.45\textwidth}
+\begin{itemize}
+	\item Mächtiger als lineare Regression
+	%Mit ausreichender Komplexität des Netzes Approximation beliebiger kontinuierlicher Funktionen
+	%universal approximation theorem von Cybenko
+\end{itemize}
+
+\column{.45\textwidth}
+\begin{figure}
+\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_NO.png}
+\end{figure}
 
 \end{columns}
 \end{frame}
 
-%------------------------------------------------
-\section{Second Section}
-%------------------------------------------------
+\section{Gestaltung der Analyse}
+\subsection{Messdaten}
+%welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
+\subsection{E/A-Modell}
+%speicherhierachie, Zugriffszeit davon abhängig
+\section{Erste Ergebnisse}
+%lineare vs nn modelle, was sind die Modelle überhaupt?
+\section{E/A-Pfad zur Leistungsvorhersage}
+\subsection{Fehlerklassen}
+%Verfahren zum Erstellen der FK
+%Analyse der FK
+\subsection{Ergebnisse von Modellen mit Fehlerklassen}
 
-\begin{frame}
-\frametitle{Table}
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
-\end{frame}
-
+\section{Zusammenfassung und Ausblick}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation \cite{p1}.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
-\end{thebibliography}
-}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\Huge{\centerline{The End}}
+\Huge{\centerline{Fragen}}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
