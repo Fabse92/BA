@@ -1,0 +1,10 @@
+Modell,MAF,RMAF,RMQA,Q3,Max,RMAFTraining,Bereich,RMAFavg
+LinReg-FK Median agg ,1.9e-05,   6.6,  13,   7.1,  96,NA,NA,NA
+NN-Tupel1FK,2.4e-05, 8.8, 14,11,  273, 7.9,96,  9
+NN-LinRegFK,2.0e-05, 8.6, 14,10,  275, 7.7,93,  9
+NN-Tupel1 agg,8.9e-05,14.3, 21,17,  319,14.6,61, 16
+NN-EMA,5.7e-05,13.7, 22,18, 2336,13.2,95, 14
+NN-Tupel1,6.0e-05,14.1, 22,18,  295,13.6,100, 14
+LinReg G,7.6e-05,  50.8,  59,  73.7, 326,NA,NA,NA
+NN-Tupel2,6.3e-05,18.1,148,17,50719,17.3,78,121
+Durchschnitt,5.9e-04,2939.6,3757,5009.9,6537,NA,NA,NA
