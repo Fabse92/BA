@@ -229,11 +229,10 @@ Universität Hamburg \\ % Your institution for the title page
 \end{columns}
 \end{frame}
 
-\section{Gestaltung der Analyse}
-\subsection{Modell des Ein-/Ausgabe-Pfads}
+\section{Modell des Ein-/Ausgabe-Pfads}
 %speicherhierachie, Zugriffszeit davon abhängig
 \begin{frame}
-\frametitle{Gestaltung der Analyse: Modell des Ein-/Ausgabe-Pfads}
+\frametitle{Modell des Ein-/Ausgabe-Pfads}
 \begin{columns}
 \column{.45\textwidth}
 \begin{itemize}
@@ -253,8 +252,8 @@ Universität Hamburg \\ % Your institution for the title page
 	\includegraphics<1->[width=0.8\linewidth]{Bilder/hierachie.png}
 \end{figure}
 \begin{figure}
-	\includegraphics<2>[width=0.8\linewidth]{Bilder/rechnerknoten.png}
-	\includegraphics<3->[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}
+	\uncover<2->{\includegraphics<1,2>[width=0.8\linewidth]{Bilder/rechnerknoten.png}
+	\includegraphics<3->[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}}
 \end{figure}
 \end{columns}
 \end{frame}
@@ -337,7 +336,7 @@ Universität Hamburg \\ % Your institution for the title page
 \column{.45\textwidth}
 \begin{itemize}
 	%16KiB lesende Zugriffe
-	\item Lesende Zugriffe von 16KiB (oben SEQ unten RND)
+	\item Lesende Zugriffe von 16\,KiB (oben SEQ unten RND)
 	\item Sich wiederholende Muster (Periodizität)
 	\item Abhängigkeit von der Messreihe
 \end{itemize}
@@ -381,6 +380,7 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Erste Modelle}
 \begin{itemize}
+	\item Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
 	\item Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
 	%nach weiteren Attributen als nicht besser herausgestellt
 	\item Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
@@ -393,7 +393,7 @@ Universität Hamburg \\ % Your institution for the title page
 \end{frame}
 
 \begin{frame}
-\frametitle{Erste Modelle}
+\frametitle{Erste Modelle angewendet auf SEQ}
 \begin{table}
 		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
 				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
@@ -412,7 +412,27 @@ Universität Hamburg \\ % Your institution for the title page
 \end{frame}
 
 \begin{frame}
-\frametitle{Erste Modelle}
+\frametitle{Erste Modelle angewendet auf SEQ}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_seq_mean_performance.png}
+		%seq lesend
+	\end{figure}
+		\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}
+		%rnd lesend
+	\end{figure}
+\column{.45\textwidth}
+		\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_seq_linreg_Size.png}
+		%rnd lesend
+	\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erste Modelle angewendet auf RND}
 \begin{table}
 		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
 				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
@@ -433,16 +453,182 @@ Universität Hamburg \\ % Your institution for the title page
 \section{E/A-Pfad zur Leistungsvorhersage}
 \begin{frame}
 \frametitle{E/A-Pfad zur Leistungsvorhersage}
+%Entdeckt, dass E/A-Pfad sehr wichtig für korrekte Vorhersage sein sollte
+%auch interessant zu wissen
 \begin{itemize}
-	\item 
+	\item \textbf{Idee}: Modellabweichung eines guten Modells zur Bestimmung einer Approximation des genommenen E/A-Pfades eines E/A-Aufrufs
+	\item Clustering der Modellabweichungen zu \textbf{Fehlerklassen} 
+	\item Problem: Höhere Zugriffszeiten führen zu größeren Modellabweichungen
+	%bei SEQ deutliches Problem, bei RND nicht mehr so stark
 \end{itemize}
 \end{frame}
 \subsection{Fehlerklassen}
-%Verfahren zum Erstellen der FK
-%Analyse der FK
+%Nur Betrachtung von LinReg Fehlern!
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf SEQ}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_seq_all.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_seq.png}
+	\end{figure}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_seq_all.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/density_of_fk_seq.png}
+		%Dichte, sollte eine klare Spitze pro Klasse aufweisen, dann korreliert die Fehlerklasse mit einem Pfad
+	\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf SEQ}
+%Klassen sortiert nach durchschnittlichem Residuum!
+%Durchsätze verschiedener Klassen sollten klare Differenzen aufweisen
+%idealerweise verschiedene Klassen für Zugriffe von etwa gleicher Größe
+%Residuen sollten nicht einfach mit der mittleren Zugriffszeit ansteigen / dann hat das Problem den Nutzen kaputt gemacht
+%klare Zuordnung der meisten Messungen in die Klasse mit kleinstem Fehler
+\begin{table}
+	\resizebox{\textwidth}{!}{
+	\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+			 & \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
+		Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf SEQ selbst\\ \hline\hline
+			\csvreader[late after line=\\\hline]%
+		{CSV/seq_linreg_classes_on_rnd.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, size = \size, duration = \duration}%
+		{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount}%
+	\end{tabular}
+	}
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf RND}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_rnd_all.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_rnd.png}
+	\end{figure}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_rnd_all.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/density_of_fk_rnd.png}
+	\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf RND}
+\begin{table}
+\resizebox{\textwidth}{!}{
+	\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+			& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
+		Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf RND selbst \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+		{CSV/rnd_linreg_classes_on_seq.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, size = \size, duration = \duration}%
+		{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \rndcount}%
+	\end{tabular}
+	}
+\end{table}
+\end{frame}
+
 \subsection{Ergebnisse von Modellen mit Fehlerklassen}
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen}
+\begin{itemize}
+	\item Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
+	\item Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+	\item Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+	\item Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+	\pause
+	\item Einfaches Modell mit neuronalem Netz und Fehlerklassen (\textbf{NN-LinRegFK})
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen auf SEQ}
+\begin{table}
+		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/latex_seq_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+\end{table}
+\begin{itemize}
+\item MAE: \textit{mean absolute error}
+\item MAPE: \textit{mean absolute percentage error}
+\item MSPE: \textit{mean square percentage error}
+\item RQ3: drittes Quartil aller relativen Modellabweichungen
+\item RMax: maximale relative Modellabweichung
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen auf RND}
+\begin{table}
+		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+				{CSV/latex_rnd_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+\end{table}
+\begin{itemize}
+\item MAE: \textit{mean absolute error}
+\item MAPE: \textit{mean absolute percentage error}
+\item MSPE: \textit{mean square percentage error}
+\item RQ3: drittes Quartil aller relativen Modellabweichungen
+\item RMax: maximale relative Modellabweichung
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{E/A-Pfad zur Leistungsvorhersage: mit und ohne Fehlerklassen}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_rnd.png}
+	\end{figure}
+\column{.45\textwidth}
+		\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}\\
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+	\end{figure}
+\end{columns}
+\end{frame}
 
 \section{Zusammenfassung und Ausblick}
+\begin{frame}
+\frametitle{Zusammenfassung}
+\begin{itemize}
+	\item Lineare Modelle unzureichend für die Beschreibung des E/A-Systems
+	\item Entscheidend für eine gute Vorhersage: E/A-Zugriffe mit gleichen Zugriffsparametern unterscheiden können
+	\begin{itemize}
+		\item Verarbeitung im System kann in E/A-Pfade unterteilt werden
+		\item Welcher Pfad genommen wurde kann nicht direkt gemessen werden
+	\end{itemize}
+	\item Einfache Modelle, die die Periodizität ausnutzen, nicht ausreichend
+	%um eine Näherung der E/A-Pfade zu geben
+	\item Verfahren für die Bestimmung der E/A-Pfade eingeführt
+	\begin{itemize}
+		\item Clustering der Residuen
+	\end{itemize}
+	\item Hinweise auf teilweise korrekte Unterscheidung von E/A-Pfaden
+\end{itemize}	
+\end{frame}
+
+\begin{frame}
+\frametitle{Ausblick}
+\begin{itemize}
+	\item Periodische Zusammenhänge im E/A-System besser ausnutzen
+	%für einzelne Festplatten ist dies sehr erfolgreich
+	\item Zusammenhang zwischen Fehlerklassen und E/A-Pfaden genauer untersuchen
+	\item Fehlerklassen aus Residuen verschiedener Modelle vergleichen
+	\item Problem beheben, dass die Residuen größerer Laufzeiten die Fehlerklassen dominieren
+\end{itemize}	
+\end{frame}
 %------------------------------------------------
 
 \begin{frame}
