@@ -1,0 +1,5 @@
+Modell		,MAF	,RMAF	,RMQA	,Q3	,Max	,RMAFTraining	,Bereich,RMAFavg
+NN-EMA		,5.7e-05,13.7	, 22	,18	, 2336	,13.2		,	, 14
+NN-Tupel1	,6.0e-05,14.1	, 22	,18	,  295	,13.6		,100	, 14
+LinReg G	,7.6e-05,  50.8	,  59	,  73.7	, 326	,NA		,NA	,NA
+Durchschnitt	,5.9e-04,2939.6	,3757	,5009.9	,6537	,NA		,NA	,NA

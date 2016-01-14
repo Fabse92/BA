@@ -78,6 +78,7 @@
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{csvsimple}
 \usepackage{selinput}      % Halbautomatische Auswahl der Eingabecodierung
 \SelectInputMappings{      % mit Hilfe ausgewählter Glyphen
   adieresis={ä},	   % siehe: http://partners.adobe.com/public/developer/en/opentype/glyphlist.txt
@@ -253,15 +254,16 @@ Universität Hamburg \\ % Your institution for the title page
 \end{figure}
 \begin{figure}
 	\includegraphics<2>[width=0.8\linewidth]{Bilder/rechnerknoten.png}
-	\includegraphics<3>[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}
+	\includegraphics<3->[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}
 \end{figure}
 \end{columns}
 \end{frame}
 
+\section{Evaluierung}
 \subsection{Benchmark-Tests}
 %welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
 \begin{frame}
-\frametitle{Gestaltung der Analyse: Benchmark-Tests}
+\frametitle{Evaluierung: Attribute der Messdaten}
 %System wird mit Messungen untersucht, beschränktes Wissen dabei:
 	\begin{itemize}
 		\item Messbare/bekannte Attribute des Systems:
@@ -283,10 +285,9 @@ Universität Hamburg \\ % Your institution for the title page
 \end{frame}
 
 \begin{frame}
-\frametitle{Gestaltung der Analyse: Benchmark-Tests}
+\frametitle{Evaluierung: Benchmark-Tests}
 %Messreihen und Testsystem
 \begin{itemize}
-	\item Messreihen und Testsystem
 	\item Zwei untersuchte Anwendungsfälle:
 	\begin{itemize}
 		\item \textbf{SEQ:} Sequentieller Zugriff auf hintereinanderliegende Daten
@@ -305,7 +306,7 @@ Universität Hamburg \\ % Your institution for the title page
 
 \subsection{Exploration der Messdaten}
 \begin{frame}
-\frametitle{Gestaltung der Analyse: Exploration der Messdaten}
+\frametitle{Evaluierung: Exploration der Messdaten}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
@@ -325,11 +326,109 @@ Universität Hamburg \\ % Your institution for the title page
 	%deutlich zu erkennen, dass Messungen mit gleichen Attributen zu sehr unterschiedlichen ergebnissen führen können
 	%Aufteilung der Messungen mit selben Attributen in über mehrere Zugriffsgrößen übergreifende Gruppen, keine gleichmäßige Verteilung wie zu erwarten wäre -> E/A-Pfad
 	%Zugriffszeit stärker vom E/A-Pfad als von Zugriffsgröße abhängig
+	%Es ist notwendig(!) innerhalb der Menge von Messungen mit gleichen Attributen zu unterscheiden, wenn sehr gute Vorhersagen gemacht werden sollen
 \end{columns}
 \end{frame}
 
-\section{Erste Ergebnisse}
-%lineare vs nn modelle, was sind die Modelle überhaupt?
+\begin{frame}
+%zeigen, warum Betrachtung der zeitlichen Periodizität durchaus legitim ist
+\frametitle{Evaluierung: Exploration der Messdaten}
+\begin{columns}
+\column{.45\textwidth}
+\begin{itemize}
+	%16KiB lesende Zugriffe
+	\item Lesende Zugriffe von 16KiB (oben SEQ unten RND)
+	\item Sich wiederholende Muster (Periodizität)
+	\item Abhängigkeit von der Messreihe
+\end{itemize}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_seq.png}
+		%seq lesend
+	\end{figure}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_rnd.png}
+		%rnd lesend
+	\end{figure}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+%zeigen, warum Betrachtung der zeitlichen Periodizität durchaus legitim ist
+\frametitle{Evaluierung: Exploration der Messdaten}
+\begin{columns}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_seq.png}
+	\end{figure}
+	\begin{figure}
+		\includegraphics<1>[width=1\linewidth]{Bilder/plot_First250_write_seq.png}
+		\includegraphics<2->[width=1\linewidth]{Bilder/plot_periodicitywrite_seq.png}
+	\end{figure}
+\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics<1,2>[width=1\linewidth]{Bilder/plot_From100001to100250_read_seq.png}
+		\includegraphics<3->[width=1\linewidth]{Bilder/plot_periodicity100001read_seq.png}
+	\end{figure}
+	\begin{figure}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_From100001to100250_write_seq.png}
+	\end{figure}
+\end{columns}
+\end{frame}
+
+\section{Erste Modelle}
+%lineare vs nn modelle und ema modell, was sind die Modelle überhaupt?
+\begin{frame}
+\frametitle{Erste Modelle}
+\begin{itemize}
+	\item Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+	%nach weiteren Attributen als nicht besser herausgestellt
+	\item Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+	%Zugriffsgröße, DeltaOffset, OpTyp auf Zugriffszeit
+	%2 Bilder einmal Attribute zu Dauer und einmal Erstellung des Modells
+	\item Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+	%ema, exponential moving average
+	%2 BILDER erstellen! einmal attribute zu zugriffsdauer und einmal beispiel von ema
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erste Modelle}
+\begin{table}
+		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+\end{table}
+\begin{itemize}
+\item MAE: \textit{mean absolute error}
+\item MAPE: \textit{mean absolute percentage error}
+\item MSPE: \textit{mean square percentage error}
+\item RQ3: drittes Quartil aller relativen Modellabweichungen
+\item RMax: maximale relative Modellabweichung
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erste Modelle}
+\begin{table}
+		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+			\csvreader[late after line=\\\hline]%
+				{CSV/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+		\end{tabular}
+\end{table}
+\begin{itemize}
+\item MAE: \textit{mean absolute error}
+\item MAPE: \textit{mean absolute percentage error}
+\item MSPE: \textit{mean square percentage error}
+\item RQ3: drittes Quartil aller relativen Modellabweichungen
+\item RMax: maximale relative Modellabweichung
+\end{itemize}
+\end{frame}
 
 \section{E/A-Pfad zur Leistungsvorhersage}
 \begin{frame}
