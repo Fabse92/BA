@@ -28,26 +28,26 @@
 %\usetheme{Antibes}
 %\usetheme{Bergen}
 %\usetheme{Berkeley}
-%\usetheme{Berlin}
-%\usetheme{Boadilla}
-%\usetheme{CambridgeUS}
+%\usetheme{Berlin} % fancy navigations anzeige
+%\usetheme{Boadilla} %schön aufgeräumt und hell
+%\usetheme{CambridgeUS} % anzeige des aktuellen section und subsection, recht schick
 %\usetheme{Copenhagen}
-%\usetheme{Darmstadt}
+%\usetheme{Darmstadt} %fancy navigations anzeige
 %\usetheme{Dresden}
-%\usetheme{Frankfurt}
-%\usetheme{Goettingen}
+%\usetheme{Frankfurt}%fancy navigations anzeige, kleine auflistungspunkte
+%\usetheme{Goettingen} %Navigationsleiste rechts, recht schick, default sonst
 %\usetheme{Hannover}
-%\usetheme{Ilmenau}
-%\usetheme{JuanLesPins}
+%\usetheme{Ilmenau} % fancy navigations anzeige, mit anzeige der subsection
+%\usetheme{JuanLesPins}% anzeige des aktuellen section und subsection
 %\usetheme{Luebeck}
-\usetheme{Madrid}
+% %\usetheme{Madrid}
 %\usetheme{Malmoe}
 %\usetheme{Marburg}
-%\usetheme{Montpellier}
+\usetheme{Montpellier}% anzeige des aktuellen section und subsection, sehr hell
 %\usetheme{PaloAlto}
 %\usetheme{Pittsburgh}
-%\usetheme{Rochester}
-%\usetheme{Singapore}
+%\usetheme{Rochester} %quadrate als punkte
+%\usetheme{Singapore} % fancy navigations anzeige, hell
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
@@ -92,7 +92,8 @@
 
 \title[E/A-Leistungsvorhersage im HPC]{Vorhersage von E/A-Leistung im Hochleistungsrechnen unter der Verwendung von neuronalen Netzen} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{Jan Fabian Schmid} % Your name
+%\author{Jan Fabian Schmid} % Your name
+\author[Jan Fabian Schmid]{Jan Fabian Schmid\\{\small Betreuer: Dr. Julian Kunkel}}
 \institute[UHH] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
 Universität Hamburg \\ % Your institution for the title page
@@ -107,6 +108,7 @@ Universität Hamburg \\ % Your institution for the title page
 \titlepage % Print the title page as the first slide
 \end{frame}
 
+\section{Übersicht}
 \begin{frame}
 \frametitle{Übersicht} % Table of contents slide, comment this block out to remove it
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
@@ -116,62 +118,78 @@ Universität Hamburg \\ % Your institution for the title page
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
-\section{Motivation}
+\section{Einleitung}
+\subsection{Motivation}
 \begin{frame}
 \frametitle{Motivation}
 \begin{itemize}
-	\item Hocheleistungsrechnen bekommt zunehmende Bedeutung in der Wissenschaft
+	\item Hochleistungsrechnen hat große Bedeutung für die Wissenschaft
 	%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
 	%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
-	\pause
-	\item Verwendung massiv paralleler Systeme
-	%Flaschenhals einzelner Hardwarekomponenten umgehen
-	%Aufwendige Programmierung
-	\pause	
-	\item Unterstützung der Wissenschaftler durch Werkzeuge
-	%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
-	%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
-	\pause
-	\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
-	%insbesondere die Vermeidung von Festplattenzugriffen
+	\item Ermöglicht die Simulation komplexer Modelle
 	\begin{itemize}
-		\pause
-		\item Modellerstellung
-		%Modell erstellen, um E/A-System besser verstehen zu können
-		\pause		
-		\item Kategorisierung von E/A-Leistung
-		%Anteil an Festplattenzugriffen etc. abschätzen, dadurch Beurteilung der Effizienz möglich
+		\item Verwendung massiv paralleler Systeme
+		%Flaschenhals einzelner Hardwarekomponenten umgehen
+		\item Aufwendige Programmierung
+		%Aufwendige Programmierung
+	\end{itemize}	
+	\item Effiziente Nutzung der Ressourcen ist schwierig
+	\begin{itemize}
+		\item Unterstützung der Wissenschaftler durch Werkzeuge
+		%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
+		%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
+		\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
+		%insbesondere die Vermeidung von Festplattenzugriffen
 	\end{itemize}			
 \end{itemize}
 \end{frame}
 
-\section{Verwandte Arbeiten}
+\subsection{Ziele}
+\begin{frame}
+\frametitle{Ziele}
+	\begin{itemize}
+		\item Erstellung eines Modells für das E/A-System
+		%Modell erstellen, um E/A-System besser verstehen zu können
+		\begin{itemize}
+			\item Benchmark-Tests machen und auswerten
+			\item Qualitätsmetriken entwickeln
+		\end{itemize}	
+		\item Kategorisierung der E/A-Leistung zur Effizienz-Beurteilung 
+		\begin{itemize}
+			\item Anteil der Festplatten-Zugriffe abschätzen
+		\end{itemize}	
+	\end{itemize}	
+\end{frame}
+
+\subsection{Modellierungsstrategien}
 %black vs white-box
 \begin{frame}
-\frametitle{Verwandte Arbeiten}
+\frametitle{Modellierungsstrategien}
 \begin{itemize}
-	\item Betrachtung von Systemen mit einzelnen Festplatten
+	\item Meist nur E/A-Leistung auf einzelnen Festplatten betrachtet
 	%keine Verbünde, sondern nur die E/A-Leistung einzelner Platten wird vorhergesagt
-	\item White-Box-Modellierung
+	\item Zwei mögliche Ansätze:
 	\begin{itemize}
-		\item Modellbildung mit Kenntnis von Hardwaredetails
-		\item Nachbildung der internen Verarbeitung
-		%Latenzzeiten, Rotationsgeschw. von Platte, Geschw. des Lesekopfes
-		\item Sehr aufwendig zu konfigurieren
-		%praktisch nur für einzelne Festplatten möglich
-		\item Sehr präzise Vorhesagen
+		\item White-Box-Modellierung
+	%\begin{itemize}
+	%	\item Modellbildung mit Kenntnis von Hardwaredetails
+	%	\item Nachbildung der internen Verarbeitung
+	%	%Latenzzeiten, Rotationsgeschw. von Platte, Geschw. des Lesekopfes
+	%	\item Sehr aufwendig zu konfigurieren
+	%	%praktisch nur für einzelne Festplatten möglich
+	%	\item Sehr präzise Vorhesagen
 		%Wenn korrekt und detailiert modelliert wurde	
-	\end{itemize}
-	\item Black-Box-Modellierung
-	\begin{itemize}
-		\item Modellbildung ohne Kenntnis von Hardwaredetails
-		%Nur Messwerte können verwendet werden
-		\item mathematische Beschreibung mittels Regressionsanalyse
-		%kein Nachbildung oder Wissen von internen Vorgängen
-		%verschiedene statistische Methoden (maschinelles Lernen) können verwendet werden
-		\item Einfach und flexibel einsetzbar
-		%Ein Modell für viele Systeme verwendbar
-		\item Nicht so präzise Vorhersagen
+	%\end{itemize}
+		\item Black-Box-Modellierung
+	%\begin{itemize}
+	%	\item Modellbildung ohne Kenntnis von Hardwaredetails
+	%	%Nur Messwerte können verwendet werden
+	% %	%kein Nachbildung oder Wissen von internen Vorgängen
+	%	%verschiedene statistische Methoden (maschinelles Lernen) können verwendet werden
+	%	\item Einfach und flexibel einsetzbar
+	%	%Ein Modell für viele Systeme verwendbar
+	%	\item Nicht so präzise Vorhersagen
+	%\end{itemize} 
 	\end{itemize}
 \end{itemize}
 \end{frame}
@@ -379,28 +397,39 @@ Universität Hamburg \\ % Your institution for the title page
 %lineare vs nn modelle und ema modell, was sind die Modelle überhaupt?
 \begin{frame}
 \frametitle{Erste Modelle}
+\begin{columns}
+	\column{.65\textwidth}
 \begin{itemize}
-	\item Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
-	\item Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+	\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
+	\item<2-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
 	%nach weiteren Attributen als nicht besser herausgestellt
-	\item Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+	\item<3-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
 	%Zugriffsgröße, DeltaOffset, OpTyp auf Zugriffszeit
 	%2 Bilder einmal Attribute zu Dauer und einmal Erstellung des Modells
-	\item Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+	\item<4-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
 	%ema, exponential moving average
 	%2 BILDER erstellen! einmal attribute zu zugriffsdauer und einmal beispiel von ema
 \end{itemize}
+	\column{.4\textwidth}
+	\begin{figure}
+		\includegraphics<2>[width=1\linewidth]{Dot/linreg.png}
+		\includegraphics<3>[width=1\linewidth]{Dot/nntupel1.png}
+		\includegraphics<4>[width=1\linewidth]{Dot/ema.png}		
+	\end{figure}
+\end{columns}
 \end{frame}
 
 \begin{frame}
 \frametitle{Erste Modelle angewendet auf SEQ}
 \begin{table}
+	\resizebox{\textwidth}{!}{
 		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
 				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
 		\end{tabular}
+	}
 \end{table}
 \begin{itemize}
 \item MAE: \textit{mean absolute error}
@@ -417,16 +446,16 @@ Universität Hamburg \\ % Your institution for the title page
 \column{.45\textwidth}
 	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/plot_seq_mean_performance.png}
-		%seq lesend
 	\end{figure}
-		\begin{figure}
+	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}
-		%rnd lesend
 	\end{figure}
 \column{.45\textwidth}
-		\begin{figure}
+	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/plot_seq_linreg_Size.png}
-		%rnd lesend
+	\end{figure}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_throughput_ema_Duration_seq.png}
 	\end{figure}
 \end{columns}
 \end{frame}
@@ -434,12 +463,14 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Erste Modelle angewendet auf RND}
 \begin{table}
+	\resizebox{\textwidth}{!}{
 		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
 				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 				{CSV/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
 				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
 		\end{tabular}
+	}
 \end{table}
 \begin{itemize}
 \item MAE: \textit{mean absolute error}
@@ -535,14 +566,22 @@ Universität Hamburg \\ % Your institution for the title page
 \subsection{Ergebnisse von Modellen mit Fehlerklassen}
 \begin{frame}
 \frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen}
-\begin{itemize}
-	\item Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
-	\item Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
-	\item Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
-	\item Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
-	\pause
-	\item Einfaches Modell mit neuronalem Netz und Fehlerklassen (\textbf{NN-LinRegFK})
-\end{itemize}
+\begin{columns}
+	\column{.65\textwidth}
+	\begin{itemize}
+		\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
+		\item<1-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+		\item<1-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+		\item<1-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+		\pause
+		\item<2-> Einfaches Modell mit neuronalem Netz und Fehlerklassen (\textbf{NN-LinRegFK})
+	\end{itemize}
+	\column{.4\textwidth}
+	\begin{figure}
+		\includegraphics<2->[width=1\linewidth]{Dot/linregfk.png}	
+	\end{figure}
+\end{columns}
+
 \end{frame}
 
 \begin{frame}
