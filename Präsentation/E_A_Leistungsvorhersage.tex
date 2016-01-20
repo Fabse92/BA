@@ -102,62 +102,101 @@ Universität Hamburg \\ % Your institution for the title page
 }
 \date{\today} % Date, can be changed to a custom date
 
+\makeatletter
+    \newenvironment{withoutheadline}{
+        \setbeamertemplate{headline}[default]
+        \def\beamer@entrycode{\vspace*{-\headheight}}
+    }{}
+\makeatother
+
 \begin{document}
 
-\begin{frame}
-\titlepage % Print the title page as the first slide
-\end{frame}
+\begin{withoutheadline}
+	\begin{frame}
+		\titlepage % Print the title page as the first slide
+	\end{frame}
+\end{withoutheadline}
 
-\section{Übersicht}
-\begin{frame}
-\frametitle{Übersicht} % Table of contents slide, comment this block out to remove it
-\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
-\end{frame}
+
+\section*{Übersicht}
+\begin{withoutheadline}
+	\begin{frame}
+		\frametitle{Übersicht} % Table of contents slide, comment this block out to remove it
+		\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+	\end{frame}
+\end{withoutheadline}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
 \section{Einleitung}
-\subsection{Motivation}
+%\subsection{Motivation}
+%\begin{frame}
+%\frametitle{Motivation}
+%\begin{itemize}
+%	\item Hochleistungsrechnen hat große Bedeutung für die Wissenschaft
+%	%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
+%	%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
+%	\item Ermöglicht die Simulation komplexer Modelle
+%	\begin{itemize}
+%		\item Verwendung massiv paralleler Systeme
+%		%Flaschenhals einzelner Hardwarekomponenten umgehen
+%		\item Aufwendige Programmierung
+%		%Aufwendige Programmierung
+%	\end{itemize}	
+%	\item Effiziente Nutzung der Ressourcen ist schwierig
+%	\begin{itemize}
+%		\item Unterstützung der Wissenschaftler durch Werkzeuge
+		%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
+		%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
+%		\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
+		%insbesondere die Vermeidung von Festplattenzugriffen
+%	\end{itemize}			
+%\end{itemize}
+%\end{frame}
+
+%\subsection{Ziele}
+%\begin{frame}
+%\frametitle{Ziele}
+%	\begin{itemize}
+%		\item Erstellung eines Modells für das E/A-System
+%		%Modell erstellen, um E/A-System besser verstehen zu können
+%		\begin{itemize}
+%			\item Benchmark-Tests machen und auswerten
+%			\item Qualitätsmetriken entwickeln
+%		\end{itemize}	
+%		\item Kategorisierung der E/A-Leistung zur Effizienz-Beurteilung 
+%		\begin{itemize}
+%			\item Anteil der Festplatten-Zugriffe abschätzen
+%		\end{itemize}	
+%	\end{itemize}	
+%\end{frame}
+
+\subsection{Motivation und Ziele der Bachelorarbeit}
 \begin{frame}
-\frametitle{Motivation}
-\begin{itemize}
-	\item Hochleistungsrechnen hat große Bedeutung für die Wissenschaft
+\frametitle{Motivation und Ziele der Bachelorarbeit}
+	\begin{itemize}
+		\item Hochleistungsrechnen hat große Bedeutung für die Wissenschaft
 	%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
 	%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
-	\item Ermöglicht die Simulation komplexer Modelle
 	\begin{itemize}
 		\item Verwendung massiv paralleler Systeme
 		%Flaschenhals einzelner Hardwarekomponenten umgehen
-		\item Aufwendige Programmierung
-		%Aufwendige Programmierung
 	\end{itemize}	
 	\item Effiziente Nutzung der Ressourcen ist schwierig
+	%Ausnutzen paralleler Hardwarekomponenten
 	\begin{itemize}
-		\item Unterstützung der Wissenschaftler durch Werkzeuge
+		%\item Unterstützung der Wissenschaftler durch Werkzeuge
 		%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
 		%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
-		\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
+		\item Hilfreich wäre ein Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
 		%insbesondere die Vermeidung von Festplattenzugriffen
 	\end{itemize}			
 \end{itemize}
-\end{frame}
-
-\subsection{Ziele}
-\begin{frame}
-\frametitle{Ziele}
 	\begin{itemize}
-		\item Erstellung eines Modells für das E/A-System
-		%Modell erstellen, um E/A-System besser verstehen zu können
-		\begin{itemize}
-			\item Benchmark-Tests machen und auswerten
-			\item Qualitätsmetriken entwickeln
-		\end{itemize}	
-		\item Kategorisierung der E/A-Leistung zur Effizienz-Beurteilung 
-		\begin{itemize}
-			\item Anteil der Festplatten-Zugriffe abschätzen
-		\end{itemize}	
+		\item Ziel: Erstellung eines Modells für das E/A-System
+		%Modell erstellen, um E/A-System besser verstehen zu können		
 	\end{itemize}	
 \end{frame}
 
@@ -212,7 +251,7 @@ Universität Hamburg \\ % Your institution for the title page
 	\item Zur Regressionsanalyse verwendet
 	%Bestimmung der Zusammenhänge der Attribute des Eingabevektors zu den Attributen des Ausgabevektors
 	%Bild einfaches feedforward-Netz, eingabevektor mit 2 attributen, ausgabevektor mit einem, und 2 verdeckten schichten
-	\item Trainieren durch Fehlerrückführung (engl. backpropagation)
+	\item Trainieren durch Fehlerrückführung
 	%mittlere quadratische Fehler gegenüber idealer Ausgabe berechnen und mit Gradientenverfahren Gewichtsupdate berechnen
 \end{itemize}
 
@@ -308,6 +347,7 @@ Universität Hamburg \\ % Your institution for the title page
 	\item Zwei untersuchte Anwendungsfälle:
 	\begin{itemize}
 		\item \textbf{SEQ:} Sequentieller Zugriff auf hintereinanderliegende Daten
+		%Delta-Offset = 0
 		\item \textbf{RND:} Zufälliger Zugriffsort 
 	\end{itemize}
 	\item Jeweils lesende und schreibende Messreihen
