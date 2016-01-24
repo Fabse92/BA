@@ -90,7 +90,7 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[E/A-Leistungsvorhersage im HPC]{Vorhersage von E/A-Leistung im Hochleistungsrechnen unter der Verwendung von neuronalen Netzen} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[E/A-Leistungsvorhersage im Hochleistungsrechnen]{Vorhersage von E/A-Leistung im Hochleistungsrechnen unter der Verwendung von neuronalen Netzen} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 %\author{Jan Fabian Schmid} % Your name
 \author[Jan Fabian Schmid]{Jan Fabian Schmid\\{\small Betreuer: Dr. Julian Kunkel}}
@@ -100,16 +100,18 @@ Universität Hamburg \\ % Your institution for the title page
 \medskip
 \textit{2schmid@informatik.uni-hamburg.de} % Your email address
 }
-\date{\today} % Date, can be changed to a custom date
+\date{??.02.2016} % Date, can be changed to a custom date
 
 \makeatletter
-    \newenvironment{withoutheadline}{
-        \setbeamertemplate{headline}[default]
-        \def\beamer@entrycode{\vspace*{-\headheight}}
-    }{}
+\newenvironment{withoutheadline}{
+	\setbeamertemplate{headline}[default]
+	\def\beamer@entrycode{\vspace*{-\headheight}}
+}{}
 \makeatother
 
 \begin{document}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\setbeamerfont{caption}{size=\scriptsize}
 
 \begin{withoutheadline}
 	\begin{frame}
@@ -148,10 +150,10 @@ Universität Hamburg \\ % Your institution for the title page
 %	\item Effiziente Nutzung der Ressourcen ist schwierig
 %	\begin{itemize}
 %		\item Unterstützung der Wissenschaftler durch Werkzeuge
-		%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
-		%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
+%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
+%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
 %		\item Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
-		%insbesondere die Vermeidung von Festplattenzugriffen
+%insbesondere die Vermeidung von Festplattenzugriffen
 %	\end{itemize}			
 %\end{itemize}
 %\end{frame}
@@ -175,25 +177,25 @@ Universität Hamburg \\ % Your institution for the title page
 
 \subsection{Motivation und Ziele der Bachelorarbeit}
 \begin{frame}
-\frametitle{Motivation und Ziele der Bachelorarbeit}
+	\frametitle{Motivation und Ziele der Bachelorarbeit}
 	\begin{itemize}
-		\item Hochleistungsrechnen hat große Bedeutung für die Wissenschaft
-	%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
-	%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
-	\begin{itemize}
-		\item Verwendung massiv paralleler Systeme
-		%Flaschenhals einzelner Hardwarekomponenten umgehen
-	\end{itemize}	
-	\item Effiziente Nutzung der Ressourcen ist schwierig
-	%Ausnutzen paralleler Hardwarekomponenten
-	\begin{itemize}
-		%\item Unterstützung der Wissenschaftler durch Werkzeuge
-		%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
-		%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
-		\item Hilfreich wäre ein Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
-		%insbesondere die Vermeidung von Festplattenzugriffen
-	\end{itemize}			
-\end{itemize}
+		\item Hochleistungsrechnen ist wichtig für die Wissenschaft
+		%Simulation komplexer abstrakter Modelle in verschiedenen Bereichen 	
+		%Mehrkörpersimulationen in der Astronomie, für Strömungssimulationen oder zur Berechnung von Klimaprognosen
+		\begin{itemize}
+			\item Verwendung massiv paralleler Systeme
+			%Flaschenhals einzelner Hardwarekomponenten umgehen
+		\end{itemize}	
+		\item Effiziente Nutzung der Ressourcen ist schwierig
+		%Ausnutzen paralleler Hardwarekomponenten
+		\begin{itemize}
+			%\item Unterstützung der Wissenschaftler durch Werkzeuge
+			%Fehlerdiagnostik, Leistungsanalyse, Visualisierung des Programms und der Ergebnisse, sowie zum Parallelisieren des Programmcodes
+			%möglichst autonome Optimierungen, Wissenschaftler kann sich aufs wesentliche konzentrieren
+			\item Hilfreich wäre ein Analysewerkzeug zur Beurteilung der Effizienz der Ein-/Ausgabe (E/A) eines Programms
+			%insbesondere die Vermeidung von Festplattenzugriffen
+		\end{itemize}			
+	\end{itemize}
 	\begin{itemize}
 		\item Ziel: Erstellung eines Modells für das E/A-System
 		%Modell erstellen, um E/A-System besser verstehen zu können		
@@ -237,51 +239,37 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Künstliche neuronale Netze}
 \begin{columns}
-\column{.45\textwidth}
+\column{.62\textwidth}
+\begin{center}
+	\includegraphics[width=0.6\linewidth]{Bilder/netz.png}
+\end{center}
 \begin{itemize}
 	\item Verfahren des maschinellen Lernens
-	\begin{itemize}
-		\item Überwachtes Lernen
-		%Vorgabe von Ausgabewerten als Lösungen
-		\item Trainingsdatensatz
-		%Beim Lernvorgang verwendete Daten
-		\item Testdatensatz
-		%ungesehene Daten zur Überprüfung der Abstraktionsfähigkeit des Modells
-	\end{itemize}
 	\item Zur Regressionsanalyse verwendet
 	%Bestimmung der Zusammenhänge der Attribute des Eingabevektors zu den Attributen des Ausgabevektors
 	%Bild einfaches feedforward-Netz, eingabevektor mit 2 attributen, ausgabevektor mit einem, und 2 verdeckten schichten
+		\begin{itemize}
+			\item Überwachtes Lernen
+			%Vorgabe von Ausgabewerten als Lösungen
+			%\item Trainingsdatensatz
+			%Beim Lernvorgang verwendete Daten
+			%\item Testdatensatz
+			%ungesehene Daten zur Überprüfung der Abstraktionsfähigkeit des Modells
+		\end{itemize}
 	\item Trainieren durch Fehlerrückführung
 	%mittlere quadratische Fehler gegenüber idealer Ausgabe berechnen und mit Gradientenverfahren Gewichtsupdate berechnen
-\end{itemize}
-
-\column{.45\textwidth}
-\begin{figure}
-	\includegraphics[width=0.9\linewidth]{Bilder/netz.png}
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=1\linewidth]{Bilder/ArtificialNeuronModel_deutsch.png}
-\end{figure}
-\end{columns}
-\end{frame}
-
-\begin{frame}
-\frametitle{Künstliche neuronale Netze}
-\begin{columns}
-\column{.45\textwidth}
-\begin{itemize}
 	\item Mächtiger als lineare Regression
 	%Mit ausreichender Komplexität des Netzes Approximation beliebiger kontinuierlicher Funktionen
 	%universal approximation theorem von Cybenko
 \end{itemize}
 
-\column{.45\textwidth}
+\column{.43\textwidth}
 \begin{figure}
-	\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}
-\end{figure}
-\begin{figure}
-	\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_NO.png}
+	\includegraphics[width=1.1\linewidth]{Dot/tupel1.png}
+	%\vspace*{0.5cm}
+	%\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}\ %footnotemark
+	%\hspace*{0.3cm}
+	%\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_NO.png}
 \end{figure}
 \end{columns}
 \end{frame}
@@ -291,26 +279,27 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Modell des Ein-/Ausgabe-Pfads}
 \begin{columns}
-\column{.45\textwidth}
+\column{.6\textwidth}
 \begin{itemize}
-	\item<1-> Speicherhierachie
-	%System entspricht einer Hierachie von verschiedenen Speichermedien
-	\item<2-> Modell des E/A-Systems
+	%\item<1-> Modell des E/A-Systems
 	%Unterscheidung von drei Anteilen des Zeitaufwandes zum Bearbeiten einer Anfrage: Festplatten, Netzwerk, Arbeitsspeicher+Caches
-	\item<3-> Verarbeitung entlang des E/A-Pfades
+	\item<1-> Verarbeitung eines Zugriffs entlang des E/A-Pfades
 	%Pfad abhängig davon wo Daten sich befinden
 	%Zeitanteil in den drei Bereichen hängt vom Durchsatz und Latenzen ab
-	\item<4-> Zugriffszeit wesentlich durch tiefe des Pfades bestimmt
+	\item<1-> Zugriffszeit wesentlich durch tiefe des Pfades bestimmt
 	%durch Speicherhirachie hängt Verarbeitungszeit von der langsamsten Komponente ab
+	%\item<1-> Speicherhierachie
+	 %System entspricht einer Hierachie von verschiedenen Speichermedien
 \end{itemize}
 
-\column{.45\textwidth}
+\column{.5\textwidth}
 \begin{figure}
-	\includegraphics<1->[width=0.8\linewidth]{Bilder/hierachie.png}
-\end{figure}
-\begin{figure}
-	\uncover<2->{\includegraphics<1,2>[width=0.8\linewidth]{Bilder/rechnerknoten.png}
-	\includegraphics<3->[width=0.8\linewidth]{Bilder/rechnerknoten_ea_pfad.png}}
+	\vspace*{-1cm}
+	\includegraphics<1>[width=0.95\linewidth]{Bilder/rechnerknoten.png}
+	\includegraphics<2->[width=0.95\linewidth]{Bilder/rechnerknoten_ea_pfad.png}
+	\vspace*{+0.4cm}
+	\hspace*{-1cm}
+	\uncover<3->{\includegraphics<1->[width=1.25\linewidth]{Bilder/hierachie.png}}
 \end{figure}
 \end{columns}
 \end{frame}
@@ -319,61 +308,86 @@ Universität Hamburg \\ % Your institution for the title page
 \subsection{Benchmark-Tests}
 %welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
 \begin{frame}
-\frametitle{Evaluierung: Attribute der Messdaten}
+\frametitle{Attribute der Messdaten}
 %System wird mit Messungen untersucht, beschränktes Wissen dabei:
+%\begin{columns}
+%	\column{.7\textwidth}
+\vspace*{0.13cm}
 	\begin{itemize}
-		\item Messbare/bekannte Attribute des Systems:
+		\item Parameter eines E/A-Aufrufs:
 		\begin{itemize}
 			\item Datei ID
 			%zur Identifikation der aufgerufenen Datei
-			\item Zugriffsgröße
+			\item \textbf{Zugriffsgröße}
 			%Anazahl Bytes die gelesen/geschrieben werden sollen
 			\item Offset
 			%Abstand vom Dateibeginn bis zum zugegriffenen Bereich
-			\item Delta-Offset = $\text{Offset}[i]-(\text{Offset}[i-1]+\text{Zugriffsgröße}[i-1])$
+			\item \textbf{Delta-Offset} %$\text{Offset}[i]-(\text{Offset}[i-1]+\text{Zugriffsgröße}[i-1])$
 			%Strecke die Dateizeiger zurücklegen muss			
-			\item Operationstyp 
+			\item \textbf{Operationstyp} 
 			%lesend oder schreibend
 		\end{itemize}
-		\item Keine Informationen über internen Zustand des Systems
+		\item Messbare Größen:
+			\begin{itemize}
+				\item Zeitpunkt der Anfrage
+				\item \textbf{Zugriffszeit}
+			\end{itemize}
+		\item Keine Informationen über den E/A-Pfad
+		%weder vor dem Aufruf bekannt noch dabei/danach direkt messbar
 		%gecached oder nech?
 	\end{itemize}
+%	\column{.5\textwidth}
+		\begin{figure}
+			\includegraphics<1>[width=0.781\linewidth]{Bilder/deltaoffset.png}
+		\end{figure}
+%\end{columns}
 \end{frame}
 
 \begin{frame}
-\frametitle{Evaluierung: Benchmark-Tests}
+\frametitle{Benchmark-Tests}
 %Messreihen und Testsystem
 \begin{itemize}
 	\item Zwei untersuchte Anwendungsfälle:
 	\begin{itemize}
 		\item \textbf{SEQ:} Sequentieller Zugriff auf hintereinanderliegende Daten
-		%Delta-Offset = 0
 		\item \textbf{RND:} Zufälliger Zugriffsort 
 	\end{itemize}
+	\item Zugriffsgrößen von 1\,B bis 16\,MiB
 	\item Jeweils lesende und schreibende Messreihen
-	%3 Messreihen pro Anwendungsfall und Zugriffsart
-	\item Testsystem: Mistral
-	\begin{itemize}
-		\item Über 1500 Knoten
-		\item Speichersystem Lustre
-		\item 30 Petabyte Speicherkapazität
-	\end{itemize}
+	
+	%3 Messreihen mit 10.000 Messungen pro Anwendungsfall und Zugriffsart, 
 \end{itemize}
+	\begin{block}{Hardwarekonfiguration des Testsystems Mistral}
+	\begin{itemize} 
+		\item Über 1500 Knoten
+		\item 30 Petabyte Speicherkapazität
+		\item Speichersystem Lustre
+	\end{itemize}
+\end{block}
 \end{frame}
 
 \subsection{Exploration der Messdaten}
 \begin{frame}
-\frametitle{Evaluierung: Exploration der Messdaten}
+\frametitle{Messungen sortiert nach Zugriffsgröße}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_seq.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_rnd.png}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_seq.png}\\
+		\vspace*{-0.45cm}
+		\caption{SEQ lesend}
+		\uncover<2->{\includegraphics<1->[width=1\linewidth]{Bilder/plot_SizeSorted_log_read_rnd.png}
+			\vspace*{-0.45cm}
+			\caption{RND lesend}}	
 	\end{figure}
 \column{.45\textwidth}
 	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_seq.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_rnd.png}
+		\uncover<2->{\includegraphics<1->[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_seq.png}
+		\\
+		\vspace*{-0.45cm}
+		\caption{SEQ schreibend}}
+		\uncover<2->{\includegraphics<1->[width=1\linewidth]{Bilder/plot_SizeSorted_log_write_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{RND schreibend}}
 	\end{figure}
 	%jede Farbe eine Messgröße, im Seq Fall komplett gleiche Attribute
 	%1 B, 4 B, 16 B, 64 B, 256 B, 1 KiB, 4 KiB,8 KiB, 16 KiB, 64 KiB, 256 KiB,512 KiB, 1 MiB, 2 MiB, 4 MiB,8 MiB und 16 MiB
@@ -387,87 +401,119 @@ Universität Hamburg \\ % Your institution for the title page
 \end{columns}
 \end{frame}
 
-\begin{frame}
+%\begin{frame}
 %zeigen, warum Betrachtung der zeitlichen Periodizität durchaus legitim ist
-\frametitle{Evaluierung: Exploration der Messdaten}
-\begin{columns}
-\column{.45\textwidth}
-\begin{itemize}
-	%16KiB lesende Zugriffe
-	\item Lesende Zugriffe von 16\,KiB (oben SEQ unten RND)
-	\item Sich wiederholende Muster (Periodizität)
-	\item Abhängigkeit von der Messreihe
-\end{itemize}
-\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_seq.png}
-		%seq lesend
-	\end{figure}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_rnd.png}
-		%rnd lesend
-	\end{figure}
-\end{columns}
-\end{frame}
+%\frametitle{Detailbetrachtung: Messungen mit 16\,KiB}
+%\begin{columns}
+%\column{.6\textwidth}
+%\begin{itemize}
+%	%16KiB lesende Zugriffe
+%	\item Lesende Zugriffe von 16\,KiB
+%	\item Sich wiederholende Muster (Periodizität)
+%	\item Abhängigkeit von der Messreihe
+%\end{itemize}
+%\column{.45\textwidth}
+%	\begin{figure}
+%		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_seq.png}\\
+%		\vspace*{-0.45cm}
+%		\caption{SEQ lesend}
+%		\includegraphics[width=1\linewidth]{Bilder/plot_Size16384_read_rnd.png}
+%		\vspace*{-0.45cm}
+%		\caption{RND lesend}
+%	\end{figure}
+%\end{columns}
+%\end{frame}
 
 \begin{frame}
 %zeigen, warum Betrachtung der zeitlichen Periodizität durchaus legitim ist
-\frametitle{Evaluierung: Exploration der Messdaten}
+\frametitle{Detailbetrachtung: 250 Messungen auf SEQ}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
-		\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_seq.png}
-	\end{figure}
-	\begin{figure}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_seq.png}\\
+		\vspace*{-0.45cm}
+		\caption{SEQ lesend}
 		\includegraphics<1>[width=1\linewidth]{Bilder/plot_First250_write_seq.png}
 		\includegraphics<2->[width=1\linewidth]{Bilder/plot_periodicitywrite_seq.png}
+		\vspace*{-0.45cm}
+		\caption{SEQ schreibend}
 	\end{figure}
 \column{.45\textwidth}
 	\begin{figure}
-		\includegraphics<1,2>[width=1\linewidth]{Bilder/plot_From100001to100250_read_seq.png}
-		\includegraphics<3->[width=1\linewidth]{Bilder/plot_periodicity100001read_seq.png}
-	\end{figure}
-	\begin{figure}
+		\includegraphics<1>[width=1\linewidth]{Bilder/plot_From100001to100250_read_seq.png}
+		\includegraphics<2->[width=1\linewidth]{Bilder/plot_periodicity100001read_seq.png}
+		\\
+		\vspace*{-0.45cm}
+		\caption{SEQ lesend}
 		\includegraphics<1->[width=1\linewidth]{Bilder/plot_From100001to100250_write_seq.png}
+		\vspace*{-0.45cm}
+		\caption{SEQ schreibend}
 	\end{figure}
 \end{columns}
 \end{frame}
 
-\section{Erste Modelle}
+\section{Modelle zur Leistungsvorhersage}
 %lineare vs nn modelle und ema modell, was sind die Modelle überhaupt?
 \begin{frame}
-\frametitle{Erste Modelle}
+\frametitle{Modelle zur Leistungsvorhersage}
 \begin{columns}
-	\column{.65\textwidth}
+	\column{.55\textwidth}
 \begin{itemize}
 	\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
 	\item<2-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
 	%nach weiteren Attributen als nicht besser herausgestellt
 	\item<3-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
 	%Zugriffsgröße, DeltaOffset, OpTyp auf Zugriffszeit
-	%2 Bilder einmal Attribute zu Dauer und einmal Erstellung des Modells
 	\item<4-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
 	%ema, exponential moving average
 	%2 BILDER erstellen! einmal attribute zu zugriffsdauer und einmal beispiel von ema
 \end{itemize}
-	\column{.4\textwidth}
+	\column{.6\textwidth}
 	\begin{figure}
-		\includegraphics<2>[width=1\linewidth]{Dot/linreg.png}
-		\includegraphics<3>[width=1\linewidth]{Dot/nntupel1.png}
-		\includegraphics<4>[width=1\linewidth]{Dot/ema.png}		
+		\includegraphics<2>[width=0.95\linewidth]{Dot/linreg.png}
+		\includegraphics<3>[width=0.95\linewidth]{Dot/nntupel1.png}
+		\uncover<4>{\includegraphics[width=0.95\linewidth]{Dot/ema.png}\\
+			\vspace*{+1cm}
+			\hspace*{-0.45cm}
+		\includegraphics[width=1.05\linewidth]{Bilder/ema.png}}
 	\end{figure}
 \end{columns}
 \end{frame}
 
+\subsection{Ergebnisse}
 \begin{frame}
-\frametitle{Erste Modelle angewendet auf SEQ}
+	\frametitle{Modelle angewendet auf SEQ}
+	\begin{columns}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics[width=1\linewidth]{Bilder/plot_seq_mean_performance.png}\\
+			\vspace*{-0.45cm}
+			\caption{Durchschnitt}
+			\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}
+			\vspace*{-0.45cm}
+			\caption{NN-Tupel1}
+		\end{figure}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics[width=1\linewidth]{Bilder/plot_seq_linreg_Size.png}\\
+			\vspace*{-0.45cm}
+			\caption{LinReg G}
+			\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_throughput_ema_Duration_seq.png}
+			\vspace*{-0.45cm}
+			\caption{NN-EMA}
+		\end{figure}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Modelle angewendet auf SEQ}
 \begin{table}
 	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
+				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
 		\end{tabular}
 	}
 \end{table}
@@ -475,40 +521,44 @@ Universität Hamburg \\ % Your institution for the title page
 \item MAE: \textit{mean absolute error}
 \item MAPE: \textit{mean absolute percentage error}
 \item MSPE: \textit{mean square percentage error}
-\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RQ3: drittes Quartil aller relativen Modellabweichungen
 \item RMax: maximale relative Modellabweichung
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Erste Modelle angewendet auf SEQ}
-\begin{columns}
-\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_seq_mean_performance.png}
-	\end{figure}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}
-	\end{figure}
-\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_seq_linreg_Size.png}
-	\end{figure}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_throughput_ema_Duration_seq.png}
-	\end{figure}
-\end{columns}
+	\frametitle{Modelle angewendet auf RND}
+	\begin{columns}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics[width=1\linewidth]{Bilder/plot_rnd_mean_performance.png}\\
+			\vspace*{-0.45cm}
+			\caption{Durchschnitt}
+			\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_rnd.png}
+			\vspace*{-0.45cm}
+			\caption{NN-Tupel1}
+		\end{figure}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics[width=1\linewidth]{Bilder/plot_rnd_linreg_Size.png}\\
+			\vspace*{-0.45cm}
+			\caption{LinReg G}
+			\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_throughput_ema_Duration_rnd.png}
+			\vspace*{-0.45cm}
+			\caption{NN-EMA}
+		\end{figure}
+	\end{columns}
 \end{frame}
 
 \begin{frame}
-\frametitle{Erste Modelle angewendet auf RND}
+\frametitle{Modelle angewendet auf RND}
 \begin{table}
 	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
+				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 				{CSV/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
 		\end{tabular}
 	}
 \end{table}
@@ -516,204 +566,271 @@ Universität Hamburg \\ % Your institution for the title page
 \item MAE: \textit{mean absolute error}
 \item MAPE: \textit{mean absolute percentage error}
 \item MSPE: \textit{mean square percentage error}
-\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RQ3: drittes Quartil aller relativen Modellabweichungen
 \item RMax: maximale relative Modellabweichung
 \end{itemize}
 \end{frame}
 
-\section{E/A-Pfad zur Leistungsvorhersage}
+\section{Näherung des E/A-Pfads bestimmen}
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage}
+\frametitle{Näherung des E/A-Pfads bestimmen}
 %Entdeckt, dass E/A-Pfad sehr wichtig für korrekte Vorhersage sein sollte
 %auch interessant zu wissen
 \begin{itemize}
-	\item \textbf{Idee}: Modellabweichung eines guten Modells zur Bestimmung einer Approximation des genommenen E/A-Pfades eines E/A-Aufrufs
-	\item Clustering der Modellabweichungen zu \textbf{Fehlerklassen} 
-	\item Problem: Höhere Zugriffszeiten führen zu größeren Modellabweichungen
+	\item Für ein gutes Modell: Näherung des E/A-Pfads
+	\item \textbf{Idee}: Residuen eines einfachen Modells zur Bestimmung einer Näherung des E/A-Pfades eines Dateizugriffs nutzen
+	\item Clustering der Residuen zu \textbf{Fehlerklassen} 
+	%\item Problem: Höhere Zugriffszeiten führen zu größeren Modellabweichungen
 	%bei SEQ deutliches Problem, bei RND nicht mehr so stark
 \end{itemize}
 \end{frame}
 \subsection{Fehlerklassen}
 %Nur Betrachtung von LinReg Fehlern!
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf SEQ}
+\frametitle{Fehlerklassen auf SEQ}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/linreg_error_seq_all.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_seq.png}
+		\vspace*{-0.45cm}
+		\caption{Residuen von LinReg G auf SEQ}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_seq_all.png}\\
+		\vspace*{-0.45cm}
+		\caption{Farblich markierte Fehlerklassen}
 	\end{figure}
 \column{.45\textwidth}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_seq_all.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/density_of_fk_seq.png}
+	\begin{figure}		
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_seq.png}
+		\vspace*{-0.45cm}		
+		\caption{sortierte Residuen}
+		%\includegraphics[width=1\linewidth]{Bilder/density_of_fk_seq.png}
 		%Dichte, sollte eine klare Spitze pro Klasse aufweisen, dann korreliert die Fehlerklasse mit einem Pfad
+		%\vspace*{-0.45cm}
+		%\caption{Dichte der Klassen um den Nullpunkt}
 	\end{figure}
 \end{columns}
 \end{frame}
 
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf SEQ}
-%Klassen sortiert nach durchschnittlichem Residuum!
-%Durchsätze verschiedener Klassen sollten klare Differenzen aufweisen
-%idealerweise verschiedene Klassen für Zugriffe von etwa gleicher Größe
-%Residuen sollten nicht einfach mit der mittleren Zugriffszeit ansteigen / dann hat das Problem den Nutzen kaputt gemacht
-%klare Zuordnung der meisten Messungen in die Klasse mit kleinstem Fehler
-\begin{table}
-	\resizebox{\textwidth}{!}{
-	\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			 & \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
-		Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf SEQ selbst\\ \hline\hline
-			\csvreader[late after line=\\\hline]%
-		{CSV/seq_linreg_classes_on_rnd.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, size = \size, duration = \duration}%
-		{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount}%
-	\end{tabular}
-	}
-\end{table}
-\end{frame}
-
-\begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf RND}
+\frametitle{Fehlerklassen auf RND}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/linreg_error_rnd_all.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{Residuen von LinReg G auf RND}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_rnd_all.png}\\
+		\vspace*{-0.45cm}
+		\caption{Farblich markierte Fehlerklassen}
 	\end{figure}
 \column{.45\textwidth}
 	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_rnd_all.png}\\
-		\includegraphics[width=1\linewidth]{Bilder/density_of_fk_rnd.png}
+		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{sortierte Residuen}
+		%\includegraphics[width=1\linewidth]{Bilder/density_of_fk_rnd.png}
+		%\vspace*{-0.45cm}
+		%\caption{Dichte der Klassen um den Nullpunkt}
 	\end{figure}
 \end{columns}
-\end{frame}
-
-\begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Fehlerklassen auf RND}
-\begin{table}
-\resizebox{\textwidth}{!}{
-	\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
-			& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
-		Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf RND selbst \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-		{CSV/rnd_linreg_classes_on_seq.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, size = \size, duration = \duration}%
-		{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \rndcount}%
-	\end{tabular}
-	}
-\end{table}
 \end{frame}
 
 \subsection{Ergebnisse von Modellen mit Fehlerklassen}
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen}
-\begin{columns}
-	\column{.65\textwidth}
-	\begin{itemize}
-		\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
-		\item<1-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
-		\item<1-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
-		\item<1-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
-		\pause
-		\item<2-> Einfaches Modell mit neuronalem Netz und Fehlerklassen (\textbf{NN-LinRegFK})
-	\end{itemize}
-	\column{.4\textwidth}
-	\begin{figure}
-		\includegraphics<2->[width=1\linewidth]{Dot/linregfk.png}	
-	\end{figure}
-\end{columns}
-
+	\frametitle{Modell mit Fehlerklassen}
+	\begin{columns}
+		\column{.55\textwidth}
+		\begin{itemize}
+			\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
+			\item<1-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+			%nach weiteren Attributen als nicht besser herausgestellt
+			\item<1-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+			%Zugriffsgröße, DeltaOffset, OpTyp auf Zugriffszeit
+			\item<1-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+			%ema, exponential moving average
+			%2 BILDER erstellen! einmal attribute zu zugriffsdauer und einmal beispiel von ema
+		\end{itemize}
+		\column{.6\textwidth}
+		\begin{figure}
+			\includegraphics<1->[width=1\linewidth]{Dot/linregfk.png}
+		\end{figure}
+	\end{columns}
 \end{frame}
 
+
+
+
+
+
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen auf SEQ}
+\frametitle{Modell mit Fehlerklassen auf SEQ}
 \begin{table}
-		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
 				\csvreader[late after line=\\\hline]%
 				{CSV/latex_seq_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
 		\end{tabular}
+	}
 \end{table}
 \begin{itemize}
 \item MAE: \textit{mean absolute error}
 \item MAPE: \textit{mean absolute percentage error}
 \item MSPE: \textit{mean square percentage error}
-\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RQ3: drittes Quartil aller relativen Modellabweichungen
 \item RMax: maximale relative Modellabweichung
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: Modell mit Fehlerklassen auf RND}
+\frametitle{Modell mit Fehlerklassen auf RND}
 \begin{table}
-		\begin{tabular}{|p{2cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RQ3\,(\%) & RMax\,(\%) \\\hline\hline
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
 			\csvreader[late after line=\\\hline]%
 				{CSV/latex_rnd_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Q3 & \Max}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
 		\end{tabular}
+	}
 \end{table}
 \begin{itemize}
 \item MAE: \textit{mean absolute error}
 \item MAPE: \textit{mean absolute percentage error}
 \item MSPE: \textit{mean square percentage error}
-\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RQ3: drittes Quartil aller relativen Modellabweichungen
 \item RMax: maximale relative Modellabweichung
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{E/A-Pfad zur Leistungsvorhersage: mit und ohne Fehlerklassen}
+\frametitle{Mit und ohne Fehlerklassen}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_seq.png}\\
+		\vspace*{-0.45cm}
+		\caption{NN-Tupel1 auf SEQ}
 		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_Duration_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{NN-Tupel1 auf RND}
 	\end{figure}
 \column{.45\textwidth}
 		\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_seq.png}\\
+		\vspace*{-0.45cm}
+		\caption{NN-LinRegFK auf SEQ}
 		\includegraphics[width=1\linewidth]{Bilder/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{NN-LinRegFK auf RND}
 	\end{figure}
 \end{columns}
 \end{frame}
 
-\section{Zusammenfassung und Ausblick}
+\section{Zusammenfassung}
 \begin{frame}
 \frametitle{Zusammenfassung}
 \begin{itemize}
-	\item Lineare Modelle unzureichend für die Beschreibung des E/A-Systems
+	\item Vorhersagen einfacher Modelle mit neuronalen Netzen teilweise recht gut 
+	%13 vs 100 % fehler, bzw. 6µs vs 300µs; im einfachen bzw. schwierigen Fall
+	\item Lineare Modelle unzureichend
 	\item Entscheidend für eine gute Vorhersage: E/A-Zugriffe mit gleichen Zugriffsparametern unterscheiden können
 	\begin{itemize}
 		\item Verarbeitung im System kann in E/A-Pfade unterteilt werden
-		\item Welcher Pfad genommen wurde kann nicht direkt gemessen werden
+		\item Welcher Pfad genommen wurde ist nicht bekannt
 	\end{itemize}
-	\item Einfache Modelle, die die Periodizität ausnutzen, nicht ausreichend
+	\item Mit einfachen Modellen, die zeitliche Abhängigkeiten ausnutzen, kann der E/A-Pfad nicht bestimmt werden
 	%um eine Näherung der E/A-Pfade zu geben
-	\item Verfahren für die Bestimmung der E/A-Pfade eingeführt
-	\begin{itemize}
-		\item Clustering der Residuen
-	\end{itemize}
-	\item Hinweise auf teilweise korrekte Unterscheidung von E/A-Pfaden
-\end{itemize}	
-\end{frame}
-
-\begin{frame}
-\frametitle{Ausblick}
-\begin{itemize}
-	\item Periodische Zusammenhänge im E/A-System besser ausnutzen
-	%für einzelne Festplatten ist dies sehr erfolgreich
-	\item Zusammenhang zwischen Fehlerklassen und E/A-Pfaden genauer untersuchen
-	\item Fehlerklassen aus Residuen verschiedener Modelle vergleichen
-	\item Problem beheben, dass die Residuen größerer Laufzeiten die Fehlerklassen dominieren
+	%\item Verfahren für die Bestimmung der E/A-Pfade eingeführt
+	%\begin{itemize}
+	%	\item Clustering der Residuen
+	%\end{itemize}
+	\item Unterscheidung von E/A-Pfaden durch Fehlerklassen möglich
 \end{itemize}	
 \end{frame}
 %------------------------------------------------
+\begin{withoutheadline}
+	\begin{frame}
+		\Huge{\centerline{Ende der Präsentation}}
+	\end{frame}
+\end{withoutheadline}
 
+\section*{Reserve Folien}
+
+\subsection*{Exploration der Messdaten}
+\frametitle{Detailbetrachtung: 250 Messungen auf RND}
 \begin{frame}
-\Huge{\centerline{Ende der Präsentation}}
+\begin{columns}
+	\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_rnd.png}\\
+		\vspace*{-0.45cm}
+		\caption{RND lesend}
+		\includegraphics<1>[width=1\linewidth]{Bilder/plot_First250_write_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{RND schreibend}
+	\end{figure}
+	\column{.45\textwidth}
+	\begin{figure}
+		\includegraphics<1>[width=1\linewidth]{Bilder/plot_From100001to100250_read_rnd.png}
+		\\
+		\vspace*{-0.45cm}
+		\caption{RND lesend}
+		\includegraphics<1->[width=1\linewidth]{Bilder/plot_From100001to100250_write_rnd.png}
+		\vspace*{-0.45cm}
+		\caption{RND schreibend}
+	\end{figure}
+\end{columns}
 \end{frame}
 
+\subsection*{Fehlerklassen}
+\begin{frame}
+	\frametitle{Fehlerklassen auf SEQ}
+	%Klassen sortiert nach durchschnittlichem Residuum!
+	%Durchsätze verschiedener Klassen sollten klare Differenzen aufweisen
+	%idealerweise verschiedene Klassen für Zugriffe von etwa gleicher Größe
+	%Residuen sollten nicht einfach mit der mittleren Zugriffszeit ansteigen / dann hat das Problem den Nutzen kaputt gemacht
+	%klare Zuordnung der meisten Messungen in die Klasse mit kleinstem Fehler
+	\begin{table}
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+				& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
+				Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf SEQ\\ \hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/seq_linreg_classes_on_rnd.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, size = \size, duration = \duration}%
+				{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount}%
+			\end{tabular}
+		}
+	\end{table}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Fehlerklassen auf RND}
+	\begin{table}
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+				& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{1}{r|}{zugeordnete Messungen} \\ \hline
+				Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf RND \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/rnd_linreg_classes_on_seq.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, size = \size, duration = \duration}%
+				{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \rndcount}%
+			\end{tabular}
+		}
+	\end{table}
+\end{frame}
+
+\subsection*{Ausblick}
+\begin{frame}
+	\frametitle{Ausblick}
+	\begin{itemize}
+		\item Periodische Zusammenhänge im E/A-System besser ausnutzen
+		%für einzelne Festplatten ist dies sehr erfolgreich
+		\item Zusammenhang zwischen Fehlerklassen und E/A-Pfaden genauer untersuchen
+		\item Fehlerklassen aus Residuen verschiedener Modelle vergleichen
+		\item Problem beheben, dass die Residuen größerer Laufzeiten die Fehlerklassen dominieren
+	\end{itemize}	
+\end{frame}
 %----------------------------------------------------------------------------------------
 
 \end{document} 

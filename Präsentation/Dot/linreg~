@@ -5,7 +5,7 @@ digraph {
 	node [fontsize = 21];
  	edge [fontsize = 21];	
 	"lineare Regression"[shape=box,fontcolor=blue]
-	rankdir=LR;
+	rankdir=TD;
 	Zugriffsgröße -> "lineare Regression"
 	"lineare Regression" -> Zugriffszeit
 }

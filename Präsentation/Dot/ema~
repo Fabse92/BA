@@ -9,5 +9,7 @@ digraph {
 	Zugriffsgröße -> "Neuronales Netz"
 	"Delta-Offset" -> "Neuronales Netz"
 	OpTyp -> "Neuronales Netz"
+	"LinReg Fehlerklassen" -> "Neuronales Netz"
+	EMA -> "Neuronales Netz"
 	"Neuronales Netz" -> Zugriffszeit
 }

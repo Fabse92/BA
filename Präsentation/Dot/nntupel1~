@@ -4,8 +4,8 @@ digraph {
  	edge [fontname = "helvetica"];	
 	node [fontsize = 21];
  	edge [fontsize = 21];	
-	"lineare Regression"[shape=box,fontcolor=blue]
 	rankdir=LR;
-	Zugriffsgröße -> "lineare Regression"
-	"lineare Regression" -> Zugriffszeit
+	Zugriffsgröße -> Zugriffszeit
+	"Delta-Offset" -> Zugriffszeit[label="neuronales Netz"]
+	OpTyp -> Zugriffszeit
 }

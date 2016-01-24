@@ -5,8 +5,10 @@ digraph {
 	node [fontsize = 21];
  	edge [fontsize = 21];	
 	rankdir=LR;
-	Zugriffsgröße -> Zugriffszeit
-	"Delta-Offset" -> Zugriffszeit[label="neuronales Netz"]
-	OpTyp -> Zugriffszeit
-	EMA -> Zugriffszeit
+	"Neuronales Netz"[shape=box,fontcolor=red]
+	Zugriffsgröße -> "Neuronales Netz"
+	"Delta-Offset" -> "Neuronales Netz"
+	OpTyp -> "Neuronales Netz"
+	EMA -> "Neuronales Netz"
+	"Neuronales Netz" -> Zugriffszeit
 }
