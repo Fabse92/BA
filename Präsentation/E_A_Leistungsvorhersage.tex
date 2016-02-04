@@ -75,6 +75,8 @@
 
 \setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
 }
+\setbeamertemplate{footline}[frame number]
+\setbeamerfont{page number in head/foot}{size=\scriptsize}
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
@@ -100,7 +102,7 @@ Universität Hamburg \\ % Your institution for the title page
 \medskip
 \textit{2schmid@informatik.uni-hamburg.de} % Your email address
 }
-\date{??.02.2016} % Date, can be changed to a custom date
+\date{12.02.2016} % Date, can be changed to a custom date
 
 \makeatletter
 \newenvironment{withoutheadline}{
@@ -109,12 +111,20 @@ Universität Hamburg \\ % Your institution for the title page
 }{}
 \makeatother
 
+\newcommand{\backupbegin}{
+	\newcounter{finalframe}
+	\setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+	\setcounter{framenumber}{\value{finalframe}}
+}
+
 \begin{document}
 \setbeamertemplate{caption}{\raggedright\insertcaption\par}
 \setbeamerfont{caption}{size=\scriptsize}
 
 \begin{withoutheadline}
-	\begin{frame}
+	\begin{frame}[plain]
 		\titlepage % Print the title page as the first slide
 	\end{frame}
 \end{withoutheadline}
@@ -241,7 +251,7 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{columns}
 \column{.62\textwidth}
 \begin{center}
-	\includegraphics[width=0.6\linewidth]{Bilder/netz.png}
+	\includegraphics[width=0.7\linewidth]{Bilder/netz.png}
 \end{center}
 \begin{itemize}
 	\item Verfahren des maschinellen Lernens
@@ -265,7 +275,8 @@ Universität Hamburg \\ % Your institution for the title page
 
 \column{.43\textwidth}
 \begin{figure}
-	\includegraphics[width=1.1\linewidth]{Dot/tupel1.png}
+	\hspace*{-0.5cm}
+	\includegraphics[width=1.15\linewidth]{Dot/tupel1.png}
 	%\vspace*{0.5cm}
 	%\includegraphics[width=0.45\linewidth]{Bilder/2000px-Separability_YES.png}\ %footnotemark
 	%\hspace*{0.3cm}
@@ -347,6 +358,7 @@ Universität Hamburg \\ % Your institution for the title page
 \frametitle{Benchmark-Tests}
 %Messreihen und Testsystem
 \begin{itemize}
+	\item Daten wurden zur Verfügung gestellt
 	\item Zwei untersuchte Anwendungsfälle:
 	\begin{itemize}
 		\item \textbf{SEQ:} Sequentieller Zugriff auf hintereinanderliegende Daten
@@ -354,6 +366,7 @@ Universität Hamburg \\ % Your institution for the title page
 	\end{itemize}
 	\item Zugriffsgrößen von 1\,B bis 16\,MiB
 	\item Jeweils lesende und schreibende Messreihen
+	\item Ausführung mit einem Thread
 	
 	%3 Messreihen mit 10.000 Messungen pro Anwendungsfall und Zugriffsart, 
 \end{itemize}
@@ -473,9 +486,9 @@ Universität Hamburg \\ % Your institution for the title page
 		\includegraphics<2>[width=0.95\linewidth]{Dot/linreg.png}
 		\includegraphics<3>[width=0.95\linewidth]{Dot/nntupel1.png}
 		\uncover<4>{\includegraphics[width=0.95\linewidth]{Dot/ema.png}\\
-			\vspace*{+1cm}
-			\hspace*{-0.45cm}
-		\includegraphics[width=1.05\linewidth]{Bilder/ema.png}}
+			\vspace*{+0.3cm}
+			\hspace*{-0.42cm}
+		\includegraphics[width=1.0\linewidth]{Bilder/ema.png}}
 	\end{figure}
 \end{columns}
 \end{frame}
@@ -571,15 +584,22 @@ Universität Hamburg \\ % Your institution for the title page
 \end{itemize}
 \end{frame}
 
-\section{Näherung des E/A-Pfads bestimmen}
+\section{Einbeziehung des E/A-Pfads}
 \begin{frame}
-\frametitle{Näherung des E/A-Pfads bestimmen}
+\frametitle{Einbeziehung des E/A-Pfads}
 %Entdeckt, dass E/A-Pfad sehr wichtig für korrekte Vorhersage sein sollte
 %auch interessant zu wissen
 \begin{itemize}
-	\item Für ein gutes Modell: Näherung des E/A-Pfads
+	\item Es werden Hinweise zum E/A-Pfad benötigt
 	\item \textbf{Idee}: Residuen eines einfachen Modells zur Bestimmung einer Näherung des E/A-Pfades eines Dateizugriffs nutzen
-	\item Clustering der Residuen zu \textbf{Fehlerklassen} 
+	\item Clustering der Residuen mit \textit{k-Means} in 10 Gruppen
+	\begin{itemize}
+		\item Diese bezeichnen wir \textbf{Fehlerklassen} 
+	\end{itemize}
+	\item Fehlerklassen sind nicht für Leistungsvorhersage geeignet
+	\begin{itemize}
+		\item Dafür kann eine Näherung des E/A-Pfades bestimmt werden
+	\end{itemize}
 	%\item Problem: Höhere Zugriffszeiten führen zu größeren Modellabweichungen
 	%bei SEQ deutliches Problem, bei RND nicht mehr so stark
 \end{itemize}
@@ -641,14 +661,15 @@ Universität Hamburg \\ % Your institution for the title page
 	\begin{columns}
 		\column{.55\textwidth}
 		\begin{itemize}
-			\item<1-> Durchschnittliche Zugriffszeit (\textbf{Durchschnitt})
-			\item<1-> Lineare Regression nach der Zugriffsgröße (\textbf{LinReg G})
+			\item<1-> \textbf{Durchschnitt}
+			\item<1-> \textbf{LinReg G}
 			%nach weiteren Attributen als nicht besser herausgestellt
-			\item<1-> Einfaches Modell mit neuronalem Netz (\textbf{NN-Tupel1})
+			\item<1-> \textbf{NN-Tupel1}
 			%Zugriffsgröße, DeltaOffset, OpTyp auf Zugriffszeit
-			\item<1-> Ausnutzen zeitlicher Abhängigkeit mit dem \textit{exponential moving average}(\textbf{NN-EMA})
+			\item<1-> \textbf{NN-EMA}
 			%ema, exponential moving average
 			%2 BILDER erstellen! einmal attribute zu zugriffsdauer und einmal beispiel von ema
+			\item<1-> Einfaches Modell mit neuronalem Netz und Fehlerklassen (\textbf{NN-LinRegFK})
 		\end{itemize}
 		\column{.6\textwidth}
 		\begin{figure}
@@ -656,11 +677,6 @@ Universität Hamburg \\ % Your institution for the title page
 		\end{figure}
 	\end{columns}
 \end{frame}
-
-
-
-
-
 
 \begin{frame}
 \frametitle{Modell mit Fehlerklassen auf SEQ}
@@ -732,7 +748,7 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Zusammenfassung}
 \begin{itemize}
-	\item Vorhersagen einfacher Modelle mit neuronalen Netzen teilweise recht gut 
+	\item Vorhersagen einfacher Modelle mit neuronalen Netzen gut für sequentielle Zugriffe 
 	%13 vs 100 % fehler, bzw. 6µs vs 300µs; im einfachen bzw. schwierigen Fall
 	\item Lineare Modelle unzureichend
 	\item Entscheidend für eine gute Vorhersage: E/A-Zugriffe mit gleichen Zugriffsparametern unterscheiden können
@@ -751,11 +767,13 @@ Universität Hamburg \\ % Your institution for the title page
 \end{frame}
 %------------------------------------------------
 \begin{withoutheadline}
-	\begin{frame}
+	\begin{frame}[plain]
 		\Huge{\centerline{Ende der Präsentation}}
 	\end{frame}
 \end{withoutheadline}
 
+\appendix
+\backupbegin
 \section*{Reserve Folien}
 
 \subsection*{Exploration der Messdaten}
@@ -832,5 +850,5 @@ Universität Hamburg \\ % Your institution for the title page
 	\end{itemize}	
 \end{frame}
 %----------------------------------------------------------------------------------------
-
+\backupend
 \end{document} 
