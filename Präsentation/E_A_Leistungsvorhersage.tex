@@ -315,8 +315,8 @@ Universität Hamburg \\ % Your institution for the title page
 \end{columns}
 \end{frame}
 
-\section{Evaluierung}
-\subsection{Benchmark-Tests}
+\section{Messdaten}
+\subsection{Attribute der Messdaten}
 %welche Messreihen wurden gemacht, auf welchem Rechner, welche Daten stehen zur Verfügung, wie sehen daten aus?
 \begin{frame}
 \frametitle{Attribute der Messdaten}
@@ -331,12 +331,12 @@ Universität Hamburg \\ % Your institution for the title page
 			%zur Identifikation der aufgerufenen Datei
 			\item \textbf{Zugriffsgröße}
 			%Anazahl Bytes die gelesen/geschrieben werden sollen
+			\item \textbf{Operationstyp} 
+			%lesend oder schreibend
 			\item Offset
 			%Abstand vom Dateibeginn bis zum zugegriffenen Bereich
 			\item \textbf{Delta-Offset} %$\text{Offset}[i]-(\text{Offset}[i-1]+\text{Zugriffsgröße}[i-1])$
 			%Strecke die Dateizeiger zurücklegen muss			
-			\item \textbf{Operationstyp} 
-			%lesend oder schreibend
 		\end{itemize}
 		\item Messbare Größen:
 			\begin{itemize}
@@ -485,10 +485,11 @@ Universität Hamburg \\ % Your institution for the title page
 	\begin{figure}
 		\includegraphics<2>[width=0.95\linewidth]{Dot/linreg.png}
 		\includegraphics<3>[width=0.95\linewidth]{Dot/nntupel1.png}
-		\uncover<4>{\includegraphics[width=0.95\linewidth]{Dot/ema.png}\\
+		\uncover<4->{\includegraphics[width=0.95\linewidth]{Dot/ema.png}\\
 			\vspace*{+0.3cm}
 			\hspace*{-0.42cm}
-		\includegraphics[width=1.0\linewidth]{Bilder/ema.png}}
+		\includegraphics<4>[width=1.0\linewidth]{Bilder/ema.png}
+		\includegraphics<5>[width=1.0\linewidth]{Bilder/ema2.png}}
 	\end{figure}
 \end{columns}
 \end{frame}
@@ -518,26 +519,26 @@ Universität Hamburg \\ % Your institution for the title page
 	\end{columns}
 \end{frame}
 
-\begin{frame}
-\frametitle{Modelle angewendet auf SEQ}
-\begin{table}
-	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
-				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
-				\csvreader[late after line=\\\hline]%
-				{CSV/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Max}%
-		\end{tabular}
-	}
-\end{table}
-\begin{itemize}
-\item MAE: \textit{mean absolute error}
-\item MAPE: \textit{mean absolute percentage error}
-\item MSPE: \textit{mean square percentage error}
-%\item RQ3: drittes Quartil aller relativen Modellabweichungen
-\item RMax: maximale relative Modellabweichung
-\end{itemize}
-\end{frame}
+%\begin{frame}
+%\frametitle{Modelle angewendet auf SEQ}
+%\begin{table}
+%	\resizebox{\textwidth}{!}{
+%		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
+%				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
+%				\csvreader[late after line=\\\hline]%
+%				{CSV/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+%				{\Model & \MAF & \RMAF & \RMQA & \Max}%
+%		\end{tabular}
+%	}
+%\end{table}
+%\begin{itemize}
+%\item MAE: \textit{mean absolute error}
+%\item MAPE: \textit{mean absolute percentage error}
+%\item MSPE: \textit{mean square percentage error}
+%%\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RMax: maximale relative Modellabweichung
+%\end{itemize}
+%\end{frame}
 
 \begin{frame}
 	\frametitle{Modelle angewendet auf RND}
@@ -563,51 +564,58 @@ Universität Hamburg \\ % Your institution for the title page
 	\end{columns}
 \end{frame}
 
-\begin{frame}
-\frametitle{Modelle angewendet auf RND}
-\begin{table}
-	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
-				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-				{CSV/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Max}%
-		\end{tabular}
-	}
-\end{table}
-\begin{itemize}
-\item MAE: \textit{mean absolute error}
-\item MAPE: \textit{mean absolute percentage error}
-\item MSPE: \textit{mean square percentage error}
-%\item RQ3: drittes Quartil aller relativen Modellabweichungen
-\item RMax: maximale relative Modellabweichung
-\end{itemize}
-\end{frame}
+%\begin{frame}
+%\frametitle{Modelle angewendet auf RND}
+%\begin{table}
+%	\resizebox{\textwidth}{!}{
+%		\begin{tabular}{|p{2cm}|r|r|r|r|}\hline%
+%				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
+%			\csvreader[late after line=\\\hline]%
+%				{CSV/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+%				{\Model & \MAF & \RMAF & \RMQA & \Max}%
+%		\end{tabular}
+%	}
+%\end{table}
+%\begin{itemize}
+%\item MAE: \textit{mean absolute error}
+%\item MAPE: \textit{mean absolute percentage error}
+%\item MSPE: \textit{mean square percentage error}
+%%\item RQ3: drittes Quartil aller relativen Modellabweichungen
+%\item RMax: maximale relative Modellabweichung
+%\end{itemize}
+%\end{frame}
 
 \section{Einbeziehung des E/A-Pfads}
 \begin{frame}
 \frametitle{Einbeziehung des E/A-Pfads}
 %Entdeckt, dass E/A-Pfad sehr wichtig für korrekte Vorhersage sein sollte
 %auch interessant zu wissen
+\begin{columns}
+	\column{.85\textwidth}
 \begin{itemize}
-	\item Es werden Hinweise zum E/A-Pfad benötigt
+	\item Bisher keine Unterscheidung von E/A-Pfaden
 	\item \textbf{Idee}: Residuen eines einfachen Modells zur Bestimmung einer Näherung des E/A-Pfades eines Dateizugriffs nutzen
 	\item Clustering der Residuen mit \textit{k-Means} in 10 Gruppen
 	\begin{itemize}
 		\item Diese bezeichnen wir \textbf{Fehlerklassen} 
 	\end{itemize}
-	\item Fehlerklassen sind nicht für Leistungsvorhersage geeignet
+	\item Fehlerklassen sind nicht für die Vorhersage von Zugriffszeiten geeignet
 	\begin{itemize}
 		\item Dafür kann eine Näherung des E/A-Pfades bestimmt werden
 	\end{itemize}
 	%\item Problem: Höhere Zugriffszeiten führen zu größeren Modellabweichungen
 	%bei SEQ deutliches Problem, bei RND nicht mehr so stark
 \end{itemize}
+	\column{.12\textwidth}
+	\begin{figure}
+		\includegraphics[width=1\linewidth]{Bilder/sprunge.png}\\
+	\end{figure}
+\end{columns}
 \end{frame}
 \subsection{Fehlerklassen}
 %Nur Betrachtung von LinReg Fehlern!
 \begin{frame}
-\frametitle{Fehlerklassen auf SEQ}
+\frametitle{Erstellung der Fehlerklassen}
 \begin{columns}
 \column{.45\textwidth}
 	\begin{figure}
@@ -619,22 +627,6 @@ Universität Hamburg \\ % Your institution for the title page
 		\caption{Farblich markierte Fehlerklassen}
 	\end{figure}
 \column{.45\textwidth}
-	\begin{figure}		
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_seq.png}
-		\vspace*{-0.45cm}		
-		\caption{sortierte Residuen}
-		%\includegraphics[width=1\linewidth]{Bilder/density_of_fk_seq.png}
-		%Dichte, sollte eine klare Spitze pro Klasse aufweisen, dann korreliert die Fehlerklasse mit einem Pfad
-		%\vspace*{-0.45cm}
-		%\caption{Dichte der Klassen um den Nullpunkt}
-	\end{figure}
-\end{columns}
-\end{frame}
-
-\begin{frame}
-\frametitle{Fehlerklassen auf RND}
-\begin{columns}
-\column{.45\textwidth}
 	\begin{figure}
 		\includegraphics[width=1\linewidth]{Bilder/linreg_error_rnd_all.png}\\
 		\vspace*{-0.45cm}
@@ -642,15 +634,6 @@ Universität Hamburg \\ % Your institution for the title page
 		\includegraphics[width=1\linewidth]{Bilder/linreg_error_clustering_rnd_all.png}\\
 		\vspace*{-0.45cm}
 		\caption{Farblich markierte Fehlerklassen}
-	\end{figure}
-\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_rnd.png}
-		\vspace*{-0.45cm}
-		\caption{sortierte Residuen}
-		%\includegraphics[width=1\linewidth]{Bilder/density_of_fk_rnd.png}
-		%\vspace*{-0.45cm}
-		%\caption{Dichte der Klassen um den Nullpunkt}
 	\end{figure}
 \end{columns}
 \end{frame}
@@ -676,48 +659,6 @@ Universität Hamburg \\ % Your institution for the title page
 			\includegraphics<1->[width=1\linewidth]{Dot/linregfk.png}
 		\end{figure}
 	\end{columns}
-\end{frame}
-
-\begin{frame}
-\frametitle{Modell mit Fehlerklassen auf SEQ}
-\begin{table}
-	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
-				\csvreader[late after line=\\\hline]%
-				{CSV/latex_seq_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Max}%
-		\end{tabular}
-	}
-\end{table}
-\begin{itemize}
-\item MAE: \textit{mean absolute error}
-\item MAPE: \textit{mean absolute percentage error}
-\item MSPE: \textit{mean square percentage error}
-%\item RQ3: drittes Quartil aller relativen Modellabweichungen
-\item RMax: maximale relative Modellabweichung
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Modell mit Fehlerklassen auf RND}
-\begin{table}
-	\resizebox{\textwidth}{!}{
-		\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
-				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
-			\csvreader[late after line=\\\hline]%
-				{CSV/latex_rnd_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
-				{\Model & \MAF & \RMAF & \RMQA & \Max}%
-		\end{tabular}
-	}
-\end{table}
-\begin{itemize}
-\item MAE: \textit{mean absolute error}
-\item MAPE: \textit{mean absolute percentage error}
-\item MSPE: \textit{mean square percentage error}
-%\item RQ3: drittes Quartil aller relativen Modellabweichungen
-\item RMax: maximale relative Modellabweichung
-\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -748,15 +689,14 @@ Universität Hamburg \\ % Your institution for the title page
 \begin{frame}
 \frametitle{Zusammenfassung}
 \begin{itemize}
-	\item Vorhersagen einfacher Modelle mit neuronalen Netzen gut für sequentielle Zugriffe 
+	\item Vorhersagen einfacher Modelle mit neuronalen Netzen gut für schreibende Zugriffe 
 	%13 vs 100 % fehler, bzw. 6µs vs 300µs; im einfachen bzw. schwierigen Fall
 	\item Lineare Modelle unzureichend
-	\item Entscheidend für eine gute Vorhersage: E/A-Zugriffe mit gleichen Zugriffsparametern unterscheiden können
+	\item E/A-Pfad entscheidender Faktor für die Zugriffszeiten
 	\begin{itemize}
-		\item Verarbeitung im System kann in E/A-Pfade unterteilt werden
-		\item Welcher Pfad genommen wurde ist nicht bekannt
+		\item Keine Kenntnisse über den E/A-Pfad einer Messung gegeben
 	\end{itemize}
-	\item Mit einfachen Modellen, die zeitliche Abhängigkeiten ausnutzen, kann der E/A-Pfad nicht bestimmt werden
+	\item Periodische Abhängigkeiten konnten nicht auf einfache Weise genutzt werden
 	%um eine Näherung der E/A-Pfade zu geben
 	%\item Verfahren für die Bestimmung der E/A-Pfade eingeführt
 	%\begin{itemize}
@@ -775,31 +715,48 @@ Universität Hamburg \\ % Your institution for the title page
 \appendix
 \backupbegin
 \section*{Reserve Folien}
+\subsection*{Ergebnisse der Modelle}
 
-\subsection*{Exploration der Messdaten}
-\frametitle{Detailbetrachtung: 250 Messungen auf RND}
 \begin{frame}
-\begin{columns}
-	\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_rnd.png}\\
-		\vspace*{-0.45cm}
-		\caption{RND lesend}
-		\includegraphics<1>[width=1\linewidth]{Bilder/plot_First250_write_rnd.png}
-		\vspace*{-0.45cm}
-		\caption{RND schreibend}
-	\end{figure}
-	\column{.45\textwidth}
-	\begin{figure}
-		\includegraphics<1>[width=1\linewidth]{Bilder/plot_From100001to100250_read_rnd.png}
-		\\
-		\vspace*{-0.45cm}
-		\caption{RND lesend}
-		\includegraphics<1->[width=1\linewidth]{Bilder/plot_From100001to100250_write_rnd.png}
-		\vspace*{-0.45cm}
-		\caption{RND schreibend}
-	\end{figure}
-\end{columns}
+	\frametitle{Modell mit Fehlerklassen auf SEQ}
+	\begin{table}
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) &  MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/latex_seq_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
+			\end{tabular}
+		}
+	\end{table}
+	\begin{itemize}
+		\item MAE: \textit{mean absolute error}
+		\item MAPE: \textit{mean absolute percentage error}
+		\item MSPE: \textit{mean square percentage error}
+		%\item RQ3: drittes Quartil aller relativen Modellabweichungen
+		\item RMax: maximale relative Modellabweichung
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Modell mit Fehlerklassen auf RND}
+	\begin{table}
+		\resizebox{\textwidth}{!}{
+			\begin{tabular}{|p{2.5cm}|r|r|r|r|r|}\hline%
+				Modell & MAE\,(s) & MAPE\,(\%) & MSPE\,(\%) & RMax\,(\%) \\\hline\hline
+				\csvreader[late after line=\\\hline]%
+				{CSV/latex_rnd_results_fk.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+				{\Model & \MAF & \RMAF & \RMQA & \Max}%
+			\end{tabular}
+		}
+	\end{table}
+	\begin{itemize}
+		\item MAE: \textit{mean absolute error}
+		\item MAPE: \textit{mean absolute percentage error}
+		\item MSPE: \textit{mean square percentage error}
+		%\item RQ3: drittes Quartil aller relativen Modellabweichungen
+		\item RMax: maximale relative Modellabweichung
+	\end{itemize}
 \end{frame}
 
 \subsection*{Fehlerklassen}
@@ -836,6 +793,51 @@ Universität Hamburg \\ % Your institution for the title page
 			\end{tabular}
 		}
 	\end{table}
+\end{frame}
+
+\subsection*{Exploration der Messdaten}
+\frametitle{Detailbetrachtung: 250 Messungen auf RND}
+\begin{frame}
+	\begin{columns}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics<1->[width=1\linewidth]{Bilder/plot_First250_read_rnd.png}\\
+			\vspace*{-0.45cm}
+			\caption{RND lesend}
+			\includegraphics<1>[width=1\linewidth]{Bilder/plot_First250_write_rnd.png}
+			\vspace*{-0.45cm}
+			\caption{RND schreibend}
+		\end{figure}
+		\column{.45\textwidth}
+		\begin{figure}
+			\includegraphics<1>[width=1\linewidth]{Bilder/plot_From100001to100250_read_rnd.png}
+			\\
+			\vspace*{-0.45cm}
+			\caption{RND lesend}
+			\includegraphics<1->[width=1\linewidth]{Bilder/plot_From100001to100250_write_rnd.png}
+			\vspace*{-0.45cm}
+			\caption{RND schreibend}
+		\end{figure}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Darstellung der Fehlerklassen nach sortierten Residuen}
+	\begin{columns}
+		\column{.45\textwidth}
+			\begin{figure}		
+				\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_seq.png}
+				\vspace*{-0.45cm}		
+				\caption{sortierte Residuen auf SEQ}
+			\end{figure}
+		\column{.45\textwidth}
+
+		\begin{figure}		
+			\includegraphics[width=1\linewidth]{Bilder/linreg_error_sorted_clustering_rnd.png}
+			\vspace*{-0.45cm}		
+			\caption{sortierte Residuen auf RND}
+		\end{figure}
+	\end{columns}
 \end{frame}
 
 \subsection*{Ausblick}

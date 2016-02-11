@@ -6,3 +6,5 @@ auch durchschnittsperformance bei auswahl netze berücksichtigen
 
 problem mit dem verwenden des reinen fehlers, nur hohe laufzeiten berücksichtigt
  -> throuput verwenden?
+
+warum verwenden wir nicht einfach das Durchschnittsmodell für die Fehlerklassen?
