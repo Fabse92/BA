@@ -6,7 +6,7 @@ digraph G{
 	Messdaten -> "Trainingsdaten" [label = "aufteilen"]
 	Messdaten -> Testdaten[label = "aufteilen"]
 	"Trainingsdaten" -> Lernverfahren
-	NeuronalesNetz -> Lernverfahren [label = ""]
+	"neuronales Netz" -> Lernverfahren [label = ""]
 	Lernverfahren -> Prädiktor[label = "erzeugt"]
 	Testdaten -> Residuen [label = ""]
 	Prädiktor -> Residuen [label = "berechnen der Modellabweichungen"]
