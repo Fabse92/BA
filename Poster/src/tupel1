@@ -1,0 +1,13 @@
+digraph G{
+	node [style=filled]
+ 	node [fontname = "helvetica"];
+ 	edge [fontname = "helvetica"];	
+	rankdir=UD;
+	"Benchmark data" -> "Training set" [label = "split"]
+	"Benchmark data" -> "Test set"[label = "split"]
+	"Training set" -> "Learning process"
+	ANN -> "Learning process" [label = ""]
+	"Learning process" -> Approximator[label = "generates"]
+	"Test set" -> Residue [label = ""]
+	Approximator -> Residue [label = "calculate model deviation"]
+}
