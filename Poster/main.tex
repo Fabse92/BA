@@ -22,6 +22,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
+%\documentclass[final]{beamer}
 \documentclass[final]{beamer}
 
 \usepackage[scale=1.24]{beamerposter} % Use the beamerposter package for laying out the poster
@@ -29,15 +30,21 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 
-\usepackage{wrapfig}
+%\usepackage{wrapfig}
+%\usepackage{fancyhdr}
+\usepackage{float}
+ %\usepackage{graphicx}
+\usepackage{subfig}
 
 \usetheme{confposter} % Use the confposter theme supplied with this template
 
-\setbeamercolor{block title}{fg=ngreen,bg=white} % Colors of the block titles
+\setbeamercolor{block title}{fg=dgreen,bg=white} % Colors of the block titles
 \setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
 \setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
 \setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
 % Many more colors are available for use in beamerthemeconfposter.sty
+
+\setbeamertemplate{caption}[numbered] % Figure numbering 
 
 %-----------------------------------------------------------
 % Define the column widths and overall poster size
@@ -51,8 +58,8 @@
 \newlength{\onecolwid}
 \newlength{\twocolwid}
 \newlength{\threecolwid}
-\setlength{\paperwidth}{48in} % A0 width: 46.8in
-\setlength{\paperheight}{36in} % A0 height: 33.1in
+\setlength{\paperwidth}{1189mm} % A0 width: 46.8in
+\setlength{\paperheight}{841mm} % A0 height: 33.1in
 \setlength{\sepwid}{0.024\paperwidth} % Separation width (white space) between columns
 \setlength{\onecolwid}{0.22\paperwidth} % Width of one column
 \setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
@@ -77,6 +84,8 @@
 %----------------------------------------------------------------------------------------
 
 \begin{document}
+	
+	\small
 
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
 \addtobeamertemplate{block alerted end}{}{\vspace*{2ex}} % White space under highlighted (alert) blocks
@@ -101,9 +110,9 @@
 %The goals of this work were:
 
 \begin{itemize}
-\item Gain knowledge about the storage system of a super computer for the development of computational models in the future
-\item Find an artificial neural network that is reliable in predicting performance of HPC-IO with sufficient quality
-\item Extract information about the I/O-paths for file access used by the storage system
+\item Gain knowledge about the storage system of a super computer for the development of computational models and tools in the future.
+\item Find a good model that is reliable in predicting performance of HPC-IO with sufficient quality.
+\item Extract information about the I/O-paths the storage system used for measured file accesses.
 \end{itemize}
 
 \end{alertblock}
@@ -114,17 +123,17 @@
 
 \begin{block}{Introduction}
 	
-There is a need for tools that help users to implement efficient input/output (I/O) in their software, because this is a complex and time-consuming task. Finding the best access parameters and patterns is difficult, mainly because of the use of complex parallel storage systems in HPC.
+There is a need for tools that help users to implement efficient input/output (I/O) in their software, because optimizing I/O-behaviour is a complex and time-consuming task.
+Finding the best access parameters and patterns is difficult, mainly because of the use of complex parallel storage systems in HPC.
 %Currently users have to optimize their programs at great expense to each system individually without much assistance.
 For the development of tools to support the implementation of efficient I/O the availability of a computational model of the storage system is key.\medskip
 
 We analysed the storage system of a super computer and tried to find a good predictor for its I/O-performance using artificial neural networks (ANNs).
-A hypothesis was then made: \textbf{The I/O-path determines the performance of a file access.}
-The I/O-performance of a file access is more dependent on the processing in the storage system than on the access size for example.\medskip
+A hypothesis was then made: \textbf{The I/O-path has significant influence on the time needed for a file access.}
+In particular the access time for a file access is more dependent on the I/O-path used in the storage system than on the access size for example.\medskip
 
 To test our hypothesis we used ANNs with different input information for the prediction of access times.
 For the use of I/O-paths as input information for the ANNs we developed a method to compute an approximation of the different I/O-paths used in an benchmark-test.
-%This statement requires citation \cite{Smith:2012qr}.
 
 \end{block}
 
@@ -137,12 +146,6 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 
 %----------------------------------------------------------------------------------------
 
-\end{column} % End of the first column
-
-\begin{column}{\sepwid}\end{column} % Empty spacer column
-
-\begin{column}{\onecolwid} % The sec column
-	
 \begin{block}{Artificial Neural Networks}
 	
 	ANNs are bio-inspired function approximators.
@@ -157,35 +160,67 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 	
 	An ANN is able to approximate a function that maps given input vectors on their associated output vectors.
 	This is done by adapting the connection weights in the network using gradient decent during a supervised learning process (backpropagation).
-	With appropriate topology ANNs are able to approximate any continuous functions on compact subsets of $\mathbb{R}^n$ \cite{cybenko:mcss}.
+	With appropriate topology \textbf{ANNs are able to approximate any continuous functions} on compact subsets of $\mathbb{R}^n$ \cite{cybenko:mcss}.
 	
-	%\begin{figure}
-	%\includegraphics[height=0.3\linewidth]{src/netz.png}
-	%\caption{small feedforward-network}
-	%\end{figure}
+%	\begin{figure}
+%	\includegraphics[height=0.3\linewidth]{src/netz.png}
+%	\caption{small feedforward-network}
+%	\label{netz}
+%	\end{figure}
 	
 \end{block}
+
+\end{column} % End of the first column
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid} % The sec column
+	
 
 \begin{block}{Model of the I/O-path}
 	
 	The processing of a file access in the storage system can be viewed using the I/O-path.
-	That is the path from the invoking processor to the storage medium that contains the necessary data.
-	The resulting access time of the process is then dependent on the depth of the path, because the further the path goes into the storage system, the the slower the storage media get.
-	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower, the same applies for the step into the parallel storage system that is connected via network to the computer nodes.\medskip
+	That is \textbf{the path from the invoking processor to the storage medium that contains the necessary data}.
+	The resulting access time of the process is then dependent on the depth of the path, because the further the path leads into the storage system, the slower the storage media gets.
+	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system that is connected via network to the computer nodes.\medskip
 	
-	As can be seen in figure \ref{read_rnd} the access times increase with access sizes.
-	However a phenomenon that can be explained with the I/O-path model can be seen as well; access times of measurements with same parameter values are split into several groups of durations. Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
+	Our measurements showed, as can be seen in figure \ref{exploration}, that the access times increase with access sizes.
+	However a phenomenon that can be explained with the I/O-path model can be seen as well; \textbf{access times of measurements with equal parameter values are split into several groups of access times.} Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
 	
 	\begin{figure}
-		\label{read_rnd}
-		\includegraphics[width=0.8\linewidth]{src/plot_SizeSorted_log_read_seq.png}
-		\caption{Access times of measurements with increasing access sizes. The sizes increase from left to right, all measurements with the same size have the same color.}
-	\end{figure}
+		\subfloat[Sequential access pattern]{
+			\includegraphics[width=.58\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+		}
+		%\hfill
+		\\
+		\subfloat[Random access pattern]{
+			\includegraphics[width=.58\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
+		}	
+		\caption{Access times of measured file accesses. The access sizes increase from left to right, all measurements with equal parameter values have the same color.}
+		\label{exploration}
+	\end{figure} 
+	
+%	\begin{figure}		
+%		\includegraphics[width=0.7\linewidth]{src/plot_SizeSorted_log_read_rnd.png}
+%		\vspace*{-0.5cm}
+%		\caption{Access times of measurements with increasing access sizes. The sizes increase from left to right, all measurements with the same size have the same color.}
+%		\label{read_rnd}
+%	\end{figure}
 	
 	%\begin{figure}
 	%	\includegraphics[width=1\linewidth]{src/rechnerknoten_ea_pfad.png}
 	%	\caption{Sketch of the storage system in a super computer}
 	%\end{figure}
+	
+\end{block}
+
+\vspace*{-2cm}
+\begin{block}{Benchmark-Tests}
+	
+	The measurements were done on the super computer Mistral of the DKRZ (Deutsches Klimarechenzentrum).
+	Mistral operates with the parallel distributed file system Lustre and consist of over 1500 computing nodes and 30 petabyte storage.
+	\textbf{Two different use cases were tested: Sequential and random file access}.
+	Access sizes varied from 1\,B to 16\,MiB.
 	
 \end{block}
 	
@@ -195,34 +230,63 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 
 \begin{column}{\onecolwid} % The 3 column
 	
-\begin{block}{Benchmark-Tests}
-	
-	The measurements were done on the super computer Mistral of the DKRZ (Deutsches Klimarechenzentrum).
-	%Mistral operates with the parallel distributed file system Lustre and consist of over 1500 computing nodes and 30 petabyte storage.
-	Two different use cases were tested: Sequential and random file access.
-	Access sizes varied from 1\,B to 16\,MiB.
-	
-\end{block}
 
 \begin{block}{Models}
 	
-	As baseline model linear regression was used for a simple mapping of access size to access time of measurements.
-	Three models with different input information utilizing ANNs were then used to predict the access times.
-	Every ANN-model received access size, file offset and access type as input.
-	Additionally one model receives information about the past data throughputs of the system, this can be used to model time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). Another model receives error classes as input.
+	Different models were used for the prediction of measured access times of file accesses.
+	As baseline model linear regression was used for a simple mapping of access size to measured access time.
+	Additionally three \textbf{models with different input information utilizing ANNs were used}.
+	Every ANN-model received information about access sizes, file offsets and access types of an input.
+	One ANN also received information about the past data throughputs of the system, this can be used to exploit time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). The last ANN received error classes as input.
 	
-		\begin{figure}
-			\label{time_dep}
-			\includegraphics[width=0.8\linewidth]{src/plot_From100001to100250_read_seq.png}
-			\caption{A small sequence of file accesses with same parameters. Peaks in the access times occure regularly.}
-		\end{figure}
+	\begin{figure}
+		\subfloat[In this sequence peaks in the access times occure regularly.]{
+			\includegraphics[width=.48\textwidth]{src/plot_From100001to100250_read_seq.png}
+		}
+		\hfill
+		\subfloat[Exponential moving average in red to predict peaks.]{
+			\includegraphics[width=.48\textwidth]{src/ema2.png}
+		}	
+		\caption{Time dependencies can be utilized for better access time predictions.}
+		\label{time_dep}
+	\end{figure} 
+	
+%		\begin{figure}
+%			\includegraphics[width=0.7\linewidth]{src/plot_From100001to100250_read_seq.png}
+%			\vspace*{-0.5cm}
+%			\caption{A small sequence of file accesses with same parameters. Peaks in the access times occure regularly.}
+%			\label{time_dep}
+%		\end{figure}
 	
 \end{block}
 
+\vspace*{-2cm}
 \begin{block}{Error Classes}
 	
+The idea of error classes is based on the fact that the \textbf{residues of a simple model are characteristic for the groups of measurements with different typical access times} and therefore also for the I/O-path used by the storage system for the corresponding file accesses. 
+%Here a simple model is a model that doesn't discriminate measurements with similar parameters.
+Error classes are then obtained by clustering the residues of such a model with a k-Means algorithm.
 
-	
+	\begin{figure}
+		\subfloat[Sequential access pattern]{
+			\includegraphics[width=.58\textwidth]{src/linreg_error_clustering_seq_all.png}
+		}
+		\\
+		%\hfill
+		\subfloat[Random access pattern]{
+			\includegraphics[width=.58\textwidth]{src/linreg_error_clustering_rnd_all.png}
+		}	
+		\caption{Residues from the linear regression model clustered into error classes.}
+		\label{error_classes}
+	\end{figure} 
+
+%\begin{figure}
+%	\includegraphics[width=0.7\linewidth]{src/linreg_error_clustering_rnd_all.png}
+%	\vspace*{-0.5cm}
+%	\caption{The clustering into error classes on the residues of the model with linear regression.}
+%	\label{error_classes}
+%\end{figure}
+
 \end{block}
 
 \end{column} % End of the 3 column
@@ -233,9 +297,33 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 
 \begin{block}{Results}
 	
-	Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin. Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin.
-	Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin. Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin.
+	From the residues of the different models it became clear that access times can't be modelled linearly.
+	Furthermore the exploitation of time dependencies of the storage system has been found to be difficult.
+	As our hypothesis predicted \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
+	In figure \ref{preds} the difference in the predictions of the ANN without and with error class input can be seen.
+	The second ANN is able to classify file accesses correctly in respect to their I/O-path.
 	
+	\begin{figure}
+		\subfloat[ANN without error classes]{
+			\includegraphics[width=.58\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
+		}
+		%\hfill
+		\\
+		\subfloat[ANN with error classes]{
+			\includegraphics[width=.58\textwidth]{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		}	
+		\caption{Measurements with random access pattern. Measured access times in black; predictions in blue.}
+		\label{preds}
+	\end{figure} 
+%	
+%	\begin{figure}
+%		\includegraphics[width=0.48\linewidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
+%		\hfill
+%		\includegraphics[width=0.48\linewidth]{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+%		\vspace*{-0.5cm}
+%		\caption{Measurements in black; predictions in blue.}
+%		\label{preds}
+%	\end{figure}
 	
 \end{block}
 
@@ -243,9 +331,12 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 %	CONCLUSION
 %----------------------------------------------------------------------------------------
 
+\vspace*{-2cm}
 \begin{block}{Conclusion}
 
-Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non porttitor. Sed a massa dolor, id ornare enim. Fusce quis massa dictum tortor \textbf{tincidunt mattis}. Donec quam est, lobortis quis pretium at, laoreet scelerisque lacus. Nam quis odio enim, in molestie libero. Vivamus cursus mi at \textit{nulla elementum sollicitudin}.
+	The hypothesis is supported by our data.
+	It is therefore necessary to deduce information about I/O-paths to make predictions for file access times.
+	This can be done with the introduced method of computing error classes, however further investigations for its practical utilization have to be done. 
 
 \end{block}
 
@@ -257,7 +348,7 @@ Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non 
 \begin{block}{References}
 
 \nocite{*} % Insert publications even if they are not cited in the poster
-\small{\bibliographystyle{unsrt}
+\footnotesize{\bibliographystyle{unsrt}
 \bibliography{sample}\vspace{0.75in}}
 
 \end{block}
@@ -278,21 +369,22 @@ Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non 
 %	CONTACT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\setbeamercolor{block alerted title}{fg=black,bg=norange} % Change the alert block title colors
+\setbeamercolor{block alerted title}{fg=black,bg=Apricot} % Change the alert block title colors
 \setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
-
+\vspace*{-1.5cm}
 \begin{alertblock}{Contact Information}
 
 \begin{itemize}
-\item Web: \href{http://wr.informatik.uni-hamburg.de}{http://wr.informatik.uni-hamburg.de}
-\item Email: \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de}
+%\item Web: \href{http://wr.informatik.uni-hamburg.de}{http://wr.informatik.uni-hamburg.de}
+\item \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de}
+\item \href{mailto:juliankunkel@googlemail.com}{juliankunkel@googlemail.com}
 \end{itemize}
 
 \end{alertblock}
 
 \begin{flushright}
 \begin{tabular}{r}
-\includegraphics[width=0.2\linewidth]{src/2000px-Unihamburg-logo.png} % & \hfill & \includegraphics[width=0.4\linewidth]{logo.png}
+%\includegraphics[width=0.2\linewidth]{src/2000px-Unihamburg-logo.png} % & \hfill & \includegraphics[width=0.4\linewidth]{logo.png}
 \end{tabular}
 \end{flushright}
 
