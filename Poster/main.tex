@@ -237,7 +237,7 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 	As baseline model linear regression was used for a simple mapping of access size to measured access time.
 	Additionally three \textbf{models with different input information utilizing ANNs were used}.
 	Every ANN-model received information about access sizes, file offsets and access types of an input.
-	One ANN also received information about the past data throughputs of the system, this can be used to exploit time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). The last ANN received error classes as input.
+	One ANN also received information about the past data throughputs of the system, this can be used to exploit time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). The last ANN received error classes as additional input.
 	
 	\begin{figure}
 		\subfloat[In this sequence peaks in the access times occure regularly.]{
@@ -263,7 +263,7 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 \vspace*{-2cm}
 \begin{block}{Error Classes}
 	
-The idea of error classes is based on the fact that the \textbf{residues of a simple model are characteristic for the groups of measurements with different typical access times} and therefore also for the I/O-path used by the storage system for the corresponding file accesses. 
+The idea of error classes is based on the fact that \textbf{the residues of a simple model are characteristic for the groups of measurements with different typical access times} and therefore also for the I/O-path used by the storage system for the corresponding file accesses. 
 %Here a simple model is a model that doesn't discriminate measurements with similar parameters.
 Error classes are then obtained by clustering the residues of such a model with a k-Means algorithm.
 
@@ -297,20 +297,46 @@ Error classes are then obtained by clustering the residues of such a model with 
 
 \begin{block}{Results}
 	
-	From the residues of the different models it became clear that access times can't be modelled linearly.
+	From the residues of the different models (see table \ref{residues}) it became clear that access times shouldn't be modelled linearly.
 	Furthermore the exploitation of time dependencies of the storage system has been found to be difficult.
 	As our hypothesis predicted \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
 	In figure \ref{preds} the difference in the predictions of the ANN without and with error class input can be seen.
 	The second ANN is able to classify file accesses correctly in respect to their I/O-path.
 	
+	
+	\begin{table}
+		\vspace{2ex}
+		\begin{tabular}{l|r|r}%
+			&  \multicolumn{2}{|c}{mean absolut error}\\ \hline
+			%\toprule
+			Modell & seq. access & rnd. access\\ \hline
+			%\midrule
+			Linear regression & $7.6\cdot 10^-5$ & $4.76\cdot 10^-3$ \\
+			ANN & $6.0\cdot 10^-5$ & $3.13\cdot 10^-3$ \\
+			ANN + time dependencies & $5.7\cdot 10^-5$ & $3.05\cdot 10^-3$\\
+			ANN + error classes & $2.0\cdot 10^-5$ & $1.03\cdot 10^-3$ \\
+			%\bottomrule
+		\end{tabular}
+		\caption{Mean absolut errors of the different models for the two different file access patterns.}
+		\label{residues}
+	\end{table}
+	
+%		\begin{tabular}{|r|r|r|r|r|r|r|r|r|}\hline%
+%			& \multicolumn{3}{|c|}{gemittelte Angaben} & \multicolumn{3}{|c|}{Angaben zu den Residuen} & \multicolumn{2}{r|}{zugeordnete Messungen} \\ \hline
+%			Klasse & Durchsatz (B/s) & Größe (B) & Dauer (s) & Min (s) & Durchschnitt (s) & Max (s) & auf SEQ selbst & auf RND \\ \hline\hline
+%			\csvreader[late after line=\\\hline]%
+%			{CSV/error_class/seq_linreg_classes_on_rnd.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, size = \size, duration = \duration}%
+%			{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
+%		\end{tabular}
+	
+	\vspace*{-2cm}
 	\begin{figure}
 		\subfloat[ANN without error classes]{
-			\includegraphics[width=.58\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
+			\includegraphics[width=.47\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
 		}
-		%\hfill
-		\\
+		\hfill		
 		\subfloat[ANN with error classes]{
-			\includegraphics[width=.58\textwidth]{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+			\includegraphics[width=.47\textwidth]{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
 		}	
 		\caption{Measurements with random access pattern. Measured access times in black; predictions in blue.}
 		\label{preds}
