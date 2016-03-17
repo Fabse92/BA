@@ -34,7 +34,14 @@
 %\usepackage{fancyhdr}
 \usepackage{float}
  %\usepackage{graphicx}
-\usepackage{subfig}
+%\usepackage{subfig}
+\usepackage{tikz}
+\usetikzlibrary{spy}
+
+\usepackage[position=t,singlelinecheck=off]{subfig}
+\usepackage{caption}
+
+\renewcommand\thesubfigure{\alph{subfigure}}
 
 \usetheme{confposter} % Use the confposter theme supplied with this template
 
@@ -60,7 +67,7 @@
 \newlength{\threecolwid}
 \setlength{\paperwidth}{1189mm} % A0 width: 46.8in
 \setlength{\paperheight}{841mm} % A0 height: 33.1in
-\setlength{\sepwid}{0.024\paperwidth} % Separation width (white space) between columns
+\setlength{\sepwid}{0.005\paperwidth} % Separation width (white space) between columns
 \setlength{\onecolwid}{0.22\paperwidth} % Width of one column
 \setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
 \setlength{\threecolwid}{0.708\paperwidth} % Width of three columns
@@ -79,7 +86,12 @@
 
 \author{Jan Fabian Schmid and Julian Kunkel} % Author(s)
 
+%\author{Jan Fabian Schmid \href{mailto:2schmid@informatik.uni-hamburg.de}{\textit{{\normalsize 2schmid@informatik.uni-hamburg.de}}}, Julian Kunkel \href{mailto:juliankunkel@googlemail.com}{\textit{{\normalsize juliankunkel@googlemail.com}}}} % Author(s)
+
 \institute{Universität Hamburg} % Institution(s)
+
+%\item \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de}
+%\item \href{mailto:juliankunkel@googlemail.com}{juliankunkel@googlemail.com}
 
 %----------------------------------------------------------------------------------------
 
@@ -99,14 +111,24 @@
 
 \begin{column}{\sepwid}\end{column} % Empty spacer column
 
+\setlength{\sepwid}{0.02\paperwidth} % Separation width (white space) between columns
+
 \begin{column}{\onecolwid} % The first column
 
 %----------------------------------------------------------------------------------------
 %	GOALS
 %----------------------------------------------------------------------------------------
 
-\begin{alertblock}{Goals}
+	\small
 
+\setbeamercolor{block title}{fg=dgreen,bg=white} % Colors of the block titles
+\setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
+% Many more colors are available for use in beamerthemeconfposter.sty
+
+\begin{alertblock}{Goals}
+	
 %The goals of this work were:
 
 \begin{itemize}
@@ -128,12 +150,13 @@ Finding the best access parameters and patterns is difficult, mainly because of 
 %Currently users have to optimize their programs at great expense to each system individually without much assistance.
 For the development of tools to support the implementation of efficient I/O the availability of a computational model of the storage system is key.\medskip
 
-We analysed the storage system of a super computer and tried to find a good predictor for its I/O-performance using artificial neural networks (ANNs).
-A hypothesis was then made: \textbf{The I/O-path has significant influence on the time needed for a file access.}
-In particular the access time for a file access is more dependent on the I/O-path used in the storage system than on the access size for example.\medskip
+For single hard disk systems such a model can be derived analytical \cite{Ruemmler94anintroduction}, however for the complex storage system of a super computer these models become too difficult to configure \cite{DBLP:conf/npc/ZhangLZJC10}.
+Therefore we tried to find a good predictor for I/O-performance using a machine learning approach with artificial neural networks (ANNs).
+A hypothesis was then made: \textbf{The I/O-path has significant influence on the time needed for a file access.}\medskip
+%In particular the access time for a file access is more dependent on the I/O-path used in the storage system than on the access size for example.
 
 To test our hypothesis we used ANNs with different input information for the prediction of access times.
-For the use of I/O-paths as input information for the ANNs we developed a method to compute an approximation of the different I/O-paths used in an benchmark-test.
+For the use of I/O-paths as input information for the ANNs we developed a method to compute an approximation of the different I/O-paths the storage system used during a benchmark-test.
 
 \end{block}
 
@@ -185,21 +208,46 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system that is connected via network to the computer nodes.\medskip
 	
 	Our measurements showed, as can be seen in figure \ref{exploration}, that the access times increase with access sizes.
-	However a phenomenon that can be explained with the I/O-path model can be seen as well; \textbf{access times of measurements with equal parameter values are split into several groups of access times.} Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
+	However a phenomenon that can be explained with the I/O-path model can be seen as well; \textbf{access times of measurements with equal parameter values are split into several groups of access times.}
+	The used I/O-paths for the file accesses distinguishes these groups of measurements through a step in the magnitude of access time.
+	%Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
 	
 	\begin{figure}
+		%\flushleft
+		\captionsetup[subfigure]{margin={-0.4cm,0cm}}
 		\subfloat[Sequential access pattern]{
-			\includegraphics[width=.58\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+			%\includegraphics[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+			\begin{tikzpicture}[spy using outlines={circle,black,magnification=2.2,size=4.5cm, connect spies}]
+			\node {\pgfimage[interpolate=true,width=.53\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
+			%\draw (3.5,0.5) ellipse (1 and 1);
+			\spy on (3.4,0.5) in node [left] at (14,1.25);
+			\end{tikzpicture}
 		}
 		%\hfill
 		\\
+		\captionsetup[subfigure]{margin={-0.4cm,0cm}}
+		\vspace*{0.25cm}	
+		\hspace*{-7.365cm}		
 		\subfloat[Random access pattern]{
-			\includegraphics[width=.58\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
-		}	
-		\caption{Access times of measured file accesses. The access sizes increase from left to right, all measurements with equal parameter values have the same color.}
+			%\hspace*{-5cm}
+			\includegraphics[width=.53\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
+		}
+		\vspace*{-0.05cm}	
+		\caption{Access times of measured file accesses. The access sizes increase from left to right, all measurements with equal parameter values have the same color. In the highlighted section the described step in the access time occurs.}
 		\label{exploration}
 	\end{figure} 
 	
+%	\begin{tikzpicture}[spy using outlines={circle,black,magnification=5,size=1.5cm, connect spies}]
+%		\node {\pgfimage[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
+%		\spy on (0,1) in node [left] at (10,1.25);
+%	\end{tikzpicture}
+	
+	%\begin{tikzpicture}[spy using outlines={circle,black,magnification=2.5,size=4.5cm, connect spies}]
+	%	\node {\pgfimage[interpolate=true,width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
+	%	\spy on (3.5,0.5) in node [left] at (14,1.25);
+	%\end{tikzpicture}
+
+
 %	\begin{figure}		
 %		\includegraphics[width=0.7\linewidth]{src/plot_SizeSorted_log_read_rnd.png}
 %		\vspace*{-0.5cm}
@@ -236,11 +284,11 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 	Different models were used for the prediction of measured access times of file accesses.
 	As baseline model linear regression was used for a simple mapping of access size to measured access time.
 	Additionally three \textbf{models with different input information utilizing ANNs were used}.
-	Every ANN-model received information about access sizes, file offsets and access types of an input.
+	Every ANN-model received information about access sizes, file offsets and access types as input.
 	One ANN also received information about the past data throughputs of the system, this can be used to exploit time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). The last ANN received error classes as additional input.
 	
 	\begin{figure}
-		\subfloat[In this sequence peaks in the access times occure regularly.]{
+		\subfloat[In this sequence peaks in the access times occur regularly.]{
 			\includegraphics[width=.48\textwidth]{src/plot_From100001to100250_read_seq.png}
 		}
 		\hfill
@@ -263,22 +311,53 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 \vspace*{-2cm}
 \begin{block}{Error Classes}
 	
-The idea of error classes is based on the fact that \textbf{the residues of a simple model are characteristic for the groups of measurements with different typical access times} and therefore also for the I/O-path used by the storage system for the corresponding file accesses. 
+The idea of error classes is based on the fact that \textbf{the residues of a simple model are characteristic for the groups of measurements with different typical access times} and therefore also for the I/O-paths used by the storage system for the corresponding file accesses. 
 %Here a simple model is a model that doesn't discriminate measurements with similar parameters.
 Error classes are then obtained by clustering the residues of such a model with a k-Means algorithm.
 
-	\begin{figure}
-		\subfloat[Sequential access pattern]{
-			\includegraphics[width=.58\textwidth]{src/linreg_error_clustering_seq_all.png}
-		}
-		\\
-		%\hfill
-		\subfloat[Random access pattern]{
-			\includegraphics[width=.58\textwidth]{src/linreg_error_clustering_rnd_all.png}
-		}	
-		\caption{Residues from the linear regression model clustered into error classes.}
-		\label{error_classes}
-	\end{figure} 
+%	\begin{figure}
+%		%\flushleft
+%		%\subfloat[Sequential access pattern]{
+%		%	\includegraphics[width=.55\textwidth]{src/linreg_error_clustering_seq_all.png}
+%		%}
+%		\begin{tikzpicture}[spy using outlines={circle,black}] %,magnification=2.5,size=4.5cm, connect spies}]
+%		\node {\pgfimage[interpolate=true,width=.53\textwidth]{src/linreg_error_clustering_seq_all.png}};
+%		\draw (3.7,0.9) ellipse (0.8 and 0.8);
+%		%\spy on (3.5,0.5) in node [left]; % at (14,1.25);
+%		\end{tikzpicture}
+%		\\
+%		%\hfill
+%		\subfloat[Random access pattern]{
+%			\includegraphics[width=.53\textwidth]{src/linreg_error_clustering_rnd_all.png}
+%		}	
+%		\caption{Residues from the linear regression model clustered into error classes. In the highlighted section the differen- tiation of measurements with varying I/O-paths can be seen.}
+%		\label{error_classes}
+%	\end{figure} 
+	
+		\begin{figure}
+			%\flushleft
+			\captionsetup[subfigure]{margin={-0.4cm,0cm}}
+			\subfloat[Sequential access pattern]{
+				%\includegraphics[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+				\begin{tikzpicture}[spy using outlines={circle,black,magnification=2.2,size=4cm, connect spies}]
+				\node {\pgfimage[interpolate=true,width=.53\textwidth]{src/linreg_error_clustering_seq_all.png}};
+				%\draw (3.5,0.5) ellipse (1 and 1);
+				\spy on (3.5,0.9) in node [left] at (14,1.25);
+				\end{tikzpicture}
+			}
+			%\hfill
+			\\
+			\captionsetup[subfigure]{margin={-0.4cm,0cm}}
+			\hspace*{-7.365cm}	
+			%\vspace*{0.25cm}	
+			\subfloat[Random access pattern]{
+				%\hspace*{-5cm}
+				\includegraphics[width=.53\textwidth]{src/linreg_error_clustering_rnd_all.png}
+			}
+			\vspace*{-0.1cm}
+			\caption{Residues from the linear regression model clustered into error classes. In the highlighted section the differen- tiation of measurements with varying I/O-paths can be seen.}
+			\label{error_classes}
+		\end{figure} 
 
 %\begin{figure}
 %	\includegraphics[width=0.7\linewidth]{src/linreg_error_clustering_rnd_all.png}
@@ -300,14 +379,14 @@ Error classes are then obtained by clustering the residues of such a model with 
 	From the residues of the different models (see table \ref{residues}) it became clear that access times shouldn't be modelled linearly.
 	Furthermore the exploitation of time dependencies of the storage system has been found to be difficult.
 	As our hypothesis predicted \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
+	The error classes allow the ANN to decrease the error significantly.
 	In figure \ref{preds} the difference in the predictions of the ANN without and with error class input can be seen.
-	The second ANN is able to classify file accesses correctly in respect to their I/O-path.
-	
+	The second ANN is often able to classify file accesses correctly in respect to their I/O-path.
 	
 	\begin{table}
-		\vspace{2ex}
+		\vspace{0ex}
 		\begin{tabular}{l|r|r}%
-			&  \multicolumn{2}{|c}{mean absolut error}\\ \hline
+			&  \multicolumn{2}{|c}{mean absolut error (s)}\\ \hline
 			%\toprule
 			Modell & seq. access & rnd. access\\ \hline
 			%\midrule
@@ -317,7 +396,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 			ANN + error classes & $2.0\cdot 10^-5$ & $1.03\cdot 10^-3$ \\
 			%\bottomrule
 		\end{tabular}
-		\caption{Mean absolut errors of the different models for the two different file access patterns.}
+		\caption{Mean absolut errors of the different models for the two different file access patterns used in the benchmark-tests.}
 		\label{residues}
 	\end{table}
 	
@@ -329,7 +408,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 %			{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 %		\end{tabular}
 	
-	\vspace*{-2cm}
+	\vspace*{-0.75cm}
 	\begin{figure}
 		\subfloat[ANN without error classes]{
 			\includegraphics[width=.47\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
@@ -374,10 +453,28 @@ Error classes are then obtained by clustering the residues of such a model with 
 \begin{block}{References}
 
 \nocite{*} % Insert publications even if they are not cited in the poster
-\footnotesize{\bibliographystyle{unsrt}
+\tiny{\bibliographystyle{unsrt}
 \bibliography{sample}\vspace{0.75in}}
 
 \end{block}
+
+	\footnotesize
+	
+	\setbeamercolor{block alerted title}{fg=black,bg=white} % Change the alert block title colors
+	\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
+	\vspace*{-2cm}
+	\begin{exampleblock}{}
+		\vspace*{-1.2cm}
+		%\hspace*{5cm}
+		\textbf{Contact Information:}
+		\vspace*{-0.4cm}
+		\begin{itemize}
+			%\item Web: \href{http://wr.informatik.uni-hamburg.de}{http://wr.informatik.uni-hamburg.de}
+			\item \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de}
+			%\item \href{mailto:juliankunkel@googlemail.com}{juliankunkel@googlemail.com}
+		\end{itemize}
+		
+	\end{exampleblock}
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
@@ -394,25 +491,14 @@ Error classes are then obtained by clustering the residues of such a model with 
 %----------------------------------------------------------------------------------------
 %	CONTACT INFORMATION
 %----------------------------------------------------------------------------------------
+%Apricot
 
-\setbeamercolor{block alerted title}{fg=black,bg=Apricot} % Change the alert block title colors
-\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
-\vspace*{-1.5cm}
-\begin{alertblock}{Contact Information}
-
-\begin{itemize}
-%\item Web: \href{http://wr.informatik.uni-hamburg.de}{http://wr.informatik.uni-hamburg.de}
-\item \href{mailto:2schmid@informatik.uni-hamburg.de}{2schmid@informatik.uni-hamburg.de}
-\item \href{mailto:juliankunkel@googlemail.com}{juliankunkel@googlemail.com}
-\end{itemize}
-
-\end{alertblock}
-
-\begin{flushright}
-\begin{tabular}{r}
-%\includegraphics[width=0.2\linewidth]{src/2000px-Unihamburg-logo.png} % & \hfill & \includegraphics[width=0.4\linewidth]{logo.png}
-\end{tabular}
-\end{flushright}
+%
+%\begin{flushright}
+%\begin{tabular}{r}
+%%\includegraphics[width=0.2\linewidth]{src/2000px-Unihamburg-logo.png} % & \hfill & \includegraphics[width=0.4\linewidth]{logo.png}
+%\end{tabular}
+%\end{flushright}
 
 %----------------------------------------------------------------------------------------
 
