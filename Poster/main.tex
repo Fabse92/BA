@@ -51,6 +51,11 @@
 \setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
 % Many more colors are available for use in beamerthemeconfposter.sty
 
+%\setbeamercolor{bibliography entry author}{fg=red}
+%\setbeamercolor{bibliography entry title}{fg=blue} 
+\setbeamercolor{bibliography entry location}{fg=DarkGray} 
+%\setbeamercolor{bibliography entry note}{fg=cyan} 
+
 \setbeamertemplate{caption}[numbered] % Figure numbering 
 
 %-----------------------------------------------------------
@@ -82,7 +87,7 @@
 %	TITLE SECTION 
 %----------------------------------------------------------------------------------------
 
-\title{Predicting I/O performance in HPC using Artificial Neural Networks} % Poster title
+\title{Predicting I/O-performance in HPC using Artificial Neural Networks} % Poster title
 
 \author{Jan Fabian Schmid and Julian Kunkel} % Author(s)
 
@@ -384,19 +389,20 @@ Error classes are then obtained by clustering the residues of such a model with 
 	The second ANN is often able to classify file accesses correctly in respect to their I/O-path.
 	
 	\begin{table}
-		\vspace{0ex}
-		\begin{tabular}{l|r|r}%
-			&  \multicolumn{2}{|c}{mean absolut error (s)}\\ \hline
+		\scriptsize
+		\vspace{0.4cm}
+		\begin{tabular}{l|r|r|r|r}%
+			&  \multicolumn{2}{|c}{MAE (s)}&  \multicolumn{2}{|c}{MSPE (\%)}\\ \hline
 			%\toprule
-			Modell & seq. access & rnd. access\\ \hline
+			Modell & seq. access & rnd. access & seq. access & rnd. access\\ \hline
 			%\midrule
-			Linear regression & $7.6\cdot 10^-5$ & $4.76\cdot 10^-3$ \\
-			ANN & $6.0\cdot 10^-5$ & $3.13\cdot 10^-3$ \\
-			ANN + time dependencies & $5.7\cdot 10^-5$ & $3.05\cdot 10^-3$\\
-			ANN + error classes & $2.0\cdot 10^-5$ & $1.03\cdot 10^-3$ \\
+			Linear regression & $7.6\cdot 10^-5$ & $4.76\cdot 10^-3$ & 59 & 14185  \\
+			ANN & $6.0\cdot 10^-5$ & $3.13\cdot 10^-3$ & 22 & 530 \\
+			ANN + time dependencies & $5.7\cdot 10^-5$ & $3.05\cdot 10^-3$ & 22 & 619\\
+			ANN + error classes & $2.0\cdot 10^-5$ & $1.03\cdot 10^-3$ & 14 & 119\\
 			%\bottomrule
 		\end{tabular}
-		\caption{Mean absolut errors of the different models for the two different file access patterns used in the benchmark-tests.}
+		\caption{Mean absolut errors and mean square percentage errors of the different models for the two different file access patterns used in the benchmark-tests.}
 		\label{residues}
 	\end{table}
 	
@@ -464,7 +470,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 	\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
 	\vspace*{-2cm}
 	\begin{exampleblock}{}
-		\vspace*{-1.2cm}
+		\vspace*{-1cm}
 		%\hspace*{5cm}
 		\textbf{Contact Information:}
 		\vspace*{-0.4cm}

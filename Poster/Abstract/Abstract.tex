@@ -1,0 +1,43 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[german]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{stmaryrd}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsxtra}
+\usepackage[round]{natbib}
+\usepackage{listings}  
+\usepackage{graphicx}  
+
+\renewcaptionname{german}{\contentsname}{Inhalt}
+\renewcaptionname{german}{\listfigurename}{Abbildungen}
+\renewcaptionname{german}{\listtablename}{Tabellen}
+\renewcaptionname{german}{\figurename}{Abb.}
+\renewcaptionname{german}{\tablename}{Tab.}
+\newcaptionname{german}{\lstlistingname}{Algorithmus}
+
+\newtheorem{theorem}{Theorem} 
+\newtheorem{definition}[theorem]{Definition} 
+
+
+\begin{document}
+
+\section*{{\large Predicting I/O-performance in HPC using Artificial Neural Networks}}
+% of the most efficient file access parameters and patterns can be a crucial factor to program performance while being difficult to find.
+
+The prediction of file access times is an important part in the development of models to the storage systems of super computers.
+These models can then be used to develop analysis tools which support the integration of efficient I/O-behaviour.\\
+We analysed the parallel storage system of a super computer by measuring file access times in various test series.
+Afterwards different models were developed and tested in their ability of predicting access times.
+Thereby models utilizing artificial neural networks achieved better results than linear regression models.\\
+A phenomenon in the measurements of file accesses stand out in particular: File accesses with equal parameter values arranged in multiple groups that are differentiated with a step in the magnitude of access times.\\
+These steps in the access times can be explained with a different processing of the file accesses in the storage system, were different I/O-paths have been used.
+Because I/O-paths are unknown, knowledge about them has to be derived from other factors.
+On the one hand we tried to exploit time dependencies occurring in the measurements, \textit{this however did not led to significant hints about I/O-paths}, on the other hand a method was used were residues of simple models like linear regression were utilized.
+To obtain an approximation of I/O-paths the residues were clustered into classes that correspond to I/O-paths.
+The analysis of these classes showed that they contain meaningful information about I/O-paths that can be used for better access time predictions.
+
+\end{document}
+
