@@ -72,7 +72,7 @@
 \newlength{\threecolwid}
 \setlength{\paperwidth}{1189mm} % A0 width: 46.8in
 \setlength{\paperheight}{841mm} % A0 height: 33.1in
-\setlength{\sepwid}{0.005\paperwidth} % Separation width (white space) between columns
+\setlength{\sepwid}{0.00\paperwidth} % Separation width (white space) between columns
 \setlength{\onecolwid}{0.22\paperwidth} % Width of one column
 \setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
 \setlength{\threecolwid}{0.708\paperwidth} % Width of three columns
@@ -153,15 +153,16 @@
 There is a need for tools that help users to implement efficient input/output (I/O) in their software, because optimizing I/O-behaviour is a complex and time-consuming task.
 Finding the best access parameters and patterns is difficult, mainly because of the use of complex parallel storage systems in HPC.
 %Currently users have to optimize their programs at great expense to each system individually without much assistance.
-For the development of tools to support the implementation of efficient I/O the availability of a computational model of the storage system is key.\medskip
+For the development of tools to support the implementation of efficient I/O, the availability of a computational model of the storage system is key.\medskip
 
-For single hard disk systems such a model can be derived analytical \cite{Ruemmler94anintroduction}, however for the complex storage system of a super computer these models become too difficult to configure \cite{DBLP:conf/npc/ZhangLZJC10}.
+For single hard disk systems such a model can be derived analytically \cite{Ruemmler94anintroduction}, however for the complex storage system of a super computer these models become too difficult to configure \cite{DBLP:conf/npc/ZhangLZJC10}.
 Therefore we tried to find a good predictor for I/O-performance using a machine learning approach with artificial neural networks (ANNs).
-A hypothesis was then made: \textbf{The I/O-path has significant influence on the time needed for a file access.}\medskip
+A hypothesis was then proposed: \textbf{The I/O-path significantly influences the time needed for a file access.}\medskip
 %In particular the access time for a file access is more dependent on the I/O-path used in the storage system than on the access size for example.
 
 To test our hypothesis we used ANNs with different input information for the prediction of access times.
 For the use of I/O-paths as input information for the ANNs we developed a method to compute an approximation of the different I/O-paths the storage system used during a benchmark-test.
+This method utilizes error classes.
 
 \end{block}
 
@@ -207,41 +208,10 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 
 \begin{block}{Model of the I/O-path}
 	
-	The processing of a file access in the storage system can be viewed using the I/O-path.
-	That is \textbf{the path from the invoking processor to the storage medium that contains the necessary data}.
-	The resulting access time of the process is then dependent on the depth of the path, because the further the path leads into the storage system, the slower the storage media gets.
-	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system that is connected via network to the computer nodes.\medskip
-	
-	Our measurements showed, as can be seen in figure \ref{exploration}, that the access times increase with access sizes.
-	However a phenomenon that can be explained with the I/O-path model can be seen as well; \textbf{access times of measurements with equal parameter values are split into several groups of access times.}
-	The used I/O-paths for the file accesses distinguishes these groups of measurements through a step in the magnitude of access time.
-	%Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
-	
-	\begin{figure}
-		%\flushleft
-		\captionsetup[subfigure]{margin={-0.4cm,0cm}}
-		\subfloat[Sequential access pattern]{
-			%\includegraphics[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}
-			\begin{tikzpicture}[spy using outlines={circle,black,magnification=2.2,size=4.5cm, connect spies}]
-			\node {\pgfimage[interpolate=true,width=.53\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
-			%\draw (3.5,0.5) ellipse (1 and 1);
-			\spy on (3.4,0.5) in node [left] at (14,1.25);
-			\end{tikzpicture}
-		}
-		%\hfill
-		\\
-		\captionsetup[subfigure]{margin={-0.4cm,0cm}}
-		\vspace*{0.25cm}	
-		\hspace*{-7.365cm}		
-		\subfloat[Random access pattern]{
-			%\hspace*{-5cm}
-			\includegraphics[width=.53\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
-		}
-		\vspace*{-0.05cm}	
-		\caption{Access times of measured file accesses. The access sizes increase from left to right, all measurements with equal parameter values have the same color. In the highlighted section the described step in the access time occurs.}
-		\label{exploration}
-	\end{figure} 
-	
+	The processing of a file access in the storage system can be viewed using the I/O-path, which is \textbf{the path from the invoking processor to the storage medium that contains the necessary data}.
+	The resulting access time of the process then depends on the depth of the path, because the further the path leads into the storage system, the slower the storage media gets.
+	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system that is connected via network to the computer nodes. %\medskip
+		
 %	\begin{tikzpicture}[spy using outlines={circle,black,magnification=5,size=1.5cm, connect spies}]
 %		\node {\pgfimage[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
 %		\spy on (0,1) in node [left] at (10,1.25);
@@ -267,13 +237,43 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 	
 \end{block}
 
-\vspace*{-2cm}
+%\vspace*{-2cm}
 \begin{block}{Benchmark-Tests}
 	
 	The measurements were done on the super computer Mistral of the DKRZ (Deutsches Klimarechenzentrum).
 	Mistral operates with the parallel distributed file system Lustre and consist of over 1500 computing nodes and 30 petabyte storage.
-	\textbf{Two different use cases were tested: Sequential and random file access}.
-	Access sizes varied from 1\,B to 16\,MiB.
+	\textbf{Two different use cases were tested: Sequential and random file access.}
+	Access sizes varied from 1\,B to 16\,MiB.\medskip
+	
+		Our measurements showed, as can be seen in figure \ref{exploration}, that the access times increase with access sizes.
+		However a phenomenon that can be explained with the I/O-path model can be seen as well: \textbf{Access times of measurements with equal parameter values are split into several groups of access times.}
+		The used I/O-paths for the file accesses distinguishes these groups of measurements through a step in the magnitude of access time.
+		%Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
+		
+		\begin{figure}
+			%\flushleft
+			\captionsetup[subfigure]{margin={-0.4cm,0cm}}
+			\subfloat[Sequential access pattern]{
+				%\includegraphics[width=.55\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+				\begin{tikzpicture}[spy using outlines={circle,black,magnification=2.2,size=4.5cm, connect spies}]
+				\node {\pgfimage[interpolate=true,width=.53\textwidth]{src/plot_SizeSorted_log_read_seq.png}};
+				%\draw (3.5,0.5) ellipse (1 and 1);
+				\spy on (3.4,0.5) in node [left] at (14,1.25);
+				\end{tikzpicture}
+			}
+			%\hfill
+			\\
+			\captionsetup[subfigure]{margin={-0.4cm,0cm}}
+			\vspace*{0.25cm}	
+			\hspace*{-7.365cm}		
+			\subfloat[Random access pattern]{
+				%\hspace*{-5cm}
+				\includegraphics[width=.53\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
+			}
+			\vspace*{-0.05cm}	
+			\caption{Access times of measured file accesses. The access sizes increase from left to right, all measurements with equal parameter values have the same color. In the highlighted section the described step in the access time occurs.}
+			\label{exploration}
+		\end{figure} 
 	
 \end{block}
 	
@@ -287,7 +287,7 @@ For the use of I/O-paths as input information for the ANNs we developed a method
 \begin{block}{Models}
 	
 	Different models were used for the prediction of measured access times of file accesses.
-	As baseline model linear regression was used for a simple mapping of access size to measured access time.
+	As baseline model linear regression was used for a simple mapping of access size to corresponding access time.
 	Additionally three \textbf{models with different input information utilizing ANNs were used}.
 	Every ANN-model received information about access sizes, file offsets and access types as input.
 	One ANN also received information about the past data throughputs of the system, this can be used to exploit time dependencies of the I/O-performance in the system (see figure \ref{time_dep}). The last ANN received error classes as additional input.
@@ -390,7 +390,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 	
 	\begin{table}
 		\scriptsize
-		\vspace{0.4cm}
+		\vspace{0.1cm}
 		\begin{tabular}{l|r|r|r|r}%
 			&  \multicolumn{2}{|c}{MAE (s)}&  \multicolumn{2}{|c}{MSPE (\%)}\\ \hline
 			%\toprule
@@ -414,7 +414,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 %			{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \seqcount & \rndcount}%
 %		\end{tabular}
 	
-	\vspace*{-0.75cm}
+	\vspace*{-1.5cm}
 	\begin{figure}
 		\subfloat[ANN without error classes]{
 			\includegraphics[width=.47\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
@@ -442,12 +442,17 @@ Error classes are then obtained by clustering the residues of such a model with 
 %	CONCLUSION
 %----------------------------------------------------------------------------------------
 
-\vspace*{-2cm}
+\vspace*{-2.1cm}
 \begin{block}{Conclusion}
 
 	The hypothesis is supported by our data.
-	It is therefore necessary to deduce information about I/O-paths to make predictions for file access times.
-	This can be done with the introduced method of computing error classes, however further investigations for its practical utilization have to be done. 
+	For a good model of HPC storage systems it is therefore necessary to deduce information about I/O-paths.
+	If measured access times are available this can be done with the introduced method.\\
+	The method could be a starting point for the development of a tool that provides information about I/O-paths used during the execution of a program.
+	
+	%approximates the proportions of used I/O-paths.
+	%however further investigations for its practical utilization have to be done.
+	
 
 \end{block}
 
@@ -455,7 +460,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 %----------------------------------------------------------------------------------------
 %	REFERENCES
 %----------------------------------------------------------------------------------------
-
+\vspace*{-0.5cm}
 \begin{block}{References}
 
 \nocite{*} % Insert publications even if they are not cited in the poster
@@ -468,7 +473,7 @@ Error classes are then obtained by clustering the residues of such a model with 
 	
 	\setbeamercolor{block alerted title}{fg=black,bg=white} % Change the alert block title colors
 	\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
-	\vspace*{-2cm}
+	\vspace*{-2.4cm}
 	\begin{exampleblock}{}
 		\vspace*{-1cm}
 		%\hspace*{5cm}
