@@ -1,0 +1,21 @@
+weak accept:
+I like the idea of using ANN for modeling I/O in supercomputer. It is clearly motivated and explained. Waiting for the tool based on this approach... My only recommendation is to reduce the text amount: usually people don’t like to read much text on poster.
+
+
+
+strong accept:
+It is clear that I/O operations have strong influence on the system performance. So it is very important to analyze I/O complexity and to predict required time needed for I/O operation. Presented numerical results are very promising. I thing the poster can be accepted.
+
+
+
+weak accept:
+The poster presents a model for predicting performance of HPC I/O using Artificial Neural Networks. The content is well structured with a good balance between experiments and analysis of the results.
+
+The authors are doing the experiments on the Mistral supercomputing at DKRZ using a Lustre file system. However it is no clear if the results are file system independent. Is the ANM able to replicate the access pattern on a GPFS file system?
+
+How should the model be modified for deeper file tiers especially with new burst buffer I/O systems (for example DDN IME)?
+
+
+
+weak accept:
+This poster investigates I/O performance model using linear regression and artificial neural networks (ANN). Since there are several I/O paths that affect the I/O performance even with the same parameter. Simple linear regression does not produce a good prediction model. This poster introduces error classes by clustering the I/O performance. Using ANN and additional error class input produces better prediction model. The result is rather straightforward, but this may help further performance analysis of storage system and applications.
