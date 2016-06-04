@@ -1,17 +1,10 @@
-The prediction of file access times is an important part for the modelling of the storage systems of super computers.
-These models can then be used to develop analysis tools which support the integration of efficient I/O-behaviour.
+The prediction of file access times is an important part for the modeling of the storage systems of super computers. These models can be used to develop analysis tools which support the integration of efficient I/O-behavior.
 
-We analysed the parallel storage system of a super computer by measuring file access times in various test series.
-Afterwards different models were developed and tested in their ability of predicting access times.
-Thereby models utilizing artificial neural networks achieved better results than linear regression models.
+We analyzed the parallel storage system of a super computer by measuring file access times in various test series. Afterwards, different models were developed and tested in their ability of predicting access times. Thereby, models utilizing artificial neural networks achieved better results than linear regression models.
 
 A phenomenon in the measurements of file accesses stands out in particular:
-File accesses with equal parameter values clustered in multiple groups that are differentiated with a gap in the magnitude of access times.
+File accesses with equal parameter values have several typical access times.
 
-These steps in the access times can be explained with a different processing of the file accesses in the storage system where different I/O-paths have been used.
-Because I/O-paths can't be measured directly, knowledge about them has to be derived from other factors.
-On the one hand we tried to exploit time dependencies occurring in the measurements, this however did not lead to significant indications about I/O-paths.
-On the other hand we used a method that utilizes residues of simple models like linear regression.
-To obtain an approximation of I/O-paths the residues were clustered into classes that correspond to I/O-paths.
-The analysis of these classes showed that they contain meaningful information about I/O-paths.
-
+The steps in the magnitude between these typical access times can be explained with a different processing of the file accesses in the storage system. They have been processed on varying I/O-paths.
+Because I/O-paths can't be measured directly, knowledge about them has to be derived from other factors. On the one hand we tried to exploit time dependencies occurring in the measurements, this however did not lead to significant indications about I/O-paths.
+On the other hand we used a method that utilizes residues of simple models like linear regression. To obtain an approximation of I/O-paths, the residues were clustered into classes that correspond to them. The analysis of these classes showed that they contain meaningful information about I/O-paths.

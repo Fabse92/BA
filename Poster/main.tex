@@ -152,9 +152,9 @@
 \begin{block}{Introduction}
 	
 Tools are demanded that help users of HPC-facilities to implement efficient input/output (I/O) in their programs.
-It is difficult to find the best access parameters and patterns, due to complex parallel storage systems.
+It is difficult to find the best access parameters and patterns due to complex parallel storage systems.
 %Currently users have to optimize their programs at great expense to each system individually without much assistance.
-To develop tools, which support the implementation of efficient I/O, a computational model of the storage system is key.\medskip
+To develop tools which support the implementation of efficient I/O a computational model of the storage system is key.\medskip
 
 For single hard disk systems such a model can be derived analytically \cite{Ruemmler94anintroduction}; however, for the complex storage system of a super computer these models become too difficult to configure \cite{DBLP:conf/npc/ZhangLZJC10}.
 Therefore we searched for good predictors of I/O-performance using a machine learning approach with artificial neural networks (ANNs).
@@ -200,8 +200,8 @@ This method utilizes error classes.
 
 \begin{block}{Model of the I/O-path}
 	
-	The processing of a file access in the storage system can be viewed using the I/O-path, which is \textbf{the path from the invoking processor to the storage medium that contains the data}.
-	The resulting access time of the process depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
+	The processing of a file access in the storage system can be viewed using the I/O-path which is \textbf{the path from the invoking processor to the storage medium that contains the data}.
+	The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
 	%the further the path leads into the storage system, the slower the storage media gets.
 	While the first storage levels (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes. %\medskip
 		
@@ -234,12 +234,12 @@ This method utilizes error classes.
 \begin{block}{Benchmark-Tests}
 	
 	The measurements were done on the super computer Mistral of the DKRZ (Deutsches Klimarechenzentrum).
-	Mistral operates with the parallel distributed file system Lustre and consist of over 1500 computing nodes and 30 petabyte storage.
+	Mistral operates with the parallel distributed file system Lustre and consists of over 1500 computing nodes and 30 petabyte storage.
 	\textbf{Two different use cases were tested: Sequential and random file access.}
 	Access sizes varied from 1\,B to 16\,MiB.\medskip
 	
 	Our measurements have shown, as can be seen in figure \ref{exploration}, that the access times increase with access sizes.
-	However, a phenomenon that can be explained with the I/O-path model can be seen as well: \textbf{Access times of measurements with equal parameter values are split into several groups of access times.}
+	However, a phenomenon that can be explained with the I/O-path model can be seen as well: \textbf{Access times of measurements with equal parameter values are split into several groups.}
 	The file accesses can be distinguished by a step in the magnitude of access time that is caused by the different I/O-paths the system used.
 	%Different I/O-paths were used for file accesses in these groups, which led to a step in the magnitude of the access time. 
 		
@@ -309,7 +309,7 @@ This method utilizes error classes.
 \vspace*{-2cm}
 \begin{block}{Error Classes}
 	
-The idea of error classes is based on the fact that \textbf{the residues of a simple model are characteristic for the groups of measurements with different typical access times} we obeserved in figure \ref{exploration}. The residues therefore represent the I/O-paths used by the storage system for the corresponding file accesses. 
+The idea of error classes is based on the fact that \textbf{the residues of a simple model are characteristic for the groups of measurements with different typical access times} we observed in figure \ref{exploration}. The residues therefore represent the I/O-paths used by the storage system for the corresponding file accesses. 
 %Here a simple model is a model that doesn't discriminate measurements with similar parameters.
 Error classes are obtained by clustering the residues with a k-Means algorithm.
 
@@ -374,7 +374,7 @@ Error classes are obtained by clustering the residues with a k-Means algorithm.
 
 \begin{block}{Results}
 	
-	From the residues of our models (see table \ref{residues}) it became clear that access times shouldn't be modelled linearly.
+	From the residues of our models (see table \ref{residues}) it became clear that access times shouldn't be modeled linearly.
 	Furthermore, it has been found to be difficult to exploit time dependencies of the storage system.
 	As our hypothesis predicted, \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
 	The error classes allow the ANN to decrease the error significantly.
@@ -387,7 +387,7 @@ Error classes are obtained by clustering the residues with a k-Means algorithm.
 		\begin{tabular}{l|r|r|r|r}%
 			&  \multicolumn{2}{|c}{MAE (s)}&  \multicolumn{2}{|c}{MSPE (\%)}\\ \hline
 			%\toprule
-			Modell & seq. access & rnd. access & seq. access & rnd. access\\ \hline
+			Model & seq. access & rnd. access & seq. access & rnd. access\\ \hline
 			%\midrule
 			Linear regression & $7.6\cdot 10^-5$ & $4.76\cdot 10^-3$ & 59 & 14185  \\
 			ANN & $6.0\cdot 10^-5$ & $3.13\cdot 10^-3$ & 22 & 530 \\
@@ -395,7 +395,7 @@ Error classes are obtained by clustering the residues with a k-Means algorithm.
 			ANN + error classes & $2.0\cdot 10^-5$ & $1.03\cdot 10^-3$ & 14 & 119\\
 			%\bottomrule
 		\end{tabular}
-		\caption{Mean absolut errors and mean square percentage errors of the models for the two different file access patterns.}
+		\caption{Mean absolute errors and mean square percentage errors of the models for the two different file access patterns.}
 		\label{residues}
 	\end{table}
 	
@@ -505,6 +505,7 @@ Error classes are obtained by clustering the residues with a k-Means algorithm.
 %\end{flushright}
 
 %----------------------------------------------------------------------------------------
+
 
 \end{column} % End of the 4 column
 
