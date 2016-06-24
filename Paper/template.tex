@@ -1,7 +1,9 @@
 \documentclass{superfri}
 
 \usepackage{amssymb}
-
+\usepackage{float}
+\usepackage[position=t,singlelinecheck=off]{subfig}
+\usepackage{caption}
 % ------------
 
 \bibliographystyle{plain}
@@ -71,13 +73,56 @@ Application of black-box-modeling is easier and more flexible as it's independen
 Stochastic approaches coupled with data mining methods are mostly used for black-box-modeling; for example a combination of regression trees support vector regression \cite{Dai:2012:SDP:2477169.2477214}, or selective bagging classification and regression trees \cite{DBLP:conf/npc/ZhangLZJC10}.
 
 \subsection{Prediction of I/O-performance with ANNs}
-Computability of ANNs was reasearched by Rojas \cite{Rojas:1996:NNS:235222} and Cybenko \cite{cybenko:mcss} they demonstrated possibility of modeling non linear systems. Cybenko also proved the \textit{universal approximation theorem} which states that feed-forward networks with sufficient complexity exist that can approximate continuous functions on compact subsets of $\mathbb{R}^n$.
-	
+Computability of ANNs was reasearched by Rojas \cite{Rojas:1996:NNS:235222} and Cybenko \cite{cybenko:mcss} they demonstrated possibility of modeling non linear systems. Cybenko also proved the \textit{universal approximation theorem} which states that feed-forward networks with sufficient complexity exist that can approximate continuous functions on compact subsets of $\mathbb{R}^n$.\\
+Crume et al. developed a method using ANNs which exploits periodic patterns in sequences of file access times \cite{Crume:2013:FML:2538542.2538561}.
+A Fourier analysis is used to determine the most important frequencies, which are then used as input information of the ANNs.
+In a following publication they move away from Fourier analysis, but then use additional sine waves as input for the ANNs \cite{crumelatent}.
+This seems to be a promising approach for access time prediction of single hard drives, where the rotational characteristics of the magnetic disk are an essential consideration. It might, however, be difficult to use for more complex systems.
+
 \subsection{I/O-performance prediction in HPC}
+Performance analysis in HPC is a important task to examine the system for improvements in usage.
+For instance Liu et al. simulated scheduling algorithms for research \cite{liu2011towards}. 
+The simulation used DiskSim for prediction of occurring file accesses \cite{Bucy08thedisksim}.\\
+Kunkel et al. utilized access time prediction with decision trees for varying parameterizations of ROMIO for access of non-contiguous data \cite{UMLTPTPONI15}. Instead searching for optimal parameters by testing, they were able to find good values through prediction of performance.
 
 \section{Structure of the analysis}
+The storage system can be analyzed with series of measurements.
+We use synthetic benchmark-tests were many similar measurements follow each other, instead of using arbitrary access parameters for consecutive accesses.
+This approach allows for a in-depth analysis of system behavior for different use cases.\\
+The file access parameters are:
+\begin{itemize}
+	\item \textbf{File-ID}: Identifies the invoked file.
+	\item \textbf{Access size}: Number of bytes to read or write.
+	\item \textbf{OpType}: Type of file access (read or write).
+\end{itemize}
+Directly measurable or derivable attributes are:
+\begin{itemize}
+	\item \textbf{Offset}: Distance of file beginning to the starting point of access.
+	\item \textbf{Delta-Offset}: Can be calculated for file access $i$ as Offset[$i$] - (Offset[i-1] + access size[i-1]).
+	\item \textbf{Access time}: Time in seconds from initiation of the file access to the termination of the process.
+\end{itemize}
+Knowledge of internal aspects of the system about the current system utilization or about the storage media that have to be addressed is not directly available.
 
-\subsection{Benchmark-tests}
+\subsection{Model of the I/O-path}
+The internal processing of a file access in the storage system can be viewed using the I/O-path which is the path from the invoking processor to the storage medium that contains the data. Once the data has been found it is passed-through the levels of storage hierarchy to caches.
+The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
+(\textbf{figure of storage hierarchy?})
+While the first levels in storage hierarchy (Caches) are very quick to respond, the main memory is already magnitudes slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes.\\
+In particular reading file accesses are effected by the depth of the I/O-path, because writing file accesses are usually addressed to the bottom of storage hierarchy to propagate the change to all levels.
+As data in the volatile memory is exchanged frequently the I/O-paths to similar file accesses can change with time.
+
+\subsubsection{I/O-path for access time prediction}
+Due to the exponential decay of processing speed in the hierarchy, file accesses with similar access parameters, but varying I/O-path, are differentiated with a step in the magnitude of access time.
+As the access time is dominated by the slowest component along the I/O-path, a step in the measured access time occurs between to I/O-paths of diverging length.
+In figure \ref{fig:io_paths} measurements of reading file accesses can seen, this figure will be discussed in further detail in the following chapter.
+\begin{figure}
+	\centering
+	\includegraphics[width=.47\textwidth]{src/plot_SizeSorted_log_read_seq.png}
+	\caption{Measurements of reading file accesses. Access sizes increase from left to right and all measurements with equal access parameter values have the same color.}
+	\label{fig:io_paths}
+\end{figure} 
+The different groups of measurements with equal access parameter values (points with the same color) are clearly visible.
+Like described previously the different groups are differentiated with a step in the magnitude of access time and can be explained with varying I/O-paths.
 
 \subsection{Error classes}
 
@@ -86,6 +131,8 @@ Computability of ANNs was reasearched by Rojas \cite{Rojas:1996:NNS:235222} and 
 \section{Evaluation}
 
 \subsection{Test system}
+
+\subsection{Benchmark-tests}
 
 \subsection{Analysis of measurements}
 \label{sec:measurements}
