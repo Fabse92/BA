@@ -1,0 +1,4 @@
+Attribut,Min,Quartil1,Median,Mittel,Quartil3,Max,Korrelation
+Access time, 1.1e-05, 2.6e-04, 4.5e-04, 3.8e-03,2.2e-03,2.1e+00,1.0000
+Access size, 1.0e+00, 2.6e+02, 1.6e+04, 2.0e+06,1.0e+06,1.7e+07,0.2478
+Delta-offset,-1.1e+10,-3.2e+09,-1.1e+07,-1.9e+06,3.1e+09,1.1e+10,0.0015

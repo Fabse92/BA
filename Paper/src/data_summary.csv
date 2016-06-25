@@ -1,0 +1,5 @@
+Attribut,Min,Quartil1,Median,Mittel,Quartil3,Max,Korrelation
+Sequential reading,6.2e-06,6.9e-06,9.7e-06,3.8e-04,1.3e-04,5.6e-02,1.00
+Sequential writing,7.5e-06,8.4e-06,1.6e-05,4.3e-04,2.2e-04,3.0e-02,1.00
+Random reading,6.5e-06, 1.4e-05, 1.8e-03, 7.4e-03,1.3e-02,5.3e-01,1.000
+Random writing,1.1e-05, 2.6e-04, 4.5e-04, 3.8e-03,2.2e-03,2.1e+00,1.0000
