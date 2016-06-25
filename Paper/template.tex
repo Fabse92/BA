@@ -2,8 +2,8 @@
 
 \usepackage{amssymb}
 \usepackage{float}
-\usepackage[position=t,singlelinecheck=off]{subfig}
-\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{subcaption}
 % ------------
 
 \bibliographystyle{plain}
@@ -93,7 +93,7 @@ The file access parameters are:
 \begin{itemize}
 	\item \textbf{File-ID}: Identifies the invoked file.
 	\item \textbf{Access size}: Number of bytes to read or write.
-	\item \textbf{OpType}: Type of file access (read or write).
+	\item \textbf{Access type}: Differentiates reading and writing file accesses.
 \end{itemize}
 Directly measurable or derivable attributes are:
 \begin{itemize}
@@ -114,20 +114,64 @@ As data in the volatile memory is exchanged frequently the I/O-paths to similar 
 \subsubsection{I/O-path for access time prediction}
 Due to the exponential decay of processing speed in the hierarchy, file accesses with similar access parameters, but varying I/O-path, are differentiated with a step in the magnitude of access time.
 As the access time is dominated by the slowest component along the I/O-path, a step in the measured access time occurs between to I/O-paths of diverging length.
-In figure \ref{fig:io_paths} measurements of reading file accesses can seen, this figure will be discussed in further detail in the following chapter.
-\begin{figure}
-	\centering
-	\includegraphics[width=.47\textwidth]{src/plot_SizeSorted_log_read_seq.png}
-	\caption{Measurements of reading file accesses. Access sizes increase from left to right and all measurements with equal access parameter values have the same color.}
-	\label{fig:io_paths}
-\end{figure} 
+In figure \ref{src/plot_SizeSorted_log_read_seq.png} measurements of reading file accesses can seen, this figure will be discussed in further detail in the following chapter.
+\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq.png}{Measurements of reading file accesses. Access sizes increase from left to right and all measurements with equal access parameter values have the same color.}\\
 The different groups of measurements with equal access parameter values (points with the same color) are clearly visible.
 Like described previously the different groups are differentiated with a step in the magnitude of access time and can be explained with varying I/O-paths.
 
 \subsection{Error classes}
+\label{sec:error_classes}
+Error classes are supposed to approximate I/O-paths using the available measurements of file access times.
+To derive such knowledge we need a characteristic that is typical for the different I/O-paths. Knowing the file access parameters and the approximation of I/O-path should allow us to predict the magnitude of access time for this process.\\
+At a first thought one could come up with the idea of clustering the data seen in figure \ref{fig:io_paths}, because the groups of measurements with varying I/O-paths might be correctly differentiated by it. 
+This, however, is not a good approach, one would have to cluster for every set of access parameters individually, otherwise the clusters would be meaningless. In a real application scenario a large number of different access parameters with only very few instances occur, which makes this approach unfeasible.\\
+Another idea might be then to use the difference of an arbitrary value to the measured file access time as parameter for the clustering. 
+Such a value would not be appropriate for all magnitudes of access time occurring in the data, I/O-paths differentiating measurements with small access time might not be discriminated, because the gap between them doesn't matter at the scale of the chosen arbitrary value.\\
+Our approach uses the residues of a model like linear regression that can't differentiate between measurements with equal access parameter values.
+Basically the linear regression predicts an average access time for these measurements.
+The difference of an individual measurement for these access parameters to the average value is then characteristic for the I/O-path.
+Clustering the residues with a k-Means algorithm allows us then to assign each measurement to a specific cluster, which is the approximation of I/O-path.
+We call the retrieved clusters \textbf{error classes}.
+We use the absolute error of linear regression as clustering parameter so that one cluster can for example represent an deviation of 1 millisecond.
+Ideally it might be the case that file accesses that took 1 millisecond longer than usual were processed on the same I/O-path.
+In that case error classes are directly corresponding to I/O-paths. \medskip
+
+We will use error classes to quantify the importance of knowledge about I/O-paths for access time prediction.
+For the actual prediction error classes can't be used, because a measured access time is required to determine the error class of a measurement.
+However, the method could be used for a tool, which analyses the I/O made during application of a program. 
+It could analyze whether more file accesses throughout execution were slower than expected and therefore used unfavorable I/O-paths.
+If a direct correlation of error class to I/O-paths were found, such an tool might be able to inform about percentages of used I/O-paths.
 
 \subsection{Models}
+Different models were used to predict access times of file accesses.
+Each model seeks to correlate its known file access parameters to the corresponding access time. 
+Linear regression was used as a baseline model with a simple mapping of access size to access time.
+Additionally, three models with different input information utilizing ANNs were used:
+\begin{itemize}
+	\item The most simple ANN-model only received information about access sizes, delta-offsets and access types as input.
+	\item A second ANN-model, called \textbf{ema-model}, received additionally to the parameters of the previous model information about the past data throughputs of the system, which can be used to exploit time dependencies of the I/O-performance.
+	\item The third ANN-model, called \textbf{error-class-model}, received error classes in addition to the access parameters of the first ANN-model.
+\end{itemize}\medskip
 
+The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
+Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
+Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
+The peaks in access time are occurring periodically with knowledge about the period of peaks better access time predictions could be made.
+\fig{width=.47\textwidth}{src/plot_From100001to100250_read_seq.png}{An example of a figure}\\
+Our second model is supposed to use its input information of previous data throughput for that.
+The data throughput has peaks the same period as the access time.
+Internally the model calculates the exponential moving average (EMA) of data throughput of measurement $i$ as:
+\begin{equation}
+EMA(i) = 0.5 \cdot t(i)+ 0.5 \cdot EMA(i-1)
+\end{equation}
+With $t(i)$ the access time of measurement $i$.
+The influence of data throughput of a measurement is exponentially decreasing in the series of EMAs.
+In figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
+\fig{width=.47\textwidth}{src/ema2.png}{Exponential moving average in red for a graph with perdiodic peaks.}\\
+The ema-model can use $EMA(n-1)$ for the prediction of access time of measurement $n$.
+If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions.\medskip
+
+The error-class-model is used as described in chapter \ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths.
 \section{Evaluation}
 
 \subsection{Test system}
@@ -140,6 +184,12 @@ Like described previously the different groups are differentiated with a step in
 \subsection{Analysis of error classes}
 
 \subsection{Prediction of file accesses}
+From the residues of our models (see table \ref{residues}) it became clear that access times shouldn't be modeled linearly.
+Furthermore, it has been found to be difficult to exploit time dependencies of the storage system.
+As our hypothesis predicted, \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
+The error classes allow the ANN to decrease the error significantly.
+In figure \ref{preds} the benefit of error classes as input can be seen:
+The second ANN is often able to classify file accesses correctly in respect to their I/O-path.
 
 \section{Conclusion and future work}
 
