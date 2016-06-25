@@ -158,8 +158,9 @@ Additionally, three models with different input information utilizing ANNs were 
 The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
 Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
 Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
-The peaks in access time are occurring periodically with knowledge about the period of peaks better access time predictions could be made.
+The peaks in access time are occurring periodically. An occurrence of such a pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
 \fig{width=.47\textwidth}{src/plot_From100001to100250_read_seq.png}{An example of a figure}\\
+With knowledge about these period of peaks a model could make better access time predictions.
 Our second model is supposed to use its input information of previous data throughput for that.
 The data throughput has peaks the same period as the access time.
 Internally the model calculates the exponential moving average (EMA) of data throughput of measurement $i$ as:
@@ -246,19 +247,133 @@ The phenomenon of these splits clarifies why despite of the strong correlation o
 In figure \ref{src/plot_SizeSorted_log_read_rnd.png} the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
 For writing file accesses the splits only occur occasionally and are less drastic; these measurements might be well represented with a linear model.
 
-
 \subsection{Analysis of error classes}
+Error classes are calculated as clusters of a k-means algorithm applied on the residues of the linear regression model.
+As an estimation of possible I/O-paths, we classify into 10 clusters.
+In figure \ref{src/plot_rnd_linreg_Size.png} the predictions of linear regression on the random reading measurements can be seen as blue points.
+\fig{width=.47\textwidth}{src/plot_rnd_linreg_Size.png}{Predicted access times of the linear regression model as blue points.}\\
+For clustering the difference between the prediction of linear regression and actual access time is used.
+In figure \ref{src/linreg_error_clustering_rnd_all.png} the residues for all measurements are shown, the different colors correspond to the computed clusters, which are our error classes.
+\fig{width=.47\textwidth}{src/linreg_error_clustering_rnd_all.png}{Residues of the linear regression model, colors are corresponding to error classes.}\\
+The clusters are differentiated along horizontal lines in the graphs.
+Without going into further details one can recognize from the graphs already that the error classes are not perfect approximators of I/O-paths.
+The measurements with smallest access sizes (on the far left) are only differentiated into two different error classes; however, the two error classes mainly represent  on the one hand measurements with close to 0 or negative error and positive errors on the other hand, what seems to be a reasonable approximation of I/O-paths.\medskip
+
+The computed error classes can be examined in further detail with the data from table \ref{tab:error_classes}.
+Ideally for a good correlation of I/O-paths to error classes each error class should represent one particular value of data throughput, which would be characteristic for the slowest storage medium occurring in the I/O-path. 
+This is mostly true for the error classes. The classes 4, 5 and 6, however, have with $5.5\cdot10^7$, $6.1\cdot10^7$ and $5.8\cdot10^7$ very similar average throughput values, which might be a hint for too many error classes.\\
+\tab{tab:error_classes}{Characteristics of computed error classes for random file accesses in detail.}{
+	\centering
+	\scriptsize
+	\begin{tabular}{|r|r|r|r|r|r|r|r|}\hline%
+		& \multicolumn{3}{|c|}{averaged values} & \multicolumn{3}{|c|}{prediction error} & \multicolumn{1}{r|}{} \\ \hline
+		Error class & Throughput (B/s) & Access size (B) & Access time (s) & Min (s) & Average (s) & Max (s) & members of cluster \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{src/rnd_linreg_classes_on_seq.csv}{tp=\tp,idx = \idx,rndcount=\rndcount,minerror=\minerror, meanerror = \meanerror, maxerror = \maxerror, seqcount = \seqcount, size = \size, duration = \duration}%
+		{\idx & \tp & \size & \duration & \minerror & \meanerror & \maxerror & \rndcount}%
+	\end{tabular}
+}\\
+The vast majority of measurements were assigned to error class 3 which is the error class that covers the range around a prediction error of 0.
+Therefore most access times can be predicted sufficiently by the linear regression model.\\
+One sign for correct approximation of I/O-paths is it when error classes exist which have equal access sizes but different access times.
+In such cases a differentiation of measurements with equal access parameters takes place.
+This occurs for example with the error classes 4 and 8. Both classes have an average access size of $1.2\cdot10^6$ bits, but with 0.0143 and 0.2741 seconds very different average access times.\\ 
+The error classes of sequential file accesses are display similar characteristics as the here analyzed random file accesses.
 
 \subsection{Prediction of file accesses}
-From the residues of our models (see table \ref{residues}) it became clear that access times shouldn't be modeled linearly.
-Furthermore, it has been found to be difficult to exploit time dependencies of the storage system.
-As our hypothesis predicted, \textbf{it is essential to use knowledge about I/O-paths for precise predictions of access times}.
-The error classes allow the ANN to decrease the error significantly.
-In figure \ref{preds} the benefit of error classes as input can be seen:
-The second ANN is often able to classify file accesses correctly in respect to their I/O-path.
+After we analyzed the benchmarks and error classes we will study the results of our models.
+The ANN-models were learned with a wide span of different parameter values for the number of hidden layers and number of neurons per layer.
+They had 1000 randomly chosen measurements for pair of access size and access type as training set.
+In total that are 34\,000 measurements which should be a significant amount of data to avoid a situation in which a model isn't able to train a model due to a lack of information about the system. The test set consist of all measurements that weren't used for training.\medskip
+
+In tables \ref{tab:seq-stats} and \ref{tab:rnd-stats} characteristics of the ANNs with the smallest average prediction error can be seen.
+The models for the sequential data set had in general bigger network structures.
+\tab{tab:seq-stats}{Characteristics of the most succesful ANN-models for sequential file accesses.}{
+	\centering
+	\scriptsize
+	\begin{tabular}{|r|r|r|r|r|}\hline%
+		Model & Hidden layers & Neurons per layer & Computing iterations & Training duration (s) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{src/latex_seq_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+		{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+	\end{tabular}
+}
+\tab{tab:rnd-stats}{Characteristics of the most succesful ANN-models for random file accesses.}{
+	\centering
+	\scriptsize
+	\begin{tabular}{|r|r|r|r|r|}\hline%
+		Model & Hidden layers & Neurons per layer & Computing iterations & Training duration (s) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{src/latex_rnd_net-stats.csv}{Modell=\Model,verdeckteSchichten=\verdeckteSchichten,Neuronen=\Neuronen, Iterationen = \Iterationen, Trainingsdauer = \Trainingsdauer}%
+		{\Model & \verdeckteSchichten & \Neuronen & \Iterationen & \Trainingsdauer}%
+	\end{tabular}
+}\\
+The prediction errors of our models can be found in the tables \ref{tab:seq-results} and \ref{tab:rnd-results}.
+We used the following metrics if not stated otherwise the values refer to the ANN of the model with smallest average prediction error:
+\begin{itemize}
+	\item \textbf{MAE}: Mean average error.
+	\item \textbf{Avg-MAPE}: The mean absolute percentage error averaged about 12 instances of ANNs with equal parameter values, but different (random) initial network weights.
+	\item \textbf{Train-MAPE}: The mean absolute percentage error on the training set. 
+	\item \textbf{MAPE}: The mean absolute percentage error (on the test set).
+	\item \textbf{MSPE}: Mean squared percentage error.
+	\item \textbf{RQ3}: Third quartile of prediction errors, which means that three quarters of the test set were predicted with smaller deviation to the true value that this.
+	\item \textbf{PMax}: The biggest prediction error in percent.
+\end{itemize}
+First of all, a good thing is that for all models values for Avg-MAPE, Train-MAPE and MAPE are close to each other.
+This means that the training set was representative for the test set, and also that the model behavior was stable and did not depend so much on the random initiation of network weights.
+\tab{tab:seq-results}{Results of our models on the sequential file accesses.}{
+	\centering
+	\scriptsize
+	\begin{tabular}{|p{2.5cm}|r|p{1.4cm}|p{1.4cm}|r|r|r|r|}\hline%
+		Model & MAE (s) & Avg- \mbox{MAPE (\%)} & Train- \mbox{MAPE (\%)} &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & PMax (\%) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{src/latex_seq_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+		{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max }%
+	\end{tabular}
+}
+\tab{tab:rnd-results}{Results of our models on the random file accesses.}{
+	\centering
+	\scriptsize
+	\begin{tabular}{|p{2.5cm}|r|p{1.4cm}|p{1.4cm}|r|r|r|r|}\hline%
+		Model & MAE (s) & Avg- \mbox{MAPE (\%)} & Train- \mbox{MAPE (\%)} &  MAPE (\%) & MSPE (\%) & RQ3 (\%) & PMax (\%) \\\hline\hline
+		\csvreader[late after line=\\\hline]%
+		{src/latex_rnd_results.csv}{Modell=\Model,MAF=\MAF,RMAF=\RMAF, RMQA = \RMQA, Q3 = \Q3, Max = \Max,RMAFTraining = \RMAFTraining, Bereich = \Bereich, RMAFavg = \RMAFavg}%
+		{\Model & \MAF & \RMAFavg & \RMAFTraining & \RMAF & \RMQA & \Q3 & \Max}%
+	\end{tabular}
+}\\
+It becomes clear that linear regression is sub-optimal for the prediction of file access times for random file accesses, where it's MAPE is about 5578.4\,\%. For the sequential case the results are better, but still with more than three times higher average percentage error.\medskip
+
+The second thing one can take from the results is that the ema-model did not work as intended.
+It's error values are very close to the simple ANN-model which had less input information to work with.
+Going a little bit more into detail it is notable that the MAPE is smaller for the ema-models compared to the model without EMA-values.
+Thus the additional knowledge was in general useful for better prediction; however, the MSPE and PMax values are higher for the ema-model which means that some predictions were significantly misguided by the EMA-function value.\medskip
+
+In contrast, the error-class-model worked excellent. The mean average error compared with the model without error classes has been reduced to a third for both use cases.
+This is a strong confirmation for the thesis that knowledge about I/O-paths is crucial for access time prediction.\medskip
+
+To have a further look at the difference error classes make for access time prediction, we analyze the predictions of the two models for the case of random reading file access in figures \ref{src/plot_onlyPred_tuple1_Duration_rnd.png} and \ref{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}.
+\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_Duration_rnd.png}{Predicted access times of the simple ANN-model as blue points.}\\
+\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}{Predicted access times of the error-class-model as blue points.}\\
+The model without knowledge about I/O-paths is forced to predict some kind of average access time for each set of measurements with equal access parameter values, therefore its predictions are in between the two main groups of access time for the higher access sizes.
+With knowledge about our approximations of I/O-paths the error-class-model can discriminate measurements with equal access parameter values and achieve more accurate predictions that way.
 
 \section{Conclusion and future work}
+In this work we analyzed the parallel storage system of a supercomputer.
+Using a machine learning approach with artificial neural networks we developed different models for file access time prediction.
+Through our study of measured file access times and model results we were able to gain knowledge about the behavior of the storage system.
+We found out that linear models are not feasible for access time prediction, despite the strong correlation of access time to access size.
+Our models utilizing ANNs achieved much better results than linear regression.\\
+The hypothesis that knowledge about the internal processing of a file access in form of I/O-paths is essential for access time prediction was supported by our data.
+This is because file accesses with equal access parameters can produce strongly deviating access times depending on the used I/O-path.\\
+Our approach of deriving knowledge about I/O-paths by exploiting periodic performance of the storage system was not successful.
+The additional input information did not lead to a significant improvement of access time predictions.\\
+However, with our method of clustering residues of linear regression for approximations of I/O-paths as error classes, we were able to illustrate the importance of I/O-paths for access time prediction. The ANN-model with additional input information of error classes was able to reduce its average prediction error to a third compared to the ANN-model with only access parameter values as input information.\medskip
 
+For future work a more elaborate approach for exploitation of the periodic storage performance could be used. 
+Crume et al. had success on access time prediction for single hard drives using Fourier analysis \cite{Crume:2013:FML:2538542.2538561}.\\
+Secondly the error path method could be researched in further detail.
+Residues of other models than linear regression could be used and one could try to assign error classes to I/O-paths in the real system.
+The method could also be a starting point to develop a tool that provides information on the effectiveness of the used I/O during execution of a program.
 
 \ack{Put the acknowledgements after the last section, like this.}
 \openaccess

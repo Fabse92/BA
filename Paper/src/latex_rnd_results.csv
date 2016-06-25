@@ -1,0 +1,6 @@
+Modell,MAF,RMAF,RMQA,Q3,Max,RMAFTraining,Bereich,RMAFavg
+error-class-model,0.00103, 31, 119, 27,  4272, 32,40,     32
+simple ANN-model,0.00313,103, 530, 70, 21786,104,38,    106
+ema-model,0.00305, 86, 619, 62, 45320, 87,37,    421
+Linear regression,0.00476, 5578.4,14185,1158.1,  46941,NA,NA,NA
+
