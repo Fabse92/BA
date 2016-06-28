@@ -59,6 +59,11 @@ Unfortunately I/O-paths are difficult to deal with, as it is unknown which path 
 This paper is organized as follows:
 Related work is provided in Section\,\ref{sec:related}.
 % TODO error class...
+Firstly, we analyze behavior of the storage system by measuring a series of access times.
+Then, a simplified model of the I/O path is developed.
+Next, we describe how we derive potential classes (alternative I/O path) from the error of a prediction model.
+Finally, a set of models 
+
 
 \section{Related work}
 \label{sec:related}
@@ -104,8 +109,9 @@ Kunkel et al. utilized access time prediction with decision trees for varying pa
 Instead searching for optimal parameters by testing, they were able to find good values through prediction of performance.
 
 
-\section{Structure of the analysis}
-We analyze behavior of the storage system by measuring a time series of access times.
+\section{Modeling I/O Access Times}
+
+\subsection{Characteristics of the Data}
 This approach allows for an in-depth analysis of system behavior for different use cases.
 We used a synthetic benchmark in which identical measurements for random or sequential I/O is performed and the access time is measured individually. % , instead of using arbitrary access parameters for consecutive accesses ??? TODO was meint das
 The resulting timings are stored together with file access parameters in a file that is then used to build and validate the models.
@@ -170,9 +176,10 @@ It could analyze whether more file accesses throughout execution were slower tha
 If a direct correlation of error class to I/O-paths were found, such an tool might be able to inform about percentages of used I/O-paths.
 
 \subsection{Models}
-Different models were used to predict access times of file accesses.
+Access times of file accesses can be predicted using various models.
+While we evaluated several models for this paper, only a few relevant models are described; more models are described in \cite{TODO}. % TODO: zitiere auch noch deine Arbeit ... Vorne, hier nochmal.
 Each model seeks to correlate its known file access parameters to the corresponding access time. 
-Linear regression was used as a baseline model with a simple mapping of access size to access time.
+Linear regression is used as a baseline model with a simple mapping of access size to access time.
 Additionally, three models with different input information utilizing ANNs were used:
 \begin{itemize}
 	\item The most simple ANN-model only received information about access sizes, delta-offsets and access types as input.
@@ -183,8 +190,10 @@ Additionally, three models with different input information utilizing ANNs were 
 The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
 Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
 Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
-The peaks in access time are occurring periodically. An occurrence of such a pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
-\fig{width=.47\textwidth}{src/plot_From100001to100250_read_seq.png}{An example of a figure}\\
+The peaks in access time are occurring (almost) periodically. 
+% TODO: Im allgemeinen hat das aber nicht funktioniert, oder? Hier n bissl klarer formulieren, das es manchmal funktionert, aber nicht generell ? Oder nicht?
+An occurrence of such a pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
+\fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{TODO: What?} % TODO !!!
 With knowledge about these period of peaks a model could make better access time predictions.
 Our second model is supposed to use its input information of previous data throughput for that.
 The data throughput has peaks the same period as the access time.
@@ -194,12 +203,15 @@ EMA(i) = 0.5 \cdot t(i)+ 0.5 \cdot EMA(i-1)
 \end{equation}
 With $t(i)$ the access time of measurement $i$.
 The influence of data throughput of a measurement is exponentially decreasing in the series of EMAs.
-In figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
+In Figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
 \fig{width=.47\textwidth}{src/ema2.png}{Exponential moving average in red for a graph with perdiodic peaks.}\\
 The ema-model can use $EMA(n-1)$ for the prediction of access time of measurement $n$.
 If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions.\medskip
 
-The error-class-model is used as described in chapter \ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths.
+%The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths. TODO: wofür nochmal ?
+% TODO: hier die Erkentnisse...
+While these figures suggest ... not in general ...
+% TODO Bild einfügen, das zeigt, das es eben nicht immer funkt....
 
 \section{Evaluation}
 The execution and results of analysis are summarized in the following.
@@ -209,18 +221,16 @@ And in the end the quality of predictions of the different models are examined.
 
 \subsection{Test system}
 The measurements were done on the super computer Mistral of the DKRZ (Deutsches Klimarechenzentrum).
-Mistral operates with the parallel distributed file system Lustre and consists of over 1500 computing nodes and 30 petabyte storage with a memory bandwidth of 300\,GiB/s.
+Mistral operates with the parallel distributed file system Lustre (Lustre 2.5, Seagate's edition) and consists of over 1500 computing nodes and 30 petabyte storage with a memory bandwidth of 300\,GiB/s.
 Each computing node consists of two E5-2680v3 with a clock rate of 2.5\,GHz and 30\,MiB L3 Cache.
 Measurements were done during daily operation, typical fluctuations in workload may have influenced the execution of benchmarks.
 
 \subsection{Benchmarking}
-We are examining the test system with sequences of measurements.
-Each series of measurements follows a certain pattern of file access to study system behavior systematically.\\
-Two different use cases were tested, each with reading and writing file accesses.
-On the one hand sequential file access and on the other random file access.
-In the sequential case data directly following the previous access is retrieved.
-The random pattern is accessing the file at arbitrary positions.\\
-Our test file has a size of 10\,GiB which doesn't fit in the main memory of computer nodes.
+We created a simple benchmark (io-model) that used POSIX read/write() and measured time for each I/O individually.
+In this paper, it is executed on one node with one processor to study the quality of the predictions.
+Each series of measurements follows a certain pattern to study system behavior systematically.\\
+Sequential and random I/O patterns are measured, each with reading and writing file accesses.
+Our test file has a size of 10\,GiB which doesn't fit in the main memory of computer nodes, also measurements from  suggest that caching is not effective for these measurements (sequential reads are improved by read-ahead, though).
 Occasional access of hard drives in the parallel storage system is likely.
 Most series of measurements contain 10\,000 file accesses with a certain access size, only series with sequential access and an access size of greater then 2\,MiB have fewer measurements as the end of our 10\,GiB file is reached.
 Every series with specific access pattern, access size and access type is repeated three times.
@@ -229,7 +239,7 @@ Access sizes are varying from 1\,B to 16\,MiB (in detail:  1\,B, 4\,B, 16\,B, 64
 \subsection{Analysis of measurements}
 \label{sec:measurements}
 At first the measured access times for the four different cases are summarized in table \ref{overview}.
-\tab{overview}{Overview on file access times for the different cases.}{
+\tab{overview}{Overview of file access times for the different cases.}{
 	\centering
 	\scriptsize
 	\begin{tabular}{|r|r|r|r|r|r|r|}\hline%
@@ -239,9 +249,8 @@ At first the measured access times for the four different cases are summarized i
 		{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 	\end{tabular}
 }\\
-One can find that sequential file accesses are on average much faster than random accesses especially for the reading case.
-Interestingly our measured random reading file accesses were slower than writing reading accesses.\\
-In figure \ref{correlations} we consider the correlations between file access parameters and the resulting access time, a strong correlation can be exploited for access time prediction.
+As expected, sequential file accesses are on average much faster than random accesses especially for the reading case, also random read are slower than writes.\\
+In Figure \ref{correlations}, we consider the correlations between file access parameters and the resulting access time, a strong correlation can be exploited for access time prediction.
 \tab{correlations}{Correlations between file access parameters and access time.}{
 	\centering
 	\scriptsize
@@ -258,7 +267,12 @@ This is why linear regression can be expected to have acceptable results for acc
 
 To study the distribution of measured file access times we display them as follows:
 All measurements with equal access size have the same color, access sizes of file accesses are increasing in the graphs from left to right.
-The resulting graphs can be seen in the figures \ref{src/plot_SizeSorted_log_read_seq2.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
+The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_read_seq2.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
+
+% TODO: können wir die Datengröße noch dran schreiben? Einfach mit Gimp die Größe vertical drunter fügen anstelle Index ...
+% TODO: Global fixen.
+% Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Ansonstne OK...
+
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_rnd.png}{Measurements of random reading file accesses.}
@@ -269,16 +283,16 @@ As described in chapter \ref{sec:path_for_pred} the split of measurements with e
 Worth mentioning is that the groups of access time for different access sizes are partially at the same range of magnitude.
 This indicates as well that the splits are caused by varying I/O-paths as one I/O-path has a typical access time, which only changes slightly for different access sizes.\\
 The phenomenon of these splits clarifies why despite of the strong correlation of access size to access time a linear model might produce sub-optimal predictions. It's difficult to predict which I/O-path will be used for a measurement as they differentiate for equal access parameter values.
-In figure \ref{src/plot_SizeSorted_log_read_rnd.png} the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
+In Figure \ref{src/plot_SizeSorted_log_read_rnd.png} the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
 For writing file accesses the splits only occur occasionally and are less drastic; these measurements might be well represented with a linear model.
 
 \subsection{Analysis of error classes}
 Error classes are calculated as clusters of a k-means algorithm applied on the residues of the linear regression model.
 As an estimation of possible I/O-paths, we classify into 10 clusters.
-In figure \ref{src/plot_rnd_linreg_Size.png} the predictions of linear regression on the random reading measurements can be seen as blue points.
+In Figure \ref{src/plot_rnd_linreg_Size.png} the predictions of linear regression on the random reading measurements can be seen as blue points.
 \fig{width=.47\textwidth}{src/plot_rnd_linreg_Size.png}{Predicted access times of the linear regression model as blue points.}\\
 For clustering the difference between the prediction of linear regression and actual access time is used.
-In figure \ref{src/linreg_error_clustering_rnd_all.png} the residues for all measurements are shown, the different colors correspond to the computed clusters, which are our error classes.
+In Figure \ref{src/linreg_error_clustering_rnd_all.png} the residues for all measurements are shown, the different colors correspond to the computed clusters, which are our error classes.
 \fig{width=.47\textwidth}{src/linreg_error_clustering_rnd_all.png}{Residues of the linear regression model, colors are corresponding to error classes.}\\
 The clusters are differentiated along horizontal lines in the graphs.
 Without going into further details one can recognize from the graphs already that the error classes are not perfect approximators of I/O-paths.
@@ -400,7 +414,7 @@ Secondly the error path method could be researched in further detail.
 Residues of other models than linear regression could be used and one could try to assign error classes to I/O-paths in the real system.
 The method could also be a starting point to develop a tool that provides information on the effectiveness of the used I/O during execution of a program.
 
-\ack{Put the acknowledgements after the last section, like this.}
+%\ack{Put the acknowledgements after the last section, like this.}
 \openaccess
 
 \bibliography{literatur}
