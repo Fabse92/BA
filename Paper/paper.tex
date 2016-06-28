@@ -21,8 +21,7 @@
 	
 The prediction of file access times is an important part for the modeling of storage systems of super computers. These models can be used to develop analysis tools which support the integration of efficient I/O-behavior.\\
 In this paper, we analyzed the access times of parallel storage system of a super computer.
-Therefore, we measured file access times in various test series and developed different models for predicting access times. The evaluation showed that models utilizing artificial neural networks achieved better results than linear models.
-% TODO ungefähre Zahl angegeben wie gut das war...
+Therefore, we measured file access times in various test series and developed different models for predicting access times. The evaluation showed that models utilizing artificial neural networks achieved about 30\% smaller average prediction errors than linear models. 
 A phenomenon in the distribution of file access times is of particular interest:
 File accesses with equal parameter values have several typical access times.\\
 The steps in the magnitude between these typical access times can be explained with a different processing of the file accesses in the storage system.\\
@@ -135,9 +134,7 @@ Once the data has been found it is passed-through the levels of storage hierarch
 The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
 (\textbf{figure of storage hierarchy?} TODO OK).
 While the first levels in storage hierarchy (CPU caches) are extremely fast, the main memory is already slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes.\\
-%TODO ich verstehe den Satz nicht:
-In particular, reading files are effected by varying depths of I/O-paths, because writing file accesses are usually addressed to the bottom of storage hierarchy to propagate the change to all levels.
-As data in the volatile memory is exchanged frequently the I/O-paths to similar file accesses can change with time.
+Reading file accesses are more severely affected by varying depths of I/O-paths than writing file accesses, which are usually propagated to the disk drives.
 
 \subsubsection{I/O-path for access time prediction}
 \label{sec:path_for_pred}
@@ -154,8 +151,7 @@ We utilize a concept of error classes.
 Each class is supposed to approximate an I/O-path using the available measurements of file access times.
 To derive such knowledge, we need a characteristic that is representative for the different I/O-paths. 
 Knowing the file access parameters and the approximation of I/O-path should allow us to predict the magnitude of access time for this process.\\
-At a first thought, one could come up with the idea of clustering the data seen in Figure\,\ref{fig:io_paths}, because the groups of measurements with varying I/O-paths might be correctly differentiated by it. 
-% TODO wo ist das Bild io_paths.
+At a first thought, one could come up with the idea of clustering the data seen in Figure \ref{src/plot_SizeSorted_log_read_seq.png}, because the groups of measurements with varying I/O-paths might be correctly differentiated by it. 
 This, however, is not a good approach, one would have to cluster for every set of measurements with equal access parameters individually, otherwise the clusters would be meaningless. 
 In a real application scenario, a large number of different access parameters with only very few instances occur, which makes this approach unfeasible.\\
 Another idea might be then to use the difference of an arbitrary value to the measured file access time as parameter for the clustering. 
@@ -177,7 +173,8 @@ If a direct correlation of error class to I/O-paths were found, such an tool mig
 
 \subsection{Models}
 Access times of file accesses can be predicted using various models.
-While we evaluated several models for this paper, only a few relevant models are described; more models are described in \cite{TODO}. % TODO: zitiere auch noch deine Arbeit ... Vorne, hier nochmal.
+While we evaluated several models for this paper, only a few relevant models are described; more models are described in \cite{VVEIHUDVVN15}. 
+% TODO: Wo soll ich meine Arbeit noch zitieren?
 Each model seeks to correlate its known file access parameters to the corresponding access time. 
 Linear regression is used as a baseline model with a simple mapping of access size to access time.
 Additionally, three models with different input information utilizing ANNs were used:
@@ -190,10 +187,9 @@ Additionally, three models with different input information utilizing ANNs were 
 The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
 Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
 Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
-The peaks in access time are occurring (almost) periodically. 
-% TODO: Im allgemeinen hat das aber nicht funktioniert, oder? Hier n bissl klarer formulieren, das es manchmal funktionert, aber nicht generell ? Oder nicht?
-An occurrence of such a pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
-\fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{TODO: What?} % TODO !!!
+The peaks in access time are occurring periodically in this particular sequence. Such behavior appears only partially, often access times fluctuate without observable periodicity.
+An occurrence of a periodic pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
+\fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{Small sequence of reading file accesses with periodic peaks in access time.}
 With knowledge about these period of peaks a model could make better access time predictions.
 Our second model is supposed to use its input information of previous data throughput for that.
 The data throughput has peaks the same period as the access time.
@@ -209,7 +205,8 @@ The ema-model can use $EMA(n-1)$ for the prediction of access time of measuremen
 If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions.\medskip
 
 %The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths. TODO: wofür nochmal ?
-% TODO: hier die Erkentnisse...
+% TODO: hier die Erkentnisse... ?? Welche Erkentnisse?
+
 While these figures suggest ... not in general ...
 % TODO Bild einfügen, das zeigt, das es eben nicht immer funkt....
 
