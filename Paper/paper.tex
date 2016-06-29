@@ -187,9 +187,10 @@ Additionally, three models with different input information utilizing ANNs were 
 The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
 Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
 Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
-The peaks in access time are occurring periodically in this particular sequence. Such behavior appears only partially, often access times fluctuate without observable periodicity.
+The peaks in access time are occurring periodically in this particular sequence. Such behavior appears only partially, often access times fluctuate without observable periodicity as in Figure.
 An occurrence of a periodic pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
 \fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{Small sequence of reading file accesses with periodic peaks in access time.}
+\fig{width=0.47\textwidth}{src/plot_First250_read_seq.png}{Small sequence of reading file accesses with sporadic peaks in access time.}
 With knowledge about these period of peaks a model could make better access time predictions.
 Our second model is supposed to use its input information of previous data throughput for that.
 The data throughput has peaks the same period as the access time.
@@ -202,13 +203,10 @@ The influence of data throughput of a measurement is exponentially decreasing in
 In Figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
 \fig{width=.47\textwidth}{src/ema2.png}{Exponential moving average in red for a graph with perdiodic peaks.}\\
 The ema-model can use $EMA(n-1)$ for the prediction of access time of measurement $n$.
-If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions.\medskip
+If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions on sequences with periodic peaks in access time. Depending on how relevant periodic behavior of access times is in our measurements, this additional input information could improve the model.\medskip
 
 %The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths. TODO: wofür nochmal ?
 % TODO: hier die Erkentnisse... ?? Welche Erkentnisse?
-
-While these figures suggest ... not in general ...
-% TODO Bild einfügen, das zeigt, das es eben nicht immer funkt....
 
 \section{Evaluation}
 The execution and results of analysis are summarized in the following.
@@ -264,13 +262,13 @@ This is why linear regression can be expected to have acceptable results for acc
 
 To study the distribution of measured file access times we display them as follows:
 All measurements with equal access size have the same color, access sizes of file accesses are increasing in the graphs from left to right.
-The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_read_seq2.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
+The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_read_seq_sizes.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
 
 % TODO: können wir die Datengröße noch dran schreiben? Einfach mit Gimp die Größe vertical drunter fügen anstelle Index ...
 % TODO: Global fixen.
 % Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Ansonstne OK...
 
-\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
+\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq_sizes.png}{Measurements of sequential reading file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_rnd.png}{Measurements of random reading file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_rnd.png}{Measurements of random writing file accesses.}
