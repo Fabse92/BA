@@ -205,10 +205,10 @@ The influence of data throughput of a measurement is exponentially decreasing in
 In Figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
 \fig{width=.47\textwidth}{src/ema2.png}{Exponential moving average in red for a graph with perdiodic peaks.}\\
 The ema-model can use $EMA(n-1)$ for the prediction of access time of measurement $n$.
-If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions on sequences with periodic peaks in access time. Depending on how relevant periodic behavior of access times is in our measurements, this additional input information could improve the model.\medskip
+If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions on sequences with periodic peaks in access time. Depending on how relevant periodic behavior of access times is in our measurements, this additional input information could improve the model.
 
 %The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths. TODO: wofür nochmal ?
-% TODO: hier die Erkentnisse... ?? Welche Erkentnisse?
+% TODO: Soll hier nicht nochmal erwähnt werden, wofür das error-class-model genutzt wird?
 
 \section{Evaluation}
 The execution and results of analysis are summarized in the following.
@@ -268,7 +268,7 @@ The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_rea
 
 % TODO: können wir die Datengröße noch dran schreiben? Einfach mit Gimp die Größe vertical drunter fügen anstelle Index ...
 % TODO: Global fixen.
-% Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Ansonstne OK...
+% TODO Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Ansonstne OK...
 
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
@@ -327,7 +327,7 @@ After we analyzed the benchmarks and error classes we will study the results of 
 To investigate the accuracy of the models and investigate overfitting, we split the available data into a training set and a test set. 
 The test set consist of all measurements that weren't used for training.
 The parameters for the ANN-models are varied to explore appropriate configurations; they are trained with a wide span of different parameter values for the number of hidden layers and number of neurons per layer.
-They had 1000 randomly chosen measurements for each pair of access size and access type as training set. % TODO stimmt das 1000 pro Konfiguration?
+They had 1000 randomly chosen measurements for each pair of access size and access type as training set. % TODO stimmt das 1000 pro Konfiguration? Ja, das stimmt :)
 In total that are 34\,000 measurements which should be a significant amount of data to avoid a situation in which we aren't able to train a model due to a lack of information about the system. 
 
 \medskip
