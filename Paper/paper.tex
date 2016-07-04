@@ -134,7 +134,7 @@ Knowledge of internal aspects of the system about the current system utilization
 The internal processing of a file access in the storage system can be viewed using the I/O-path which is the path from the invoking processor to the storage medium that contains the data (larger accesses may be distributed across multiple servers). 
 Once the data has been found it is passed-through the levels of storage hierarchy to caches.
 The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
-(\textbf{figure of storage hierarchy?} TODO OK).
+(\textbf{figure of storage hierarchy?}) %TODO OK).
 While the first levels in storage hierarchy (CPU caches) are extremely fast, the main memory is already slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes.\\
 Reading file accesses are more severely affected by varying depths of I/O-paths than writing file accesses, which are usually propagated to the disk drives.
 
