@@ -29,7 +29,7 @@ File accesses with equal parameter values have several typical access times.\\
 The steps in the magnitude between these typical access times can be explained with a different processing of the file accesses in the storage system.\\
 We developed a method to quantify the significance of knowledge about the internal processing for the prediction of file access times and proved it to be essential.
 
-\keywords{file systems, performance, predicting file access times, artificial neural networks}
+\keywords{file systems, performance, predicting file access times, artificial neural networks}%TODO Gute keywords?
 \end{abstract}
 
 % -----------------------------------------------------------------------
@@ -39,7 +39,7 @@ We developed a method to quantify the significance of knowledge about the intern
 Tools are demanded that help users of HPC-facilities to implement efficient input/output (I/O) in their programs.
 It is difficult to find the best access parameters and patterns due to complex parallel storage systems.
 The processing of file accesses in a storage system can be viewed as a task that is sequentially propagated along a I/O-path in the storage system.
-Starting at the invoking processor, the storage system is searching for the data, going further and further through the storage hierarchy, until all data is found, so it can be returned to the processor.
+Starting at the invoking processor, the storage system is searching for the data, going further and further through the memory hierarchy, until all data is found, so it can be returned to the processor.
 
 Currently, users have to optimize their programs for each system individually without much assistance.
 To develop tools which support the implementation of efficient I/O a computational, models of the storage system are important.
@@ -59,12 +59,10 @@ Unfortunately I/O-paths are difficult to deal with, as it is unknown which path 
 
 This paper is organized as follows:
 Related work is provided in Section\,\ref{sec:related}.
-% TODO error class...
-Firstly, we analyze behavior of the storage system by measuring a series of access times.
-Then, a simplified model of the I/O path is developed.
-Next, we describe how we derive potential classes (alternative I/O path) from the error of a prediction model.
-Finally, a set of models 
-
+In Section\,\ref{modeling_access_times}, we explain our analysis of file access times. 
+First we develop a simplified model of the I/O-path. Then a method for approximating I/O-paths with derived classes from the error of a prediction model is proposed. At last we introduce a set of models for access time prediction.
+Afterwards in Section\,\ref{evaluation}, we evaluate our analysis of the storage system by measuring access times in various test series, studying the obtained access times and the predictions of our models to them.
+In the end Section\,\ref{conclusion} summarizes the paper suggests possible future work.
 
 \section{Related work}
 \label{sec:related}
@@ -111,10 +109,10 @@ Instead searching for optimal parameters by testing, they were able to find good
 
 
 \section{Modeling I/O Access Times}
-
+\label{modeling_access_times}
 \subsection{Characteristics of the Data}
 This approach allows for an in-depth analysis of system behavior for different use cases.
-We used a synthetic benchmark in which identical measurements for random or sequential I/O is performed and the access time is measured individually. % , instead of using arbitrary access parameters for consecutive accesses ??? TODO was meint das
+We used a synthetic benchmark in which identical measurements for random or sequential I/O are performed and the access time is measured individually.
 The resulting timings are stored together with file access parameters in a file that is then used to build and validate the models.
 The stored parameters are:
 \begin{itemize}
@@ -132,10 +130,11 @@ Knowledge of internal aspects of the system about the current system utilization
 
 \subsection{Model of the I/O-path}
 The internal processing of a file access in the storage system can be viewed using the I/O-path which is the path from the invoking processor to the storage medium that contains the data (larger accesses may be distributed across multiple servers). 
-Once the data has been found it is passed-through the levels of storage hierarchy to caches.
+Once the data has been found it is passed-through the levels of memory hierarchy to caches.
 The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
-(\textbf{figure of storage hierarchy?}) %TODO OK).
-While the first levels in storage hierarchy (CPU caches) are extremely fast, the main memory is already slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes.\\
+While the first levels in memory hierarchy (CPU caches) are extremely fast, the main memory is already slower; the same applies for the step into the parallel storage system, that is connected via network to the computer nodes.
+%The trade-off between memory capacity and performance can be visualized with the memory hierarchy as in figure %\ref{src/2000px-ComputerMemoryHierarchy.png}.
+%\fig{width=.7\textwidth}{src/2000px-ComputerMemoryHierarchy.png}{Memory hierarchy.}
 Reading file accesses are more severely affected by varying depths of I/O-paths than writing file accesses, which are usually propagated to the disk drives.
 
 \subsubsection{I/O-path for access time prediction}
@@ -167,7 +166,7 @@ We use the absolute error of linear regression as clustering parameter so that o
 Ideally it might be the case that file accesses independent of the access parameters that took 1 millisecond longer than usual were processed on the same I/O-path.
 In that case error classes are directly corresponding to I/O-paths. \medskip
 
-We will use error classes to quantify the importance of knowledge about I/O-paths for access time prediction.
+We will use error classes to quantify the importance of knowledge about I/O-paths for access time prediction. 
 For the actual prediction of access times error classes can't be used, because a measured access time is required to determine the error class of a measurement.
 However, the method could be used for a tool, which analyses the I/O made during application of a program. 
 It could analyze whether more file accesses throughout execution were slower than expected and therefore used unfavorable I/O-paths.
@@ -176,7 +175,7 @@ If a direct correlation of error class to I/O-paths were found, such an tool mig
 \subsection{Models}
 Access times of file accesses can be predicted using various models.
 While we evaluated several models for this paper, only a few relevant models are described; more models are described in \cite{VVEIHUDVVN15}. 
-% TODO: Wo soll ich meine Arbeit noch zitieren?
+% TODO: Soll ich meine Arbeit noch woanders zitieren?
 Each model seeks to correlate its known file access parameters to the corresponding access time. 
 Linear regression is used as a baseline model with a simple mapping of access size to access time.
 Additionally, three models with different input information utilizing ANNs were used:
@@ -205,12 +204,13 @@ The influence of data throughput of a measurement is exponentially decreasing in
 In Figure \ref{src/ema2.png} the EMA-function to a graph with periodic peaks can be seen.
 \fig{width=.47\textwidth}{src/ema2.png}{Exponential moving average in red for a graph with perdiodic peaks.}\\
 The ema-model can use $EMA(n-1)$ for the prediction of access time of measurement $n$.
-If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions on sequences with periodic peaks in access time. Depending on how relevant periodic behavior of access times is in our measurements, this additional input information could improve the model.
+If the model is able to find threshold values of the EMA-function after which another peaks follows, it can use this input information for better access time predictions on sequences with periodic peaks in access time. Depending on how relevant periodic behavior of access times is in our measurements, this additional input information could improve the model.\medskip
 
-%The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths. TODO: wofür nochmal ?
-% TODO: Soll hier nicht nochmal erwähnt werden, wofür das error-class-model genutzt wird?
+The error-class-model is used as described in Section\,\ref{sec:error_classes} to examine the potential improvements for access time prediction due to knowledge about I/O-paths.
+Therefore, we evaluate how much the prediction of access times of a model using error classes improves compared to a model without.
 
 \section{Evaluation}
+\label{evaluation}
 The execution and results of analysis are summarized in the following.
 First the test system used for measurements and the strategy for systematic measurement are presented.
 Then follows the study of received data and computed error classes.
@@ -266,9 +266,7 @@ To study the distribution of measured file access times we display them as follo
 All measurements with equal access size have the same color, access sizes of file accesses are increasing in the graphs from left to right.
 The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_read_seq2.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
 
-% TODO: können wir die Datengröße noch dran schreiben? Einfach mit Gimp die Größe vertical drunter fügen anstelle Index ...
-% TODO: Global fixen.
-% TODO Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Ansonstne OK...
+% TODO Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Das könnte ich probieren, aber kann man nicht auf irgendwie zwei nebeneinander setzen?
 
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
 \fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
@@ -410,6 +408,7 @@ The model without knowledge about I/O-paths is forced to predict some kind of av
 With knowledge about our approximations of I/O-paths the error-class-model can discriminate measurements with equal access parameter values and achieve more accurate predictions that way.
 
 \section{Conclusion and future work}
+\label{conclusion}
 In this work, we analyzed the performance of a supercomputer's storage system.
 Using a machine learning approach with artificial neural networks, we developed different models for file access time prediction.
 Through our study of measured file access times and model results we were able to gain knowledge about the behavior of the storage system.

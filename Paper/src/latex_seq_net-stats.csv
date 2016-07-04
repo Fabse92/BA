@@ -1,5 +1,5 @@
 Modell,verdeckteSchichten,Neuronen,Trainingsdauer,Iterationen
-simpel ANN-model,12, 8,1444,1934
+simple ANN-model,12, 8,1444,1934
 ema-model,11, 8,1379,1878
 error-class-model,15,27,8655,1551
 
