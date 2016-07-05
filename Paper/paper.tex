@@ -7,6 +7,9 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{csvsimple}
+
+\usepackage{blindtext}
+
 % ------------
 
 \bibliographystyle{plain}
@@ -187,11 +190,25 @@ Additionally, three models with different input information utilizing ANNs were 
 
 The idea of the ema-model is to exploit periodic changes in the performance of the storage system.
 Our analysis of measurements as well as the work of Crume et al. \cite{Crume:2013:FML:2538542.2538561} indicate that periodic phenomenons of access times in sequences of files accesses can be exploited for access time prediction.\\
-Figure \ref{src/plot_From100001to100250_read_seq.png} shows a small series of measurements of sequentially read file accesses.
-The peaks in access time are occurring periodically in this particular sequence. Such behavior appears only partially, often access times fluctuate without observable periodicity as in Figure.
+Figure\,\ref{periodic} shows a small series of measurements of sequentially read file accesses.
+The peaks in access time are occurring periodically in this particular sequence. Such behavior appears only partially, often access times fluctuate without observable periodicity as in Figure\,\ref{sporadic}.
 An occurrence of a periodic pattern could be explained with a processing of the storage system in which a larger amount of data is loaded into the cache at the same time as soon as a cache-miss happens.
-\fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{Small sequence of reading file accesses with periodic peaks in access time.}
-\fig{width=0.47\textwidth}{src/plot_First250_read_seq.png}{Small sequence of reading file accesses with sporadic peaks in access time.}
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_From100001to100250_read_seq.png}
+		\caption{Small sequence of reading file accesses with periodic peaks in access time.}
+		\label{periodic}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_First250_read_seq.png}
+		\caption{Small sequence of reading file accesses with sporadic peaks in access time.}
+		\label{sporadic}
+	\end{minipage}
+\end{figure}
+%\fig{width=0.47\textwidth}{src/plot_From100001to100250_read_seq.png}{Small sequence of reading file accesses with periodic peaks in access time.}
+%\fig{width=0.47\textwidth}{src/plot_First250_read_seq.png}{Small sequence of reading file accesses with sporadic peaks in access time.}
 With knowledge about these period of peaks a model could make better access time predictions.
 Our second model is supposed to use its input information of previous data throughput for that.
 The data throughput has peaks the same period as the access time.
@@ -264,34 +281,75 @@ This is why linear regression can be expected to have acceptable results for acc
 
 To study the distribution of measured file access times we display them as follows:
 All measurements with equal access size have the same color, access sizes of file accesses are increasing in the graphs from left to right.
-The resulting graphs can be seen in the Figures \ref{src/plot_SizeSorted_log_read_seq2.png} to \ref{src/plot_SizeSorted_log_write_rnd.png}.
+The resulting graphs can be seen in the Figures \ref{read_seq} to \ref{write_rnd}.
 
-% TODO Kann man in deren Style auch zwei BIlder nebeneinander zeichnen? Das wäre Cool. Das könnte ich probieren, aber kann man nicht auf irgendwie zwei nebeneinander setzen?
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_SizeSorted_log_read_seq2.png}
+		\caption{Measurements of sequential reading file accesses.}
+		\label{read_seq}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_SizeSorted_log_write_seq.png}
+		\caption{Measurements of sequential writing file accesses.}
+		\label{write_seq}
+	\end{minipage}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_SizeSorted_log_read_rnd.png}
+		\caption{Measurements of random reading file accesses.}
+		\label{read_rnd}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_SizeSorted_log_write_rnd.png}
+		\caption{Measurements of random writing file accesses.}
+		\label{write_rnd}
+	\end{minipage}
+\end{figure}
 
-\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
-\fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
-\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_rnd.png}{Measurements of random reading file accesses.}
-\fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_rnd.png}{Measurements of random writing file accesses.}
+%\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_seq2.png}{Measurements of sequential reading file accesses.}
+%\fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_seq.png}{Measurements of sequential writing file accesses.}
+%\fig{width=.47\textwidth}{src/plot_SizeSorted_log_read_rnd.png}{Measurements of random reading file accesses.}
+%\fig{width=.47\textwidth}{src/plot_SizeSorted_log_write_rnd.png}{Measurements of random writing file accesses.}
 For clarity the slowest and fastest 1\% of measurements are cut and only every 25th measurement is represented.\\
 The correlation between access size and access time can be easily identified.
 As described in chapter \ref{sec:path_for_pred} the split of measurements with equal access parameter values, that occurs in particular in the cases of sequential file accesses, can be explained with a processing in the storage system along different I/O-paths.
 Worth mentioning is that the groups of access time for different access sizes are partially at the same range of magnitude.
 This indicates as well that the splits are caused by varying I/O-paths as one I/O-path has a typical access time, which only changes slightly for different access sizes.\\
 The phenomenon of these splits clarifies why despite of the strong correlation of access size to access time a linear model might produce sub-optimal predictions. It's difficult to predict which I/O-path will be used for a measurement as they differentiate for equal access parameter values.
-In Figure \ref{src/plot_SizeSorted_log_read_rnd.png} the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
+In Figure \ref{read_rnd} the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
 For writing file accesses the splits only occur occasionally and are less drastic; these measurements might be well represented with a linear model.
 
 \subsection{Analysis of error classes}
 Error classes are calculated as clusters of a k-means algorithm applied on the residues of the linear regression model.
 As an estimation of possible I/O-paths, we classify into 10 clusters.
-In Figure \ref{src/plot_rnd_linreg_Size.png} the predictions of linear regression on the random reading measurements can be seen as blue points.
+In Figure \ref{linreg} the predictions of linear regression on the random reading measurements can be seen as blue points.
 Since a linear model predicts the mean value for all measurements with the same arguments, it cannot distinguish between the different I/O path and may not even predict a valid value (e.g., the median).
 
-\fig{width=.47\textwidth}{src/plot_rnd_linreg_Size.png}{Predicted access times of the linear regression model as blue points.}
-\fig{width=.47\textwidth}{src/linreg_error_clustering_rnd_all.png}{Residues of the linear regression model, colors are corresponding to error classes.}
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_rnd_linreg_Size.png}
+		\caption{Predicted access times of the linear regression model as blue points.}
+		\label{linreg}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/linreg_error_clustering_rnd_all.png}
+		\caption{Residues of the linear regression model, colors are corresponding to error classes.}
+		\label{clustering}
+	\end{minipage}
+\end{figure}
+%\fig{width=.47\textwidth}{src/plot_rnd_linreg_Size.png}{Predicted access times of the linear regression model as blue points.}
+%\fig{width=.47\textwidth}{src/linreg_error_clustering_rnd_all.png}{Residues of the linear regression model, colors are corresponding to error classes.}
 
 For identifying the error classes, the difference between the prediction of linear regression and actual access time is used as input for the clustering algorithm.
-In Figure \ref{src/linreg_error_clustering_rnd_all.png} the residues for all measurements are shown, the different colors correspond to the computed clusters, which are our error classes. 
+In Figure \ref{clustering} the residues for all measurements are shown, the different colors correspond to the computed clusters, which are our error classes. 
 Note that due to the random initialization of k-Means, different runs may result in different clusters\,\footnote{We will consider more robust algorithms in the future.}.
 
 
@@ -401,9 +459,23 @@ However, it is clear that the additional parameter of the error class improves t
 \medskip
 
 To investigate this further, we have to analyze measurements in more detail.
-To have a further look at the difference error classes make for access time prediction, we analyze the predictions of the two models for the case of random reading file access in Figure\,\ref{src/plot_onlyPred_tuple1_Duration_rnd.png} and \ref{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}.
-\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_Duration_rnd.png}{Predicted access times of the simple ANN-model as blue points.}\\
-\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}{Predicted access times of the error-class-model as blue points.}\\
+To have a further look at the difference error classes make for access time prediction, we analyze the predictions of the two models for the case of random reading file access in Figure\,\ref{pred_tuple1} and \ref{pred_error}.
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_onlyPred_tuple1_Duration_rnd.png}
+		\caption{Predicted access times of the simple ANN-model as blue points.}
+		\label{pred_tuple1}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.47\textwidth}
+		\includegraphics[width=\textwidth]{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}
+		\caption{Predicted access times of the error-class-model as blue points..}
+		\label{pred_error}
+	\end{minipage}
+\end{figure}
+%\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_Duration_rnd.png}{Predicted access times of the simple ANN-model as blue points.}\\
+%\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}{Predicted access times of the error-class-model as blue points.}\\
 The model without knowledge about I/O-paths is forced to predict some kind of average access time for each set of measurements with equal access parameter values, therefore its predictions are in between the two main groups of access time for the higher access sizes.
 With knowledge about our approximations of I/O-paths the error-class-model can discriminate measurements with equal access parameter values and achieve more accurate predictions that way.
 
