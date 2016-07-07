@@ -16,7 +16,7 @@
 \begin{document}
 
 %\classify{MSC?}
-\author{Fabian Schmidt\footnote{\label{susu}Universität Hamburg, E-Mail:\url{2schmid@informatik.uni-hamburg.de}} \and Julian M. Kunkel\footnote{German Climate Computing Center (DKRZ)}}
+\author{Jan Fabian Schmid\footnote{\label{susu}Universität Hamburg, E-Mail:\url{2schmid@informatik.uni-hamburg.de}} \and Julian M. Kunkel\footnote{German Climate Computing Center (DKRZ)}}
 
 \title{Predicting I/O-performance in HPC using Artificial Neural Networks}
 
@@ -356,6 +356,7 @@ Since a linear model predicts the mean value for all measurements with the ident
 	\centering
 	% TODO gibt es das Bild noch so, dass man die Error classes hier mit der selben farbe wie in Fig 10 sehen kann?
 	% Muss aber nicht zwingend sein.
+	%TODO nee, das gibt es leider nicht.	
 	\begin{minipage}[b]{0.47\textwidth}
 		\includegraphics[width=\textwidth]{src/plot_rnd_linreg_Size.png}
 		\caption{Predicted access times of the linear regression model as blue points.}
@@ -408,7 +409,9 @@ The test set consist of all measurements that weren't used for training.
 The parameters for the ANN-models are varied to explore appropriate configurations; they are trained with a wide span of different parameter values for the number of hidden layers and number of neurons per layer.
 They had 1000 randomly chosen measurements for each pair of access size and access type as training set. % TODO stimmt das 1000 pro Konfiguration? Ja, das stimmt :)
 %
-% TODO: Wie war das für die großen Zugriffe e.g. 2 MiB, wo keine 10000 Operationen vorlagen?
+% TODO: Wie war das für die großen Zugriffe e.g. 2 MiB, wo keine 1000 Operationen vorlagen? 
+
+%TODO: Du hast Recht, das ist ein Problem für den Fall mit 16MiB, da gibt es nur 640 Messungen, die sind dann alle zum Trainieren genutzt wurden. Sind dann aber auch nicht für die Berechnung der Residuen genutzt wurden. Für alle anderen Zugriffsgrößen gibt es mehr als 1000 Messungen.
 In total that are 34\,000 measurements which should be a significant amount of data to avoid a situation in which we aren't able to train a model due to a lack of information about the system. 
 
 \medskip
@@ -416,6 +419,7 @@ In total that are 34\,000 measurements which should be a significant amount of d
 In Tables\,\ref{tab:seq-stats} and \ref{tab:rnd-stats} characteristics of the ANNs with the smallest average prediction error can be seen.
 The models for the sequential data set had in general bigger network structures.
 % TODO: Warum eigtl. eine Idee? Overfitting vielleicht hier, für die sonderbaren cases?
+% TODO Tendenziell findet so eine Art deep learning statt. Zusätzliche Layer können für weitere Fallunterscheidungen genutzt werden. Entweder ist das overfitting oder es ist notwendig, um die zugrundeliegende "Funktion" der Zugriffszeiten anzunähern.
 \tab{tab:seq-stats}{Characteristics of the most successful ANN-models for seq. file accesses.}{
 	\centering
 	\scriptsize
