@@ -35,7 +35,7 @@ The typical access times usually differ by orders of magnitude times and can be 
 We investigate a method to automatically determine the alternative I/O path and quantify the significance of knowledge about the internal processing.
 It is shown that the prediction error is improved significantly with this approach.
 
-\keywords{file systems, performance, predicting file access times, artificial neural networks}%TODO Gute keywords?
+\keywords{file system, performance, modeling I/O, artificial neural networks}
 \end{abstract}
 
 % -----------------------------------------------------------------------
@@ -60,8 +60,8 @@ Because of the strong linear correlation between access time and access size, th
 However, our results show that the relation of file access parameters to access time is not sufficiently represented by linear models.
 ANNs achieve significantly better results than linear models.
 Our analysis suggests that the I/O-path used by the storage system significantly influences the file access time.
-Therefore it becomes key for a good model of access times to derive knowledge about I/O-paths.
-Unfortunately I/O-paths are difficult to deal with, as it is unknown which path was used for a file access.
+Therefore, it becomes key for a good model of access times to derive knowledge about I/O-paths.
+Unfortunately, I/O-paths are difficult to deal with, as it is unknown which path was used for a file access.
 
 This paper is organized as follows:
 Related work is provided in Section\,\ref{sec:related}.
@@ -69,7 +69,7 @@ In Section\,\ref{modeling_access_times}, we explain our analysis of file access 
 Firstly, we develop a simplified model of the I/O-path. 
 Next, a method for approximating I/O-paths with derived classes from the error of a prediction model is proposed. 
 At last, we introduce a set of models for access time prediction.
-Afterwards in Section\,\ref{evaluation}, we evaluate our analysis of the storage system by measuring access times in various test series, studying the obtained access times and the predictions of our models to them.
+Afterwards, in Section\,\ref{evaluation}, we evaluate our analysis of the storage system by measuring access times in various test series, studying the obtained access times and the predictions of our models to them.
 Finally, Section\,\ref{conclusion} summarizes the paper and suggests future work.
 
 \section{Related work}
@@ -83,12 +83,12 @@ Generally, storage systems are modeled in two different ways for access time pre
 	Processing and resulting performance can be analyzed in detail on the model.
 	\item \textbf{Black-box modeling}: The model abstracts from the real storage system. 
 	System performance is approximated without considering the causes. %Zustandekommen
-	This procedure corresponds to an emulation of the storage system.
+	This procedure corresponds to an emulation of a storage system.
 	In contrast to the white-box model, processing of file accesses can't be analyzed on the model itself.
 \end{itemize}
 These two ways of modeling are fundamentally different and have to be differentiated.
 
-\subsection{White-box-modeling versus black-box-modeling}
+\subsection{White-box modeling versus black-box modeling}
 For the in-depth analysis of reasoning for behavior of a storage system, a white-box-model is desirable.
 On the one hand, the modeled system is represented in the model and, thus, can be examined. 
 On the other hand, these models can be very precise if modeled correctly \cite{Ruemmler94anintroduction}.
@@ -98,12 +98,12 @@ To approach the complexity of white-box modeling, Ruemmler and Wilkes analyzed t
 However, white-box modeling is usually used for simple systems like a single hard drive. For these hard drives white-box-modeling is already very demanding, hence for the complex parallel storage system of a supercomputer it's not a feasible approach \cite{DBLP:conf/npc/ZhangLZJC10}.\\
 
 Application of black-box-modeling is easier and more flexible as it's independent from the individual system.
-Stochastic approaches coupled with data mining methods are mostly used for black-box modeling; for example, a combination of regression trees support vector regression \cite{Dai:2012:SDP:2477169.2477214}, or selective bagging classification and regression trees \cite{DBLP:conf/npc/ZhangLZJC10}.
+Stochastic approaches coupled with data mining methods are mostly used for black-box modeling; for example, a combination of regression trees can be used \cite{Dai:2012:SDP:2477169.2477214}, or selective bagging classification and regression trees \cite{DBLP:conf/npc/ZhangLZJC10}.
 
 \subsection{Prediction of I/O-performance with ANNs}
-Computability of ANNs was researched by Rojas \cite{Rojas:1996:NNS:235222} and Cybenko \cite{cybenko:mcss}; they demonstrated possibility of modeling non-linear systems. 
+Computability of ANNs was researched by Rojas \cite{Rojas:1996:NNS:235222} and Cybenko \cite{cybenko:mcss}; they demonstrated the  possibility of modeling non-linear systems. 
 Cybenko also proved the \textit{universal approximation theorem}, which states that feed-forward networks with sufficient complexity can approximate any continuous functions on compact subsets of $\mathbb{R}^n$.
-Therefore ANNs should be sufficient for predicting I/O-performance as long as there are no contradictions in behavior. 
+Therefore, ANNs should be sufficient for predicting I/O-performance as long as there are no contradictions in behavior. 
 However, no statement can be made about the necessary structure of the network for this task.\\
 Crume et al. developed a method using ANNs which exploits periodic patterns in sequences of file access times \cite{Crume:2013:FML:2538542.2538561}.
 A Fourier analysis is used to determine the most important frequencies, which are then used as input information for the ANNs.
@@ -112,7 +112,7 @@ This seems to be a promising approach for predicting access times of single hard
 It is, however, difficult to extrapolate behavior from a single disk to a distributed storage system consisting of thousands of disks that utilizes several optimization mechanisms.
 
 \subsection{I/O-performance prediction in HPC}
-Performance analysis in HPC is a important task to examine the system for improvements in usage.
+Performance analysis in HPC is an important task to examine and improve system efficiency.
 For instance Liu et al. simulated scheduling algorithms for research \cite{liu2011towards}. 
 The simulation used the white-box modeling tool DiskSim for prediction of occurring file accesses \cite{Bucy08thedisksim}.\\
 There are a few simulators for parallel storage systems, for example, CODES\,\cite{cope2011codes} utilizes a scalable infrastructure to investigate relevant research issues such as the importance of burst-buffers.
@@ -141,13 +141,13 @@ Directly measurable or derivable attributes are:
 	\item \textbf{Delta-Offset}: Can be calculated for file access $i$ as Offset[$i$] - (Offset[i-1] + access size[i-1]).
 	\item \textbf{Access time}: Time for performing the I/O.
 \end{itemize}
-Knowledge of internal aspects of the system about the current system utilization or about the storage media that have to be addressed is not utilized in the model.
+Knowledge of internal aspects of the system about the current system utilization or about the storage media that have to be addressed are not used by the model.
 
 \subsection{Model of the I/O-path}
 The internal processing of a file access in the storage system can be viewed using the I/O-path, which is the path from the invoking processor to the storage medium that contains/will store the data (larger accesses may be distributed across multiple servers). 
-The data read/written it is passed through the levels of the memory hierarchy.
-The resulting access time depends on the depth of this I/O-path because storage media further along the path are increasingly slower.
-While the first levels in memory hierarchy (CPU caches) are extremely fast, the main memory is already slower; the same applies for the step into the parallel storage system, that is deployed as servers connected via network to the computer nodes.
+The data read/written is passed through the levels of the memory hierarchy.
+The resulting access time depends on the depth of this I/O-path, because with increasing distance the storage media along the path is slower.
+While the first levels in memory hierarchy (CPU caches) are the fastest volatile storage, the main memory is already an order of magnitude slower; the same applies for the step into the parallel storage system, that is deployed as servers connected via network to the computer nodes.
 %The trade-off between memory capacity and performance can be visualized with the memory hierarchy as in figure %\ref{src/2000px-ComputerMemoryHierarchy.png}.
 %\fig{width=.7\textwidth}{src/2000px-ComputerMemoryHierarchy.png}{Memory hierarchy.}
 Reading file accesses are more severely affected by varying depths of I/O-paths than writing file accesses, which can be deferred using write-behind and propagated lazily to the disk drives.
@@ -168,15 +168,15 @@ Each class is supposed to approximate an I/O-path based on the error (residuum) 
 %To derive such knowledge, we need a characteristic that is representative for the different I/O-paths. 
 The baseline model is constructed as a function of the file access parameters.\\
 
-At a first thought, one could come up with the idea of simply clustering the data seen in Figure~\ref{src/plot_SizeSorted_log_read_seq.png}, because the groups of measurements with varying I/O-paths might be correctly differentiated by it. 
-This, however, is not a good approach, one would have to cluster for every set of measurements with identical access parameters individually as access time is strongly dependent on the access size. 
+At a first consideration, one could come up with the idea of simply clustering the data seen in Figure~\ref{src/plot_SizeSorted_log_read_seq.png}, because the groups of measurements with varying I/O-paths might be correctly differentiated by it. 
+This, however, is not a good approach. One would have to cluster for every set of measurements with identical access parameters individually as access time is strongly dependent on the access size. 
 In a real application scenario, a large number of different access parameters with only very few instances occur, which makes this approach unfeasible.\\
-Another idea might be then to use the difference of an arbitrary value to the measured file access time as parameter for the clustering. 
+Another idea might be to use the difference of an arbitrary value to the measured file access time as parameter for the clustering. 
 Such a value would not be appropriate for all magnitudes of access time occurring in the data.
 I/O-paths that differ by little might not be found with this approach, because the gap between them doesn't matter at the scale of the chosen value.
 
 Our approach uses the residues of a model like linear regression that can't differentiate between measurements with equal access parameter values.
-Basically the linear regression predicts an average access time for the measurements of any given size.
+Basically, the linear regression predicts an average access time for the measurements of any given size.
 The deviation of an individual measurement for these access parameters to the predicted average value is then characteristic for the I/O-path.
 Clustering the residues with a k-Means algorithm allows us then to assign each measurement to a specific cluster, which is the approximation of its I/O-path.
 We call the retrieved clusters \textbf{error classes}.
@@ -202,7 +202,7 @@ Linear regression is used as a baseline model with a simple mapping of access si
 Additionally, three models with different input information utilizing ANNs are used:
 \begin{itemize}
 	\item The most simple ANN-model only received information about access sizes, delta-offsets and access types as input.
-	\item A second ANN-model, called \textbf{ema-model}, received additionally to the parameters of the previous model information about the past data throughputs of the system, which can be used to exploit time dependencies of the I/O-performance.
+	\item A second ANN-model, called \textbf{ema-model}, receives additionally to the parameters of the previous model,  information about the past data throughputs of the system. This can be used to exploit time dependencies of the I/O-performance.
 	\item The third ANN-model, called \textbf{error-class-model}, received error classes in addition to the access parameters of the first ANN-model.
 \end{itemize}\medskip
 
@@ -253,8 +253,8 @@ Finally, the quality of predictions of the different models are examined.
 
 \subsection{Test system}
 The measurements were done on the supercomputer Mistral (phase\,1 system) of the DKRZ (Deutsches Klimarechenzentrum)\footnote{\url{http://www.vi4io.org/hpsl/2016/de/dkrz/start}}.
-The phase\,1 system of Mistral operates with the parallel distributed file system Lustre (Lustre 2.5, Seagate's edition) and consists of over 1500 computing nodes and 30 Petabyte storage.
-Each computing node consists of two E5-2680v3 with a clock rate of 2.5\,GHz and 30\,MiB L3 Cache.
+The phase\,1 system of Mistral operates with the parallel distributed file system Lustre (Lustre 2.5, Seagate's edition) and consists of over 1500 compute nodes and 30 Petabyte storage.
+Each compute node consists of two E5-2680v3 with a clock rate of 2.5\,GHz and 30\,MiB L3 Cache.
 Measurements were done during daily operation, typical fluctuations in workload may have influenced the execution of benchmarks.
 
 \subsection{Benchmarking}
@@ -281,7 +281,7 @@ The measured access times for the four different cases are summarized in Table\,
 		{\Attribut & \Min & \L & \Median & \Mittel & \Q & \Max}%
 	\end{tabular}
 }\\
-As expected, sequential file accesses are on average much faster than random accesses especially for the reading case, also random read are slower than writes.\\
+As expected, sequential file accesses are on average much faster than random accesses especially for the reading case, also random reads are slower than writes.\\
 In Figure \ref{correlations}, we consider the correlations between file access parameters and the resulting access time, a strong correlation can be exploited for access time prediction.
 \tab{correlations}{Correlations between file access parameters and access time.}{
 	\centering
@@ -302,7 +302,7 @@ This is why linear regression can be expected to have acceptable results for acc
 
 To study the distribution of measured file access times we display them as follows:
 All measurements with equal access size have the same color, access sizes of file accesses are increasing in the graphs from left to right.
-The resulting graphs can be seen in the Figures \ref{read_seq} to \ref{write_rnd}.
+The resulting graphs can be seen in the Figures \ref{read_seq} to \ref{write_rnd}. Note that they use logarithmic scale.
 
 \begin{figure}[b]
 	\centering
@@ -342,7 +342,8 @@ The correlation between access size and access time can be easily identified.
 As described in chapter \ref{sec:path_for_pred} the split of measurements with identical access parameter values, that occurs in particular in the cases of sequential file accesses, can be explained with a processing in the storage system along different I/O-paths.
 It is worth mentioning that the groups of access time for different access sizes are partially at the same range of magnitude.
 This indicates as well that the splits are caused by varying I/O-paths as one I/O-path has a typical access time, which only changes slightly for different access sizes.\\
-The phenomenon of these splits clarifies why despite of the strong correlation of access size to access time a linear model might produce sub-optimal predictions. It's difficult to predict which I/O-path will be used for a measurement as they differentiate for identical access parameter values.
+The phenomenon of these splits clarifies why despite of the strong correlation of access size to access time a linear model might produce sub-optimal predictions. 
+Even for identical access parameter, it is difficult to predict which I/O-path will be used as the storage system decides the I/O path based on the system state (e.g., is the data available in the client's cache).
 In Figure~\ref{read_rnd}, the importance of knowledge about I/O-paths for the  access time prediction can be seen, for example file accesses of only 1\,B can be processed as slow as accesses with 16\,MiB if the longest I/O-path is used.\\
 For writing file accesses the splits only occur occasionally and are less drastic; these measurements might be well represented with a linear model.
 
@@ -395,7 +396,7 @@ This is mostly true for the error classes. The classes 4, 5 and 6, however, have
 	\end{tabular}
 }\\
 The vast majority of measurements were assigned to error class 3, which is the error class that covers the range around a prediction error of 0.
-Therefore most access times can be predicted sufficiently by the linear regression model.\\
+Therefore, most access times can be predicted sufficiently by the linear regression model.\\
 One sign for correct approximation of I/O-paths is it when error classes exist which have equal access sizes but different access times.
 In such cases a differentiation of measurements with equal access parameters takes place.
 This occurs for example with the error classes 4 and 8. Both classes have an average access size of $1.2\cdot10^6$ Bytes, but with 0.0143 and 0.2741 seconds very different average access times.
@@ -403,7 +404,7 @@ The error classes of sequential file accesses are display similar characteristic
 However, since sequential accesses are not able to stress all different I/O path, this result is more interesting.
 
 \subsection{Prediction of file accesses}
-After we analyzed the benchmarks and error classes, we study the results of our models.
+Next, we study the results of our models.
 To investigate the accuracy of the models and investigate overfitting, we split the available data into a training set and a test set. 
 The test set consist of all measurements that weren't used for training.
 The parameters for the ANN-models are varied to explore appropriate configurations; they are trained with a wide span of different parameter values for the number of hidden layers and number of neurons per layer.
@@ -412,12 +413,14 @@ They had 1000 randomly chosen measurements for each pair of access size and acce
 % TODO: Wie war das für die großen Zugriffe e.g. 2 MiB, wo keine 1000 Operationen vorlagen? 
 
 %TODO: Du hast Recht, das ist ein Problem für den Fall mit 16MiB, da gibt es nur 640 Messungen, die sind dann alle zum Trainieren genutzt wurden. Sind dann aber auch nicht für die Berechnung der Residuen genutzt wurden. Für alle anderen Zugriffsgrößen gibt es mehr als 1000 Messungen.
-In total that are 34\,000 measurements which should be a significant amount of data to avoid a situation in which we aren't able to train a model due to a lack of information about the system. 
+In total that are 34\,000 measurements which should be a significant amount of data to avoid the situation in which too few data points are available to train the system. 
 
 \medskip
 
 In Tables\,\ref{tab:seq-stats} and \ref{tab:rnd-stats} characteristics of the ANNs with the smallest average prediction error can be seen.
 The models for the sequential data set had in general bigger network structures.
+We do not completely understand the reason as we naively expect that random I/O is more complex than sequential I/O.
+Presumably, the system uses additional layers to adjust for rare events and e.g., differentiate for read-ahead and write behind cases.
 % TODO: Warum eigtl. eine Idee? Overfitting vielleicht hier, für die sonderbaren cases?
 % TODO Tendenziell findet so eine Art deep learning statt. Zusätzliche Layer können für weitere Fallunterscheidungen genutzt werden. Entweder ist das overfitting oder es ist notwendig, um die zugrundeliegende "Funktion" der Zugriffszeiten anzunähern.
 \tab{tab:seq-stats}{Characteristics of the most successful ANN-models for seq. file accesses.}{
@@ -480,7 +483,7 @@ It becomes clear that linear regression is sub-optimal for the prediction of fil
 The second thing one can take from the results is that the ema-model did not work as intended.
 It's error values are very close to the simple ANN-model which had less input information to work with.
 Going a little bit more into detail it is notable that the MAPE is smaller for the ema-models compared to the model without EMA-values.
-Thus the additional knowledge was in general useful for better prediction; however, the MSPE and PMax values are higher for the ema-model which means that some predictions were significantly misguided by the EMA-function value.
+Thus, the additional knowledge was in general useful for better prediction; however, the MSPE and PMax values are higher for the ema-model which means that some predictions were significantly misguided by the EMA-function value.
 The reason is that the I/O path does not change in a well predictable way (at least from the perspective of a client).
 \medskip
 
@@ -491,7 +494,7 @@ However, it is also clear that the additional parameter of the error class impro
 \medskip
 
 To investigate this further, we have to analyze measurements in more detail.
-To have a further look at the difference error classes make for access time prediction, we analyze the predictions of the two models for the case of random reads in Figure\,\ref{pred_tuple1} and \ref{pred_error}.
+To have a further look at the difference that error classes make on the access time prediction, we analyze the predictions of the two models for the case of random reads in Figure\,\ref{pred_tuple1} and \ref{pred_error}.
 \begin{figure}[!h]
 	\centering
 	\begin{minipage}[b]{0.47\textwidth}
@@ -508,7 +511,7 @@ To have a further look at the difference error classes make for access time pred
 \end{figure}
 %\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_Duration_rnd.png}{Predicted access times of the simple ANN-model as blue points.}\\
 %\fig{width=.47\textwidth}{src/plot_onlyPred_tuple1_with_error_class_from_linreg_Duration_rnd.png}{Predicted access times of the error-class-model as blue points.}\\
-The model without knowledge about I/O-paths is forced to predict some kind of average access time for each set of measurements with equal access parameter values, therefore its predictions are in between the two main groups of access time for the higher access sizes.
+The model without knowledge about I/O-paths is forced to predict some kind of average access time for each set of measurements with equal access parameter values, therefore, its predictions are in between the two main groups of access time for the higher access sizes.
 With knowledge about our approximations of I/O-paths the error-class-model can discriminate measurements with equal access parameter values and achieve more accurate predictions that way.
 
 \section{Conclusion and future work}
