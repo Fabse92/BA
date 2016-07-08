@@ -4,7 +4,6 @@
 
 \usepackage{amssymb}
 \usepackage{csvsimple}
-\usepackage{blindtext}
 
 % ------------
 
@@ -13,7 +12,7 @@
 	
 	\author{Jan Fabian Schmid\footnote{\label{susu}Universität Hamburg, E-Mail:\url{2schmid@informatik.uni-hamburg.de}} \and Julian M. Kunkel\footnote{German Climate Computing Center (DKRZ)}}
 	
-	\title{Predicting I/O performance in HPC using Artificial Neural Networks}
+	\title{Predicting I/O performance in HPC using artificial neural networks}
 	
 	\maketitle{}
 	
@@ -284,7 +283,7 @@
 		\begin{tabular}{|r|r|r|}\hline%
 			Attribute & Sequential access pattern & Random access pattern\\\hline\hline
 			\csvreader[late after line=\\\hline]%
-			{src/data_summary_korrelationen.csv}{Attribut=\Attribut,seq = \seq, rnd = \rnd}%
+			{src/data_summary_correlations.csv}{Attribut=\Attribut,seq = \seq, rnd = \rnd}%
 			{\Attribut & \seq &\rnd}%
 		\end{tabular}
 	}
