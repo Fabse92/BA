@@ -1,0 +1,33 @@
+1. Comment:
+The paper is missing a clear definition of "I/O path" with few
+examples.
+
+Reply:
+Our definition of I/O path in Section 2.2 (Model of the I/O path) was quite short and without much detail. We now added a more specific defintion with an additional example and more details.  
+
+Old version:
+[...] I/O path, which is the path from the invoking processor to the
+storage medium that contains/will store the data (larger accesses may
+be distributed across multiple servers).
+The data read/written is passed through the levels of the memory hierarchy.
+
+New version:
+The I/O path is the interaction between all components that are
+involved in the transfer of the data read or written.
+For example, for a node local file system, this includes, operating
+system, memory and storage device / medium. Remote systems add network
+traffic and usually server sided components.
+Usually, in parallel file systems the I/O of the client is transferred
+through operating system, client side file system modules, network,
+file system servers, storage devices and ultimately media.
+In several of these steps, data may be cached in memory and
+optimizations can take place.
+
+2. Comment:
+The paper compares accuracy of ANN solution with linear model. More models are said to be presented in referenced link[12], but some brief overview would be useful here as well.
+
+Reply:
+A summarizing list about models that were examined in the reference, but are not analyzed in detail in the paper was added.
+
+Added list:
+
