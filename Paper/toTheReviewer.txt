@@ -1,0 +1,37 @@
+1. Comment:
+The paper is missing a clear definition of "I/O path" with few examples.
+
+Reply:
+Our definition of I/O path in Section 2.2 (Model of the I/O path) was quite short and without much detail. We now added a more specific defintion with an additional example and more details.  
+
+Old version:
+[...] I/O path, which is the path from the invoking processor to the storage medium that contains/will store the data (larger accesses may
+be distributed across multiple servers).
+The data read/written is passed through the levels of the memory hierarchy.
+
+New version:
+The I/O path is the interaction between all components that are involved in the transfer of the data read or written.
+For example, for a node local file system, this includes, operating system, memory and storage device/medium. Remote systems add network
+traffic and usually server sided components.
+Usually, in parallel file systems the I/O of the client is transferred through operating system, client side file system modules, network, file system servers, storage devices and ultimately media.
+In several of these steps, data may be cached in memory and optimizations can take place.
+
+
+2. Comment:
+The paper compares accuracy of ANN solution with linear model. More models are said to be presented in referenced link[12], but some brief overview would be useful here as well.
+
+Reply:
+A summarizing list about models that were examined in the reference, but are not analyzed in detail in the paper was added.
+
+Added list:
+- Using multiple linear regression, we analyzed the performance of other baseline models. We used access size and delta-offset as tuple and also access size, delta-offset and access type as triple to find a mapping to access time.
+Despite having more information to work with both models achieve equal or worse deviations to the measured access times than the simple linear regression which only considers access size.
+If access type and delta-offset have a meaningful correlation to the access time of a file access, they require more sophisticated tools than linear regression to be exploited.
+
+- An ANN-model receiving knowledge about the previous measurement was examined as well.
+Additionally to the input information of the simple ANN-model the access size, the access type, the delta-offset and also the access time of the previous file access was given as input for this model.
+Conceptually this model might be able to compare the actual performance on the previous file access with its own prediction for it. If the actual performance deviates from the predicted performance this model could exploit this knowledge to adapt its prediction for the following file access. In case of a prolonged period of high workload this adaptation might have positive affect on the predictions.
+The results of this model, however, were throughout worse compared to the simple ANN-model which has less information to work with, even though quite complex network structures were used in the learning process (16 hidden layers with 17 neurons each for the sequential access pattern and 14 hidden layers with 17 neurons each for the random access pattern achieved the best results).
+Therefore we conclude that the performance of the direct predecessor of a file access can't or is to complicated to be exploited for an improved prediction.
+
+- An ANN-model similar to the error-class-model described above, using error classes obtained from the residues of the simple ANN-model instead of residues from the linear regression, was examined as well. This approach lead to very similar prediction performance to the model using error classes from linear regression. On the data set of sequential file accesses this model achieved with 2.4*10^-5 to 2.0*10^-5 a slightly worse and on measurements with random access pattern with 8.9*10^-4 to 10.3*10^-4 a slightly better mean average error.
